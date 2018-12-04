@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Blog.Model;
+﻿using Blog.Model;
 using Blog.Repository;
 
 namespace Blog.Business.Implement
@@ -17,12 +13,31 @@ namespace Blog.Business.Implement
             _baseRepository = baseRepository;
         }
 
+        public string GetPageList(int pageIndex, int pageSize)
+        {
+            return _baseRepository.GetPageList(pageIndex, pageSize);
+        }
+
+        public string GetDetail(int id)
+        {
+            return _baseRepository.GetDetail(id);
+        }
 
         public bool Insert(T entity)
         {
             return _baseRepository.Insert(entity);
         }
 
-      
+        public bool Update(T entity)
+        {
+            return _baseRepository.Update(entity);
+        }
+
+        public bool Delete(int id)
+        {
+            return _baseRepository.Delete(id);
+        }
+
+
     }
 }

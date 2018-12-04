@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Blog.Infrastructure;
 using Microsoft.Extensions.Options;
@@ -36,47 +35,5 @@ namespace Blog.Repository.Dao
                 Console.WriteLine();
             };
         }
-
-
-        /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public virtual bool Add(T obj)
-        {
-            return CurrentDb.Insert(obj);
-        }
-
-        /// <summary>
-        /// 根据主键删除
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public virtual bool Delete(dynamic id)
-        {
-            return CurrentDb.DeleteById(id);
-        }
-
-
-        /// <summary>
-        /// 更新
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public virtual bool Update(T obj)
-        {
-            return CurrentDb.Update(obj);
-        }
-
-        /// <summary>
-        /// 获取所有
-        /// </summary>
-        /// <returns></returns>
-        public virtual List<T> GetList()
-        {
-            return CurrentDb.GetList();
-        }
-
     }
 }

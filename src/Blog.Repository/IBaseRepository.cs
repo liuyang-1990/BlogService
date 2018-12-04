@@ -2,17 +2,17 @@
 
 namespace Blog.Repository
 {
-    public interface IBaseRepository<T> where T : BaseEntity, new()
+    public interface IBaseRepository<in T> where T : BaseEntity, new()
     {
-        // Task<IEnumerable<T>> GetEntities(Expression<Func<T, bool>> lambda);
-        //Task<IEnumerable<T>> GetEntiyByPage<S>(int pageInex, int pageSize, out int total, Expression<Func<T, bool>> lambda,
-        //    Expression<Func<T, S>> orderBy, bool isAsc);
+        string GetPageList(int pageIndex, int pageSize);
+
+        string GetDetail(int id);
 
         bool Insert(T entity);
 
-        //  bool Update(T entity);
+        bool Update(T entity);
 
-        bool Delete(dynamic id);
+        bool Delete(int id);
 
     }
 }

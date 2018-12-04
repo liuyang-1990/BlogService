@@ -1,4 +1,6 @@
-﻿namespace Blog.Model
+﻿using System;
+
+namespace Blog.Model
 {
     public class ArticleDto
     {
@@ -27,5 +29,8 @@
         /// 内容
         /// </summary>
         public string Content { get; set; }
+
+
+        public DateTime CreateTime { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Blog.Infrastructure;
 using Blog.Model;
 using Microsoft.Extensions.Options;
 using NLog;
+using SqlSugar;
 
 namespace Blog.Repository.Implement
 {
@@ -12,6 +13,25 @@ namespace Blog.Repository.Implement
 
         public ArticleRepository(IOptions<DBSetting> settings) : base(settings)
         {
+
+        }
+
+
+        public string GetPageList(int pageIndex, int pageSize)
+        {
+            return Context.Db.Queryable<Article>().ToJsonPage(pageIndex, pageSize);
+        }
+
+        public string GetDetailInfo(int id)
+        {
+            var info = Context.Db.Queryable<Article, ArticleContent>((a, ac) => a.Id == ac.Article_Id)
+                .Where((a, ac) => a.Id == id)
+                .Select((a, ac) => new ArticleDto()
+                {
+                    Id = SqlFunc.GetSelfAndAutoFill(a.Id),
+                    Content = ac.Content
+                }).Single();
+            return Context.Db.Utilities.SerializeObject(info);
 
         }
 

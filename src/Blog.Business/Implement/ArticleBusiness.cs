@@ -12,6 +12,16 @@ namespace Blog.Business.Implement
             _articleRepository = articleRepository;
         }
 
+        public string GetPageList(int pageIndex, int pageSize)
+        {
+            return _articleRepository.GetPageList(pageIndex, pageSize);
+        }
+
+        public string GetDetailInfo(int id)
+        {
+            return _articleRepository.GetDetailInfo(id);
+        }
+
         public bool Insert(ArticleDto articleDto)
         {
             var article = new Article()
@@ -53,5 +63,7 @@ namespace Blog.Business.Implement
 
             return _articleRepository.Update(article, content);
         }
+
+
     }
 }
