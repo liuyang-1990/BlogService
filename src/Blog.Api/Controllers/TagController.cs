@@ -20,26 +20,26 @@ namespace Blog.Api.Controllers
             return _tagBusiness.GetPageList(pageIndex, pageSize);
         }
 
-        [HttpGet("detail/{id}")]
+        [HttpGet("{id}")]
         public string GetDetailInfo(int id)
         {
             return _tagBusiness.GetDetail(id);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public bool AddArticle([FromBody]Tag tag)
         {
 
             return _tagBusiness.Insert(tag);
         }
 
-        [HttpGet("delete")]
+        [HttpDelete("{id}")]
         public bool DeleteArticle(int id)
         {
             return _tagBusiness.Delete(id);
         }
 
-        [HttpPost("update")]
+        [HttpPut]
         public bool UpdateArticle([FromBody]Tag tag)
         {
             return _tagBusiness.Update(tag);
