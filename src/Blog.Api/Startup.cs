@@ -84,8 +84,8 @@ namespace Blog.Api
                  });
 
                  var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
-                 var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
-                 option.IncludeXmlComments(xmlPath, true);
+                // var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
+                // option.IncludeXmlComments(xmlPath, true);
                  //添加header验证信息
                  var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
                  option.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
