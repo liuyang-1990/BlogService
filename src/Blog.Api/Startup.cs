@@ -2,18 +2,22 @@
 using Autofac.Extensions.DependencyInjection;
 using Blog.Api.AutoFac;
 using Blog.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using Blog.Api.AuthHelp;
 
 namespace Blog.Api
 {
@@ -43,8 +47,9 @@ namespace Blog.Api
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<DBSetting>(Configuration.GetSection("ConnectionStrings"));
             #region 跨域
 
             services.AddCors(options =>
@@ -60,7 +65,6 @@ namespace Blog.Api
             });
 
             #endregion
-
 
             #region Swagger
 
@@ -93,7 +97,36 @@ namespace Blog.Api
 
             #endregion
 
-            services.Configure<DBSetting>(Configuration.GetSection("ConnectionStrings"));
+            #region 认证  
+            // 认证，就是根据登录的时候，生成的令牌，检查其是否合法，这个主要是证明没有被篡改
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = "Blog.Api",
+                    ValidAudience = "liuyang",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("")),
+                    RequireSignedTokens = true,
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true
+                };
+            });
+            #endregion
+
+            #region 授权
+            //  授权，就是根据令牌反向去解析出的用户身份，回应当前http请求的许可，表示可以使用当前接口，或者拒绝访问
+            services.AddAuthorization(options =>
+              {
+                  options.AddPolicy("admin", policy => policy.RequireRole("admin").Build());
+              }); 
+            #endregion
 
             #region Ioc
             var builder = new ContainerBuilder();
@@ -131,10 +164,17 @@ namespace Blog.Api
             {
                 app.UseHsts();
             }
-            app.UseMiddleware<ExceptionFilter>();//自定义异常处理
+            //自定义异常处理
+            app.UseMiddleware<ExceptionFilter>();
+            //日志
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");
+            //跨域
             app.UseCors("allowAll");
+            //认证
+            app.UseAuthentication();
+            //授权
+            app.UseMiddleware<JwtTokenAuth>();
             app.UseMvc();
 
         }

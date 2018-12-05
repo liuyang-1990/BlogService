@@ -4,6 +4,24 @@
         <name>Blog.Api</name>
     </assembly>
     <members>
+        <member name="T:Blog.Api.AuthHelp.JwtTokenAuth">
+            <summary>
+            中间件JwtTokenAuth，验证作用
+            </summary>
+        </member>
+        <member name="M:Blog.Api.AuthHelp.JwtTokenAuth.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            ctor
+            </summary>
+            <param name="next"></param>
+        </member>
+        <member name="M:Blog.Api.AuthHelp.JwtTokenAuth.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            过滤请求
+            </summary>
+            <param name="httpContext"></param>
+            <returns></returns>
+        </member>
         <member name="M:Blog.Api.AutoFac.AutofacModuleRegister.GetAssemblyByName(System.String)">
             <summary>
             根据程序集名称获取程序集
