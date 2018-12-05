@@ -1,5 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace Blog.Api.Controllers
     /// </summary>
     [EnableCors("allowAll")]//支持跨域
     [BlogApiController]
+    [Authorize(Policy = "admin")]
     public class ArticleController : ControllerBase
     {
         private readonly IArticleBusiness _articleBusiness;

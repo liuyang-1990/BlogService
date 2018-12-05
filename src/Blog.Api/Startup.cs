@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Blog.Api.AuthHelp;
+using Blog.Infrastructure.AuthHelp;
+using Blog.Model.Settings;
 
 namespace Blog.Api
 {
@@ -47,9 +49,11 @@ namespace Blog.Api
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-
+            var jwtConfig = Configuration.GetSection("JwtAuth");
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<DBSetting>(Configuration.GetSection("ConnectionStrings"));
+            services.Configure<JwtConfig>(jwtConfig);
+            JwtHelper.Configuration = Configuration;
             #region 跨域
 
             services.AddCors(options =>
@@ -105,11 +109,11 @@ namespace Blog.Api
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(o =>
             {
-                o.TokenValidationParameters = new TokenValidationParameters()
+                o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = "Blog.Api",
-                    ValidAudience = "liuyang",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("")),
+                    ValidIssuer = jwtConfig["Issuer"],
+                    ValidAudience = jwtConfig["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig["SecurityKey"])),
                     RequireSignedTokens = true,
                     ValidateAudience = true,
                     ValidateIssuer = true,
@@ -125,7 +129,7 @@ namespace Blog.Api
             services.AddAuthorization(options =>
               {
                   options.AddPolicy("admin", policy => policy.RequireRole("admin").Build());
-              }); 
+              });
             #endregion
 
             #region Ioc
