@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Blog.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Blog.Api.AutoFac.AutofacModuleRegister.GetAssemblyByName(System.String)">
+            <summary>
+            根据程序集名称获取程序集
+            </summary>
+            <param name="assemblyName">程序集名称</param>
+            <returns></returns>
+        </member>
+        <member name="T:Blog.Api.Controllers.ArticleController">
+            <summary>
+            文章
+            </summary>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.GetPageList(System.Int32,System.Int32)">
+            <summary>
+            分页获取文章
+            </summary>
+            <param name="pageIndex">当前页码</param>
+            <param name="pageSize">页大小</param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.GetDetailInfo(System.Int32)">
+            <summary>
+            获取详细信息
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.AddArticle(Blog.Model.ArticleDto)">
+            <summary>
+            新增
+            </summary>
+            <param name="articleDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.DeleteArticle(System.Int32)">
+            <summary>
+            删除
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.UpdateArticle(Blog.Model.ArticleDto)">
+            <summary>
+            更新
+            </summary>
+            <param name="articleDto"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
