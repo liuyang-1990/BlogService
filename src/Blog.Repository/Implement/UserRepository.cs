@@ -1,12 +1,12 @@
-﻿using Blog.Infrastructure;
-using Blog.Model;
+﻿using Blog.Model;
+using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 
 namespace Blog.Repository.Implement
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(IOptions<DBSetting> settings) : base(settings)
+        public UserRepository(IOptions<DbSetting> settings) : base(settings)
         {
         }
     }

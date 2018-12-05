@@ -1,12 +1,12 @@
-﻿using Blog.Infrastructure;
-using Blog.Model;
+﻿using Blog.Model;
+using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 
 namespace Blog.Repository.Implement
 {
     public class TagRepository:BaseRepository<Tag>,ITagRespoitory
     {
-        public TagRepository(IOptions<DBSetting> settings) : base(settings)
+        public TagRepository(IOptions<DbSetting> settings) : base(settings)
         {
         }
 

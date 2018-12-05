@@ -2,7 +2,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
-using Blog.Infrastructure.AuthHelp;
+using Blog.Infrastructure;
+
 
 namespace Blog.Api.AuthHelp
 {
@@ -13,13 +14,13 @@ namespace Blog.Api.AuthHelp
     {
         private readonly RequestDelegate _next;
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="next"></param>
-        public JwtTokenAuth(RequestDelegate next)
+        private readonly IJwtHelper _jwtHelper;
+         
+
+        public JwtTokenAuth(RequestDelegate next, IJwtHelper jwtHelper)
         {
             _next = next;
+            _jwtHelper = jwtHelper;
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Blog.Api.AuthHelp
 
             var tokenHeader = httpContext.Request.Headers["Authorization"].ToString();
             tokenHeader = tokenHeader.Substring("Bearer ".Length).Trim();
-            var  tm = JwtHelper.SerializeJwt(tokenHeader);//解析Token
+            var tm = _jwtHelper.SerializeJwt(tokenHeader);//解析Token
             //授权
             var claimList = new List<Claim>();
             var claim = new Claim(ClaimTypes.Role, tm.Role);//一个新声明  用角色

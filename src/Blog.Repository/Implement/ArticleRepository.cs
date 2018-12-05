@@ -1,6 +1,6 @@
 ﻿using System;
-using Blog.Infrastructure;
 using Blog.Model;
+using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using NLog;
 using SqlSugar;
@@ -11,7 +11,7 @@ namespace Blog.Repository.Implement
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public ArticleRepository(IOptions<DBSetting> settings) : base(settings)
+        public ArticleRepository(IOptions<DbSetting> settings) : base(settings)
         {
 
         }

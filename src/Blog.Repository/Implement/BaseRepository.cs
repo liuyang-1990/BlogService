@@ -1,6 +1,6 @@
 ﻿using System;
-using Blog.Infrastructure;
 using Blog.Model;
+using Blog.Model.Settings;
 using Blog.Repository.Dao;
 using Microsoft.Extensions.Options;
 using NLog;
@@ -12,7 +12,7 @@ namespace Blog.Repository.Implement
         protected readonly DbContext<T> Context;
 
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        protected BaseRepository(IOptions<DBSetting> settings)
+        protected BaseRepository(IOptions<DbSetting> settings)
         {
             Context = new DbContext<T>(settings);
         }

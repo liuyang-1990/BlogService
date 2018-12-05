@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Blog.Infrastructure;
+using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using SqlSugar;
 
@@ -18,7 +18,7 @@ namespace Blog.Repository.Dao
         /// </summary>
         public SimpleClient<T> CurrentDb => new SimpleClient<T>(Db);
 
-        public DbContext(IOptions<DBSetting> settings)
+        public DbContext(IOptions<DbSetting> settings)
         {
             Db = new SqlSugarClient(new ConnectionConfig()
             {

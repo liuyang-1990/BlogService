@@ -15,10 +15,8 @@ using NLog.Web;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using Blog.Api.AuthHelp;
-using Blog.Infrastructure.AuthHelp;
 using Blog.Model.Settings;
 
 namespace Blog.Api
@@ -51,9 +49,8 @@ namespace Blog.Api
         {
             var jwtConfig = Configuration.GetSection("JwtAuth");
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.Configure<DBSetting>(Configuration.GetSection("ConnectionStrings"));
+            services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<JwtConfig>(jwtConfig);
-            JwtHelper.Configuration = Configuration;
             #region 跨域
 
             services.AddCors(options =>

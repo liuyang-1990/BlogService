@@ -13,6 +13,9 @@ namespace Blog.Api.AutoFac
             builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Business")).Where(a => a.Name.EndsWith("Business")).AsImplementedInterfaces();
             //注册Repository中的对象,Repository中的类要以Repository结尾，否则注册失败
             builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Repository")).Where(a => a.Name.EndsWith("Repository")).AsImplementedInterfaces();
+
+            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Infrastructure")).Where(a=>a.Name.EndsWith("Helper")).AsImplementedInterfaces();
+
         }
         /// <summary>
         /// 根据程序集名称获取程序集

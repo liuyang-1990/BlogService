@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blog.Infrastructure.AuthHelp;
+using Blog.Infrastructure;
 using Blog.Model;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Controllers
@@ -14,6 +13,12 @@ namespace Blog.Api.Controllers
     [EnableCors("allowAll")]//支持跨域
     public class LoginController : ControllerBase
     {
+
+        private readonly IJwtHelper _jwtHelper;
+        public LoginController(IJwtHelper jwtHelper)
+        {
+            _jwtHelper = jwtHelper;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -21,7 +26,7 @@ namespace Blog.Api.Controllers
         [HttpGet("token")]
         public JsonResult GetJwtStr()
         {
-            var jwtStr = JwtHelper.IssueJwt(new JwtToken()
+            var jwtStr = _jwtHelper.IssueJwt(new JwtToken()
             {
                 Uid = "1",
                 Role = "admin"
