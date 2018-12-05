@@ -27,20 +27,20 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public bool AddArticle([FromBody]Tag tag)
+        public bool AddTag([FromBody]Tag tag)
         {
 
             return _tagBusiness.Insert(tag);
         }
 
         [HttpDelete("{id}")]
-        public bool DeleteArticle(int id)
+        public bool DeleteTag(int id)
         {
             return _tagBusiness.Delete(id);
         }
 
         [HttpPut]
-        public bool UpdateArticle([FromBody]Tag tag)
+        public bool UpdateTag([FromBody]Tag tag)
         {
             return _tagBusiness.Update(tag);
         }

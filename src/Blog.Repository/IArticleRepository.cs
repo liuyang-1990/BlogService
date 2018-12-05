@@ -2,18 +2,10 @@
 
 namespace Blog.Repository
 {
-    public interface IArticleRepository
+    public interface IArticleRepository : IBaseRepository<Article>
     {
-        string GetPageList(int pageIndex, int pageSize);
-
-        string GetDetailInfo(int id);
-
         bool Insert(Article article, ArticleContent content);
 
-        bool Delete(int id);
-
         bool Update(Article article, ArticleContent content);
-
-        
     }
 }

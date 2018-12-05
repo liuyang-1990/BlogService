@@ -3,24 +3,17 @@ using Blog.Repository;
 
 namespace Blog.Business.Implement
 {
-    public class ArticleBusiness : IArticleBusiness
+    public class ArticleBusiness : BaseBusiness<Article>, IArticleBusiness
     {
 
         private readonly IArticleRepository _articleRepository;
+
         public ArticleBusiness(IArticleRepository articleRepository)
         {
+            BaseRepository = articleRepository;
             _articleRepository = articleRepository;
         }
 
-        public string GetPageList(int pageIndex, int pageSize)
-        {
-            return _articleRepository.GetPageList(pageIndex, pageSize);
-        }
-
-        public string GetDetailInfo(int id)
-        {
-            return _articleRepository.GetDetailInfo(id);
-        }
 
         public bool Insert(ArticleDto articleDto)
         {
@@ -37,11 +30,6 @@ namespace Blog.Business.Implement
                 Content = articleDto.Content
             };
             return _articleRepository.Insert(article, content);
-        }
-
-        public bool Delete(int id)
-        {
-            return _articleRepository.Delete(id);
         }
 
         public bool Update(ArticleDto articleDto)

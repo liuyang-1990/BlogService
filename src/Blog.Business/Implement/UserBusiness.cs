@@ -5,9 +5,9 @@ namespace Blog.Business.Implement
 {
     public class UserBusiness : BaseBusiness<User>, IUserBusiness
     {
-        public UserBusiness(IBaseRepository<User> baseRepository) : base(baseRepository)
+        public UserBusiness(IUserRepository repository)
         {
-
+            BaseRepository = repository;
         }
 
     }

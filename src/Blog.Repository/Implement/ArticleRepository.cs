@@ -16,13 +16,7 @@ namespace Blog.Repository.Implement
 
         }
 
-
-        public string GetPageList(int pageIndex, int pageSize)
-        {
-            return Context.Db.Queryable<Article>().ToJsonPage(pageIndex, pageSize);
-        }
-
-        public string GetDetailInfo(int id)
+        public override string GetDetail(int id)
         {
             var info = Context.Db.Queryable<Article, ArticleContent>((a, ac) => a.Id == ac.Article_Id)
                 .Where((a, ac) => a.Id == id)

@@ -6,36 +6,31 @@ namespace Blog.Business.Implement
 
     public class BaseBusiness<T> where T : BaseEntity, new()
     {
-        private readonly IBaseRepository<T> _baseRepository;
-
-        public BaseBusiness(IBaseRepository<T> baseRepository)
-        {
-            _baseRepository = baseRepository;
-        }
+        protected IBaseRepository<T> BaseRepository;
 
         public string GetPageList(int pageIndex, int pageSize)
         {
-            return _baseRepository.GetPageList(pageIndex, pageSize);
+            return BaseRepository.GetPageList(pageIndex, pageSize);
         }
 
         public string GetDetail(int id)
         {
-            return _baseRepository.GetDetail(id);
+            return BaseRepository.GetDetail(id);
         }
 
         public bool Insert(T entity)
         {
-            return _baseRepository.Insert(entity);
+            return BaseRepository.Insert(entity);
         }
 
         public bool Update(T entity)
         {
-            return _baseRepository.Update(entity);
+            return BaseRepository.Update(entity);
         }
 
         public bool Delete(int id)
         {
-            return _baseRepository.Delete(id);
+            return BaseRepository.Delete(id);
         }
 
 

@@ -32,7 +32,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public string GetDetail(int id)
+        public virtual string GetDetail(int id)
         {
             var info = Context.CurrentDb.GetSingle(x => x.Id == id);
             return Context.Db.Utilities.SerializeObject(info);

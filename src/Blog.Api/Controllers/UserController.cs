@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,17 +14,35 @@ namespace Blog.Api.Controllers
             _userBusiness = userBusiness;
         }
 
-        //[HttpGet]
-        //public async Task<IEnumerable<User>> GetUsers(User user)
-        //{
-        //    return await _userBusiness.GetEntities(_ => true);
-        //}
+        [HttpGet("page")]
+        public string GetPageList(int pageIndex, int pageSize)
+        {
+            return _userBusiness.GetPageList(pageIndex, pageSize);
+        }
 
-        //[HttpPost]
-        //public async Task<bool> Add([FromBody]User user)
-        //{
-        //    return await _userBusiness.Add(user);
-        //}
+        [HttpGet("{id}")]
+        public string GetDetailInfo(int id)
+        {
+            return _userBusiness.GetDetail(id);
+        }
 
+        [HttpPost]
+        public bool AddUser([FromBody]User user)
+        {
+
+            return _userBusiness.Insert(user);
+        }
+
+        [HttpDelete("{id}")]
+        public bool DeleteUser(int id)
+        {
+            return _userBusiness.Delete(id);
+        }
+
+        [HttpPut]
+        public bool UpdateUser([FromBody]User user)
+        {
+            return _userBusiness.Update(user);
+        }
     }
 }

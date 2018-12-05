@@ -23,7 +23,7 @@ namespace Blog.Api.Controllers
         [HttpGet("{id}")]
         public string GetDetailInfo(int id)
         {
-            return _articleBusiness.GetDetailInfo(id);
+            return _articleBusiness.GetDetail(id);
         }
 
         [HttpPost]

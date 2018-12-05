@@ -4,9 +4,10 @@ using Microsoft.Extensions.Options;
 
 namespace Blog.Repository.Implement
 {
-    public class UserRepository 
+    public class UserRepository :BaseRepository<User>,IUserRepository
     {
-    
-
+        protected UserRepository(IOptions<DBSetting> settings) : base(settings)
+        {
+        }
     }
 }
