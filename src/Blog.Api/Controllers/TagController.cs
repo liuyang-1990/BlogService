@@ -1,9 +1,11 @@
 ﻿using Blog.Business;
 using Blog.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Controllers
 {
+    [EnableCors("allowAll")]//支持跨域
     [BlogApiController]
     public class TagController : ControllerBase
     {

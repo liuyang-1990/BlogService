@@ -17,19 +17,50 @@ using System.IO;
 
 namespace Blog.Api
 {
+    /// <summary>
+    /// 启动配置类
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Configuration属性
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            #region 跨域
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("allowAll", policy =>
+                    {
+                        policy
+                            .AllowAnyOrigin()//允许任何源
+                            .AllowAnyMethod()//允许任何方式
+                            .AllowAnyHeader()//允许任何头
+                            .AllowCredentials();//允许cookie
+                    });
+            });
+
+            #endregion
+
 
             #region Swagger
 
@@ -76,7 +107,12 @@ namespace Blog.Api
             #endregion
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        ///  This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
@@ -98,6 +134,7 @@ namespace Blog.Api
             app.UseMiddleware<ExceptionFilter>();//自定义异常处理
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");
+            app.UseCors("allowAll");
             app.UseMvc();
 
         }
