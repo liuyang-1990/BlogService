@@ -1,8 +1,10 @@
 ﻿using Blog.Business;
+using Blog.Model.Db;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
@@ -28,9 +30,9 @@ namespace Blog.Api.Controllers
         /// <param name="pageSize">页大小</param>
         /// <returns></returns>
         [HttpGet("page")]
-        public string GetPageList(int pageIndex, int pageSize)
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList(int pageIndex, int pageSize)
         {
-            return _articleBusiness.GetPageList(pageIndex, pageSize);
+            return await _articleBusiness.GetPageList(pageIndex, pageSize, null);
         }
 
         /// <summary>
@@ -39,9 +41,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public string GetDetailInfo(int id)
+        public async Task<ArticleInfo> GetDetailInfo(int id)
         {
-            return _articleBusiness.GetDetail(id);
+            return await _articleBusiness.GetDetail(id);
         }
 
         /// <summary>
@@ -62,9 +64,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public bool DeleteArticle(int id)
+        public async Task<bool> DeleteArticle(int id)
         {
-            return _articleBusiness.Delete(id);
+            return await _articleBusiness.Delete(id);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Blog.Infrastructure;
 using Blog.Model.Db;
 using Blog.Repository;
+using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
@@ -14,7 +15,7 @@ namespace Blog.Business.Implement
             _md5Helper = md5Helper;
         }
 
-        public override bool Insert(UserInfo entity)
+        public override Task<bool> Insert(UserInfo entity)
         {
             entity.Password = _md5Helper.Encrypt32(entity.Password);
             return base.Insert(entity);

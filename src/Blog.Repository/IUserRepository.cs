@@ -2,8 +2,8 @@
 
 namespace Blog.Repository
 {
-    public interface IUserRepository:IBaseRepository<UserInfo>
+    public interface IUserRepository : IBaseRepository<UserInfo>
     {
-        
+
     }
 }

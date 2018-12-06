@@ -1,18 +1,23 @@
-﻿
+﻿using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Blog.Model;
+using Blog.Model.ViewModel;
+
 namespace Blog.Business
 {
-    public interface IBaseBusiness<in T> where T : class, new()
+    public interface IBaseBusiness<T> where T : BaseEntity, new()
     {
 
-        string GetPageList(int pageIndex, int pageSize);
+        Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize, Expression<Func<T, bool>> expression);
 
-        string GetDetail(int id);
+        Task<T> GetDetail(int id);
 
-        bool Insert(T entity);
+        Task<bool> Insert(T entity);
 
-        bool Update(T entity);
+        Task<bool> Update(T entity);
 
-        bool Delete(int id);
+        Task<bool> Delete(int id);
 
 
     }

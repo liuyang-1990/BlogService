@@ -12,7 +12,7 @@ namespace Blog.Model
         public int Id { get; set; }
 
         /// <summary>
-        /// 是否删除
+        /// 是否删除 0 未删除 1 已删除
         /// </summary>
         [SugarColumn(ColumnName = "is_deleted")]
         public int IsDeleted { get; set; }

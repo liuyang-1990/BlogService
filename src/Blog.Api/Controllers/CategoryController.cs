@@ -1,6 +1,8 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
@@ -15,34 +17,34 @@ namespace Blog.Api.Controllers
         }
 
         [HttpGet("page")]
-        public string GetPageList(int pageIndex, int pageSize)
+        public async Task<JsonResultModel<CategoryInfo>> GetPageList(int pageIndex, int pageSize)
         {
-            return _categoryBusiness.GetPageList(pageIndex, pageSize);
+            return await _categoryBusiness.GetPageList(pageIndex, pageSize, null);
         }
 
         [HttpGet("{id}")]
-        public string GetDetailInfo(int id)
+        public async Task<CategoryInfo> GetDetailInfo(int id)
         {
-            return _categoryBusiness.GetDetail(id);
+            return await _categoryBusiness.GetDetail(id);
         }
 
         [HttpPost]
-        public bool AddCategory([FromBody]CategoryInfo category)
+        public async Task<bool> AddCategory([FromBody]CategoryInfo category)
         {
 
-            return _categoryBusiness.Insert(category);
+            return await _categoryBusiness.Insert(category);
         }
 
         [HttpDelete("{id}")]
-        public bool DeleteCategory(int id)
+        public async Task<bool> DeleteCategory(int id)
         {
-            return _categoryBusiness.Delete(id);
+            return await _categoryBusiness.Delete(id);
         }
 
         [HttpPut]
-        public bool UpdateCategory([FromBody]CategoryInfo category)
+        public async Task<bool> UpdateCategory([FromBody]CategoryInfo category)
         {
-            return _categoryBusiness.Update(category);
+            return await _categoryBusiness.Update(category);
         }
     }
 }

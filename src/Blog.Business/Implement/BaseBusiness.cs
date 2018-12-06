@@ -1,5 +1,9 @@
 ﻿using Blog.Model;
+using Blog.Model.ViewModel;
 using Blog.Repository;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
@@ -8,31 +12,29 @@ namespace Blog.Business.Implement
     {
         protected IBaseRepository<T> BaseRepository;
 
-        public virtual string GetPageList(int pageIndex, int pageSize)
+        public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize, Expression<Func<T, bool>> expression)
         {
-            return BaseRepository.GetPageList(pageIndex, pageSize);
+            return await BaseRepository.GetPageList(pageIndex, pageSize, expression);
         }
 
-        public virtual string GetDetail(int id)
+        public virtual async Task<T> GetDetail(int id)
         {
-            return BaseRepository.GetDetail(id);
+            return await BaseRepository.GetDetail(id);
         }
 
-        public virtual bool Insert(T entity)
+        public virtual async Task<bool> Insert(T entity)
         {
-            return BaseRepository.Insert(entity);
+            return await BaseRepository.Insert(entity);
         }
 
-        public virtual bool Update(T entity)
+        public virtual async Task<bool> Update(T entity)
         {
-            return BaseRepository.Update(entity);
+            return await BaseRepository.Update(entity);
         }
 
-        public virtual bool Delete(int id)
+        public virtual async Task<bool> Delete(int id)
         {
-            return BaseRepository.Delete(id);
+            return await BaseRepository.Delete(id);
         }
-
-
     }
 }

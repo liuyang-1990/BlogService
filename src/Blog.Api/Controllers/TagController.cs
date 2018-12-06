@@ -1,7 +1,9 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
@@ -17,34 +19,34 @@ namespace Blog.Api.Controllers
 
 
         [HttpGet("page")]
-        public string GetPageList(int pageIndex, int pageSize)
+        public async Task<JsonResultModel<TagInfo>> GetPageList(int pageIndex, int pageSize)
         {
-            return _tagBusiness.GetPageList(pageIndex, pageSize);
+            return await _tagBusiness.GetPageList(pageIndex, pageSize, null);
         }
 
         [HttpGet("{id}")]
-        public string GetDetailInfo(int id)
+        public async Task<TagInfo> GetDetailInfo(int id)
         {
-            return _tagBusiness.GetDetail(id);
+            return await _tagBusiness.GetDetail(id);
         }
 
         [HttpPost]
-        public bool AddTag([FromBody]TagInfo tag)
+        public async Task<bool> AddTag([FromBody]TagInfo tag)
         {
 
-            return _tagBusiness.Insert(tag);
+            return await _tagBusiness.Insert(tag);
         }
 
         [HttpDelete("{id}")]
-        public bool DeleteTag(int id)
+        public async Task<bool> DeleteTag(int id)
         {
-            return _tagBusiness.Delete(id);
+            return await _tagBusiness.Delete(id);
         }
 
         [HttpPut]
-        public bool UpdateTag([FromBody]TagInfo tag)
+        public async Task<bool> UpdateTag([FromBody]TagInfo tag)
         {
-            return _tagBusiness.Update(tag);
+            return await _tagBusiness.Update(tag);
         }
     }
 }

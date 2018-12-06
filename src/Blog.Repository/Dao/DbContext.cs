@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq;
-using Blog.Model.Settings;
+﻿using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using SqlSugar;
+using System;
+using System.Linq;
 
 namespace Blog.Repository.Dao
 {
@@ -28,6 +28,17 @@ namespace Blog.Repository.Dao
                 IsAutoCloseConnection = true
             });
 
+            Db.QueryFilter.Add(new SqlFilterItem()
+            {
+                //单表全局过滤器
+                FilterValue = filterdb => new SqlFilterResult() { Sql = "   is_deleted=0" },
+                IsJoinQuery = false
+            }).Add(new SqlFilterItem()
+            {
+                //多表全局过滤器
+                FilterValue = filterdb => new SqlFilterResult() { Sql = "   f.is_deleted=0" },
+                IsJoinQuery = true
+            });
             //调式代码 用来打印SQL 
             Db.Aop.OnLogExecuting = (sql, pars) =>
             {

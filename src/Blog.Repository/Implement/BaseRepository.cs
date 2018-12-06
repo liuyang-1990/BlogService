@@ -1,9 +1,12 @@
-﻿using System;
-using Blog.Model;
+﻿using Blog.Model;
 using Blog.Model.Settings;
+using Blog.Model.ViewModel;
 using Blog.Repository.Dao;
 using Microsoft.Extensions.Options;
 using NLog;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
 {
@@ -21,21 +24,36 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        public virtual string GetPageList(int pageIndex, int pageSize)
+        public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize = 10, Expression<Func<T, bool>> expression=null)
         {
-            return Context.Db.Queryable<T>().ToJsonPage(pageIndex, pageSize);
+            const int totalNumber = 0;
+            var pageInfo = await Context.Db.Queryable<T>().Where(expression).ToPageListAsync(pageIndex, pageSize, totalNumber);
+            return new JsonResultModel<T>()
+            {
+                Rows = pageInfo.Key,
+                TotalRows = pageInfo.Value
+            };
         }
 
         /// <summary>
         /// 获取详细信息
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">主键</param>
         /// <returns></returns>
-        public virtual string GetDetail(int id)
+        public virtual async Task<T> GetDetail(int id)
         {
-            var info = Context.CurrentDb.GetSingle(x => x.Id == id);
-            return Context.Db.Utilities.SerializeObject(info);
+            try
+            {
+                return await Task.Run(() => Context.Db.Queryable<T>().InSingle(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return null;
+            }
+
         }
 
         /// <summary>
@@ -43,11 +61,12 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public virtual bool Insert(T entity)
+        public virtual async Task<bool> Insert(T entity)
         {
             try
             {
-                return Context.CurrentDb.Insert(entity);
+                var changes = await Context.Db.Insertable(entity).ExecuteCommandAsync();
+                return changes > 0;
             }
             catch (Exception ex)
             {
@@ -61,20 +80,31 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool Update(T entity)
-        {
-            return Context.CurrentDb.Update(entity);
-        }
-        /// <summary>
-        /// 根据主键删除
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public virtual bool Delete(int id)
+        public virtual async Task<bool> Update(T entity)
         {
             try
             {
-                return Context.CurrentDb.DeleteById(id);
+                entity.ModifyTime = DateTime.Now;
+                return await Context.Db.Updateable(entity).IgnoreColumns(true).IgnoreColumns(it => it.CreateTime).ExecuteCommandHasChangeAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// 根据主键删除(假删除)
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <returns></returns>
+        public virtual async Task<bool> Delete(int id)
+        {
+            try
+            {
+                return await Context.Db.Updateable<T>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
             }
             catch (Exception ex)
             {

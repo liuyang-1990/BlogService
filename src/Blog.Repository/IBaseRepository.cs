@@ -1,18 +1,22 @@
 ﻿using Blog.Model;
+using Blog.Model.ViewModel;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Blog.Repository
 {
-    public interface IBaseRepository<in T> where T : BaseEntity, new()
+    public interface IBaseRepository<T> where T : BaseEntity, new()
     {
-        string GetPageList(int pageIndex, int pageSize);
+        Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize, Expression<Func<T, bool>> expression);
 
-        string GetDetail(int id);
+        Task<T> GetDetail(int id);
 
-        bool Insert(T entity);
+        Task<bool> Insert(T entity);
 
-        bool Update(T entity);
+        Task<bool> Update(T entity);
 
-        bool Delete(int id);
+        Task<bool> Delete(int id);
 
     }
 }
