@@ -9,7 +9,7 @@ namespace Blog.Model.Db
     public class Comment:BaseEntity
     {
         [SugarColumn(ColumnName = "parent_id")]
-        public long? ParentId { get; set; }
+        public int? ParentId { get; set; }
 
         /// <summary>
         /// 留言内容
@@ -20,7 +20,7 @@ namespace Blog.Model.Db
         /// 留言人
         /// </summary>
         [SugarColumn(ColumnName = "create_by")]
-        public string CreateBy { get; set; }
+        public int CreateBy { get; set; }
 
 
     }

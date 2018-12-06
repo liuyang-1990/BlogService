@@ -11,6 +11,7 @@ namespace Blog.Model.Db
         /// <summary>
         /// 分类名称
         /// </summary>
+        [SugarColumn(ColumnName = "category_name")]
         public string CategoryName { get; set; }
     }
 }

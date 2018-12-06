@@ -3,26 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Api", "src\Blog.Api\Blog.Api.csproj", "{D5A7478B-1CF3-4238-B314-DC98E622B057}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Api", "src\Blog.Api\Blog.Api.csproj", "{D5A7478B-1CF3-4238-B314-DC98E622B057}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2FF6E00-9575-496A-9F36-7DB01AD6DBBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Business", "src\Blog.Business\Blog.Business.csproj", "{CC0C69A1-4848-41E0-B97F-4DD3772BF6B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Business", "src\Blog.Business\Blog.Business.csproj", "{CC0C69A1-4848-41E0-B97F-4DD3772BF6B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Model", "src\Blog.Model\Blog.Model.csproj", "{F2F5D84A-84A6-4B73-A1A8-6593AB221D8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Model", "src\Blog.Model\Blog.Model.csproj", "{F2F5D84A-84A6-4B73-A1A8-6593AB221D8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Infrastructure", "src\Blog.Infrastructure\Blog.Infrastructure.csproj", "{83B4AE03-5E7E-4E88-9611-5100C06EB691}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Infrastructure", "src\Blog.Infrastructure\Blog.Infrastructure.csproj", "{83B4AE03-5E7E-4E88-9611-5100C06EB691}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Repository", "src\Blog.Repository\Blog.Repository.csproj", "{7ECCF53E-EBEF-4CF4-8706-119B5F7F5EC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Repository", "src\Blog.Repository\Blog.Repository.csproj", "{7ECCF53E-EBEF-4CF4-8706-119B5F7F5EC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{79237ED0-B483-4D27-8A77-49765D6F67B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Test", "test\Blog.Test\Blog.Test.csproj", "{1873CB33-2E94-4C04-9D2D-8A6980838D77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Test", "test\Blog.Test\Blog.Test.csproj", "{1873CB33-2E94-4C04-9D2D-8A6980838D77}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E8D62B2-A965-475B-B7EB-C62CA5630406}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		db.sql = db.sql
 	EndProjectSection
 EndProject
 Global

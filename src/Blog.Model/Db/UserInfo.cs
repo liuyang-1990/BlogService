@@ -17,7 +17,7 @@ namespace Blog.Model.Db
         public string Password { get; set; }
 
         /// <summary>
-        /// 用户角色
+        /// 用户角色  1系统管理员  0 普通用户
         /// </summary>
         public int Role { get; set; }
 
@@ -29,7 +29,8 @@ namespace Blog.Model.Db
         /// <summary>
         /// 上次登录时间
         /// </summary>
-        public DateTime LastLoginTime { get; set; }
+        [SugarColumn(ColumnName = "last_login_time")]
+        public DateTime? LastLoginTime { get; set; }
 
 
     }

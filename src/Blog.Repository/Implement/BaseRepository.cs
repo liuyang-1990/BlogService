@@ -26,10 +26,11 @@ namespace Blog.Repository.Implement
         /// <param name="pageSize"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize = 10, Expression<Func<T, bool>> expression=null)
+        public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize = 10, Expression<Func<T, bool>> expression = null)
         {
             const int totalNumber = 0;
-            var pageInfo = await Context.Db.Queryable<T>().Where(expression).ToPageListAsync(pageIndex, pageSize, totalNumber);
+
+            var pageInfo = await Context.Db.Queryable<T>().ToPageListAsync(pageIndex, pageSize, totalNumber);
             return new JsonResultModel<T>()
             {
                 Rows = pageInfo.Key,

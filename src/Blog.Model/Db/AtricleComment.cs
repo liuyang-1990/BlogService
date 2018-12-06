@@ -9,7 +9,7 @@ namespace Blog.Model.Db
         /// 对应文章ID
         /// </summary>
         [SugarColumn(ColumnName = "article_id")]
-        public long ArticleId { get; set; }
+        public int ArticleId { get; set; }
 
         [SugarColumn(ColumnName = "comment_id")]
         public int CommentId { get; set; }
