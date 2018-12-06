@@ -1,6 +1,7 @@
 ﻿using System;
-using Blog.Model;
+using Blog.Model.Db;
 using Blog.Model.Settings;
+using Blog.Model.ViewModel;
 using Microsoft.Extensions.Options;
 using NLog;
 using SqlSugar;

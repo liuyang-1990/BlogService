@@ -1,4 +1,4 @@
-﻿namespace Blog.Model
+﻿namespace Blog.Model.Db
 {
     /// <summary>
     /// 文章内容

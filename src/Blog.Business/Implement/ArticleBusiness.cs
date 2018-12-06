@@ -1,4 +1,5 @@
-﻿using Blog.Model;
+﻿using Blog.Model.Db;
+using Blog.Model.ViewModel;
 using Blog.Repository;
 
 namespace Blog.Business.Implement

@@ -1,4 +1,4 @@
-﻿using Blog.Model;
+﻿using Blog.Model.Db;
 
 namespace Blog.Business
 {

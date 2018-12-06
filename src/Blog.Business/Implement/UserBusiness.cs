@@ -1,5 +1,5 @@
 ﻿using Blog.Infrastructure;
-using Blog.Model;
+using Blog.Model.Db;
 using Blog.Repository;
 
 namespace Blog.Business.Implement

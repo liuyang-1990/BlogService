@@ -1,5 +1,5 @@
 ﻿using Blog.Business;
-using Blog.Model;
+using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

@@ -1,10 +1,10 @@
-﻿namespace Blog.Model
+﻿using System;
+
+namespace Blog.Model.ViewModel
 {
-    /// <summary>
-    /// 文章表
-    /// </summary>
-    public class Article : BaseEntity
+    public class ArticleDto
     {
+        public int Id { get; set; }
         /// <summary>
         /// 标题
         /// </summary>
@@ -25,6 +25,12 @@
         /// </summary>
         public string Categories { get; set; }
 
+        /// <summary>
+        /// 内容
+        /// </summary>
+        public string Content { get; set; }
 
+
+        public DateTime CreateTime { get; set; }
     }
 }

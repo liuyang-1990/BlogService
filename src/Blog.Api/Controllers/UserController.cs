@@ -1,5 +1,5 @@
 ﻿using Blog.Business;
-using Blog.Model;
+using Blog.Model.Db;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 

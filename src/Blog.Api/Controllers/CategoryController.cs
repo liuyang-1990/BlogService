@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Blog.Business;
-using Blog.Model;
-using Microsoft.AspNetCore.Http;
+﻿using Blog.Business;
+using Blog.Model.Db;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Controllers
