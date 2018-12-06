@@ -27,7 +27,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public bool AddCategory([FromBody]Category category)
+        public bool AddCategory([FromBody]CategoryInfo category)
         {
 
             return _categoryBusiness.Insert(category);
@@ -40,7 +40,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPut]
-        public bool UpdateCategory([FromBody]Category category)
+        public bool UpdateCategory([FromBody]CategoryInfo category)
         {
             return _categoryBusiness.Update(category);
         }

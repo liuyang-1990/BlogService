@@ -2,7 +2,7 @@
 
 namespace Blog.Repository
 {
-    public interface ICategoryRepository : IBaseRepository<Category>
+    public interface ICategoryRepository : IBaseRepository<CategoryInfo>
     {
 
     }

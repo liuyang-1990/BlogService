@@ -8,7 +8,7 @@ using SqlSugar;
 
 namespace Blog.Repository.Implement
 {
-    public class ArticleRepository : BaseRepository<Article>, IArticleRepository
+    public class ArticleRepository : BaseRepository<ArticleInfo>, IArticleRepository
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
@@ -19,7 +19,7 @@ namespace Blog.Repository.Implement
 
         public override string GetDetail(int id)
         {
-            var info = Context.Db.Queryable<Article, ArticleContent>((a, ac) => a.Id == ac.Article_Id)
+            var info = Context.Db.Queryable<ArticleInfo, ArticleContent>((a, ac) => a.Id == ac.ArticleId)
                 .Where((a, ac) => a.Id == id)
                 .Select((a, ac) => new ArticleDto()
                 {
@@ -31,13 +31,13 @@ namespace Blog.Repository.Implement
         }
 
 
-        public bool Insert(Article article, ArticleContent content)
+        public bool Insert(ArticleInfo article, ArticleContent content)
         {
             try
             {
                 Context.Db.Ado.BeginTran();
                 var id = Context.Db.Insertable(article).ExecuteReturnIdentity();
-                content.Article_Id = id;
+                content.ArticleId = id;
                 Context.Db.Insertable(content).ExecuteCommand();
                 Context.Db.Ado.CommitTran();
                 return true;
@@ -56,7 +56,7 @@ namespace Blog.Repository.Implement
             {
                 Context.Db.Ado.BeginTran();
                 Context.CurrentDb.DeleteById(id);
-                Context.Db.Deleteable<ArticleContent>().Where(x => x.Article_Id == id).ExecuteCommand();
+                Context.Db.Deleteable<ArticleContent>().Where(x => x.ArticleId == id).ExecuteCommand();
                 Context.Db.Ado.CommitTran();
                 return true;
             }
@@ -69,14 +69,14 @@ namespace Blog.Repository.Implement
 
         }
 
-        public bool Update(Article article, ArticleContent content)
+        public bool Update(ArticleInfo article, ArticleContent content)
         {
             try
             {
                 Context.Db.Ado.BeginTran();
                 Context.Db.Updateable(article).ExecuteCommand();
-                content.Article_Id = article.Id;
-                Context.Db.Updateable(content).WhereColumns(it => it.Article_Id).ExecuteCommand();
+                content.ArticleId = article.Id;
+                Context.Db.Updateable(content).WhereColumns(it => it.ArticleId).ExecuteCommand();
                 Context.Db.Ado.CommitTran();
                 return true;
             }

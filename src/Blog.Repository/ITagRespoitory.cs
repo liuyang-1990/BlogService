@@ -2,7 +2,7 @@
 
 namespace Blog.Repository
 {
-    public interface ITagRespoitory:IBaseRepository<Tag>
+    public interface ITagRespoitory:IBaseRepository<TagInfo>
     {
         
     }

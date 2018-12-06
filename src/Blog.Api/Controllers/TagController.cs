@@ -29,7 +29,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public bool AddTag([FromBody]Tag tag)
+        public bool AddTag([FromBody]TagInfo tag)
         {
 
             return _tagBusiness.Insert(tag);
@@ -42,7 +42,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPut]
-        public bool UpdateTag([FromBody]Tag tag)
+        public bool UpdateTag([FromBody]TagInfo tag)
         {
             return _tagBusiness.Update(tag);
         }

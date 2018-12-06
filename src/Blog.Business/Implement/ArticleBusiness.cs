@@ -4,7 +4,7 @@ using Blog.Repository;
 
 namespace Blog.Business.Implement
 {
-    public class ArticleBusiness : BaseBusiness<Article>, IArticleBusiness
+    public class ArticleBusiness : BaseBusiness<ArticleInfo>, IArticleBusiness
     {
 
         private readonly IArticleRepository _articleRepository;
@@ -18,11 +18,9 @@ namespace Blog.Business.Implement
 
         public bool Insert(ArticleDto articleDto)
         {
-            var article = new Article()
+            var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
-                Categories = articleDto.Categories,
-                Tags = articleDto.Tags,
                 Title = articleDto.Title
             };
 
@@ -35,11 +33,11 @@ namespace Blog.Business.Implement
 
         public bool Update(ArticleDto articleDto)
         {
-            var article = new Article()
+            var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
-                Categories = articleDto.Categories,
-                Tags = articleDto.Tags,
+                //Categories = articleDto.Categories,
+                //Tags = articleDto.Tags,
                 Title = articleDto.Title,
                 Id = articleDto.Id
             };
@@ -47,7 +45,7 @@ namespace Blog.Business.Implement
             var content = new ArticleContent()
             {
                 Content = articleDto.Content,
-                Article_Id = article.Id
+                ArticleId = article.Id
             };
 
             return _articleRepository.Update(article, content);

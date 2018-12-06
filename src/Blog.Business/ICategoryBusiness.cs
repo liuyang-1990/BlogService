@@ -2,7 +2,7 @@
 
 namespace Blog.Business
 {
-    public interface ICategoryBusiness : IBaseBusiness<Category>
+    public interface ICategoryBusiness : IBaseBusiness<CategoryInfo>
     {
 
     }

@@ -2,10 +2,10 @@
 
 namespace Blog.Repository
 {
-    public interface IArticleRepository : IBaseRepository<Article>
+    public interface IArticleRepository : IBaseRepository<ArticleInfo>
     {
-        bool Insert(Article article, ArticleContent content);
+        bool Insert(ArticleInfo article, ArticleContent content);
 
-        bool Update(Article article, ArticleContent content);
+        bool Update(ArticleInfo article, ArticleContent content);
     }
 }

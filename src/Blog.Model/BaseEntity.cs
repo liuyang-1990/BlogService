@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SqlSugar;
+using System;
 
 namespace Blog.Model
 {
@@ -7,9 +8,15 @@ namespace Blog.Model
     {
         /// <summary>
         /// 主键
-        /// </summary>
-        
+        /// </summary>        
         public int Id { get; set; }
+
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+        [SugarColumn(ColumnName = "is_deleted")]
+        public int IsDeleted { get; set; }
+
         /// <summary>
         /// 创建时间
         /// </summary>

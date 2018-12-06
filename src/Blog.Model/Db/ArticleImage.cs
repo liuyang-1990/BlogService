@@ -2,11 +2,8 @@
 
 namespace Blog.Model.Db
 {
-    /// <summary>
-    /// 文章内容
-    /// </summary>
-    [SugarTable("tbl_article_content")]
-    public class ArticleContent : BaseEntity
+    [SugarTable("tbl_article_image")]
+    public class ArticleImage:BaseEntity
     {
         /// <summary>
         /// 对应文章ID
@@ -15,9 +12,9 @@ namespace Blog.Model.Db
         public int ArticleId { get; set; }
 
         /// <summary>
-        /// 内容
+        /// 图片链接
         /// </summary>
-        public string Content { get; set; }
-
+        [SugarColumn(ColumnName = "image_url")]
+        public string ImageUrl { get; set; }
     }
 }

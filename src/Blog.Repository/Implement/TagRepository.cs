@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Blog.Repository.Implement
 {
-    public class TagRepository:BaseRepository<Tag>,ITagRespoitory
+    public class TagRepository:BaseRepository<TagInfo>,ITagRespoitory
     {
         public TagRepository(IOptions<DbSetting> settings) : base(settings)
         {

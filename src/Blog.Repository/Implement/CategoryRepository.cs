@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Blog.Repository.Implement
 {
-    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+    public class CategoryRepository : BaseRepository<CategoryInfo>, ICategoryRepository
     {
         public CategoryRepository(IOptions<DbSetting> settings) : base(settings)
         {

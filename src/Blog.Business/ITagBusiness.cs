@@ -2,7 +2,7 @@
 
 namespace Blog.Business
 {
-    public interface ITagBusiness : IBaseBusiness<Tag>
+    public interface ITagBusiness : IBaseBusiness<TagInfo>
     {
 
     }

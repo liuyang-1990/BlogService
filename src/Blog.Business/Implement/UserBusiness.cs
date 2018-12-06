@@ -4,7 +4,7 @@ using Blog.Repository;
 
 namespace Blog.Business.Implement
 {
-    public class UserBusiness : BaseBusiness<User>, IUserBusiness
+    public class UserBusiness : BaseBusiness<UserInfo>, IUserBusiness
     {
         private readonly IMd5Helper _md5Helper;
 
@@ -14,7 +14,7 @@ namespace Blog.Business.Implement
             _md5Helper = md5Helper;
         }
 
-        public override bool Insert(User entity)
+        public override bool Insert(UserInfo entity)
         {
             entity.Password = _md5Helper.Encrypt32(entity.Password);
             return base.Insert(entity);

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using SqlSugar;
+using System;
 
 namespace Blog.Model.Db
 {
-    public class User : BaseEntity
+    [SugarTable("sys_user_info")]
+    public class UserInfo : BaseEntity
     {
         /// <summary>
         /// 用户名

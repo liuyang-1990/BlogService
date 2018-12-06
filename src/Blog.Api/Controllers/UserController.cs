@@ -29,7 +29,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public bool AddUser([FromBody]User user)
+        public bool AddUser([FromBody]UserInfo user)
         {
 
             return _userBusiness.Insert(user);
@@ -42,7 +42,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPut]
-        public bool UpdateUser([FromBody]User user)
+        public bool UpdateUser([FromBody]UserInfo user)
         {
             return _userBusiness.Update(user);
         }

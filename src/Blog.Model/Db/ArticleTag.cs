@@ -3,10 +3,10 @@
 namespace Blog.Model.Db
 {
     /// <summary>
-    /// 文章内容
+    /// 文章标签表
     /// </summary>
-    [SugarTable("tbl_article_content")]
-    public class ArticleContent : BaseEntity
+    [SugarTable("tbl_article_tag")]
+    public class ArticleTag:BaseEntity
     {
         /// <summary>
         /// 对应文章ID
@@ -15,9 +15,11 @@ namespace Blog.Model.Db
         public int ArticleId { get; set; }
 
         /// <summary>
-        /// 内容
+        /// 对应标签id
         /// </summary>
-        public string Content { get; set; }
+        [SugarColumn(ColumnName = "tag_id")]
+        public int TagId { get; set; }
+
 
     }
 }
