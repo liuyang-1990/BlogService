@@ -56,30 +56,33 @@ namespace Blog.Repository.Implement
             }
         }
 
-        public override Task<bool> Delete(int id)
+        /// <summary>
+        /// 假删除文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<bool> Delete(int id)
         {
 
-            return base.Delete(id);
+            try
+            {
+                Context.Db.Ado.BeginTran();
+                await Context.Db.Updateable<ArticleInfo>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandAsync();
+                await Context.Db.Updateable<ArticleContent>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
+                await Context.Db.Updateable<ArticleImage>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
+                await Context.Db.Updateable<ArticleCategory>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
+                await Context.Db.Updateable<ArticleTag>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
+                Context.Db.Ado.CommitTran();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                Context.Db.Ado.RollbackTran();
+                return false;
+            }
+
         }
-
-        //public override bool Delete(int id)
-        //{
-        //    try
-        //    {
-        //        Context.Db.Ado.BeginTran();
-        //        Context.CurrentDb.DeleteById(id);
-        //        Context.Db.Deleteable<ArticleContent>().Where(x => x.ArticleId == id).ExecuteCommand();
-        //        Context.Db.Ado.CommitTran();
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.Error(ex.Message);
-        //        return false;
-        //    }
-
-
-        //}
 
         public bool Update(ArticleInfo article, ArticleContent content)
         {
