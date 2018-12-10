@@ -20,9 +20,9 @@ job_release:
   script:
     - dotnet publish -c Release -o ../publish
     - docker build -t  blog-netcore-api  .
-    # É¾³ıÒÑ¾­ÔÚÔËĞĞµÄÈİÆ÷
+    # åˆ é™¤å·²ç»åœ¨è¿è¡Œçš„å®¹å™¨
     - if [ $(docker ps -aq --filter name= cicd-demo) ]; then docker rm -f cicd-demo;fi
-    # Í¨¹ı¾µÏñÆô¶¯ÈİÆ÷£¬²¢°Ñ±¾»ú8000¶Ë¿ÚÓ³Éäµ½ÈİÆ÷8000¶Ë¿Ú
+    # é€šè¿‡é•œåƒå¯åŠ¨å®¹å™¨ï¼Œå¹¶æŠŠæœ¬æœº8000ç«¯å£æ˜ å°„åˆ°å®¹å™¨8000ç«¯å£
     - docker run -d -p 8080:80 --name blog    blog-netcore-api
   artifacts:
     name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
@@ -31,6 +31,6 @@ job_release:
     paths: 
       - publish/
   tags:
-     -gitlabrunner
+     - gitlabrunner
   only:
     - master
