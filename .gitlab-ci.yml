@@ -32,6 +32,6 @@ job_release:
     paths: 
       - publish/
   tags:
-     - gitlabrunner
+     - ly-runner
   only:
     - master
