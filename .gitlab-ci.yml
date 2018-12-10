@@ -1,12 +1,14 @@
+image: microsoft/dotnet:latest
+
+
 stages:
   - build
   - test
   - deploy
 
 
- job_build:
+job_build:
   stage: build
-  image: microsoft/dotnet:latest
   before_script:
     - echo building...
     - dotnet --info
