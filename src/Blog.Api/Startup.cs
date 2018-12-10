@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Blog.Api.AuthHelp;
 using Blog.Api.AutoFac;
+using Blog.Model.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,8 +17,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Blog.Api.AuthHelp;
-using Blog.Model.Settings;
 
 namespace Blog.Api
 {
@@ -80,8 +80,8 @@ namespace Blog.Api
                  });
 
                  var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
-                // var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
-                // option.IncludeXmlComments(xmlPath, true);
+                 // var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
+                 // option.IncludeXmlComments(xmlPath, true);
                  //添加header验证信息
                  var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
                  option.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
@@ -148,22 +148,25 @@ namespace Blog.Api
         /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //   
+
+            //   
+            //}
+            //else
+            //{
+            //    app.UseHsts();
+            //}
+            #region Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(option =>
             {
-                app.UseDeveloperExceptionPage();
-                #region Swagger
-                app.UseSwagger();
-                app.UseSwaggerUI(option =>
-                {
-                    option.SwaggerEndpoint("/swagger/v1/swagger.json", "blog");
-                    option.RoutePrefix = "swagger";
-                });
-                #endregion
-            }
-            else
-            {
-                app.UseHsts();
-            }
+                option.SwaggerEndpoint("/swagger/v1/swagger.json", "blog");
+                option.RoutePrefix = "swagger";
+            });
+            #endregion
             //自定义异常处理
             app.UseMiddleware<ExceptionFilter>();
             //日志
