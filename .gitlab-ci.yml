@@ -7,14 +7,6 @@ stages:
   - deploy
 
 
-job_build:
-  stage: build
-  before_script:
-    - echo building...
-    - dotnet --info
-    - dotnet restore
-  script:
-    - dotnet build 
 job_release:
   stage: deploy
   script:
