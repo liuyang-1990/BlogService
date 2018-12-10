@@ -15,7 +15,8 @@ job_build:
     - dotnet restore
   script:
     - dotnet build 
-
+  tags:
+    - ly-runner
 job_release:
   stage: deploy
   script:
