@@ -59,6 +59,9 @@ publish_package:
         
 deploy_gdev:
   stage: deploy
+  image: docker:git
+  services:
+    - docker:dind
   variables:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
