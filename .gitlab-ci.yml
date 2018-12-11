@@ -1,7 +1,6 @@
 image: microsoft/dotnet:2.1-sdk
 
 variables:
-  Solution: blog.sln
   DOCKERFILE: src/Blog.Api/Dockerfile
   IMAGE_NAME: blog-api
   
@@ -16,9 +15,9 @@ job_build:
     before_script:
         - echo building...
         - dotnet --info
-        - dotnet restore %Solution%
+        - dotnet restore
     script:
-        - dotnet build %Solution%
+        - dotnet build
     tags:
 
 job_test:
@@ -47,7 +46,7 @@ publish_package:
     stage: build
     script:
         - dotnet --info
-        - dotnet build %Solution%
+        - dotnet build
         - dotnet publish -c Release -o ../publish
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
