@@ -11,8 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using NLog.Extensions.Logging;
-using NLog.Web;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -148,17 +146,6 @@ namespace Blog.Api
         /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //   
-
-            //   
-            //}
-            //else
-            //{
-            //    app.UseHsts();
-            //}
             #region Swagger
             app.UseSwagger();
             app.UseSwaggerUI(option =>
@@ -169,9 +156,6 @@ namespace Blog.Api
             #endregion
             //自定义异常处理
             app.UseMiddleware<ExceptionFilter>();
-            //日志
-            loggerFactory.AddNLog();
-            env.ConfigureNLog("nlog.config");
             //跨域
             app.UseCors("allowAll");
             //认证
