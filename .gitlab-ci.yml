@@ -1,0 +1,43 @@
+image: microsoft/dotnet:2.1-sdk
+
+variables:
+  Solution: blog.sln
+
+stages:
+    - build
+    - test
+    - deploy
+
+job_build:
+    stage: build
+    before_script:
+        - echo building...
+        - dotnet --info
+        - dotnet restore %Solution%
+    script:
+        - donet build %Solution%
+    tags:
+        - ly-runner
+
+job_test:
+     stage: test
+     script:
+         - echo testing...
+     
+job_deploy:
+    stage: deploy
+    script:
+        - donet build %Solution%
+        - dotnet publish -c Release -o ../publish
+        - cd publish
+        - pwd
+    artifacts:
+        name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
+        when: on_success
+        expire_in: 1 mos and 2 weeks
+        paths: 
+          - publish/
+    tags:
+        - ly-runner
+    only:
+        - master
