@@ -66,7 +66,8 @@ deploy_gdev:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
   script:
-    - docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
+    - whoami
+    #docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
   environment:
     name: gdev
     url: http://${DOMAIN}/swagger/
