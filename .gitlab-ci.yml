@@ -2,7 +2,10 @@ image: microsoft/dotnet:2.1-sdk
 
 variables:
   Solution: blog.sln
-
+  DOCKERFILE: src/Blog.Api/Dockerfile
+  IMAGE_NAME: blog-api
+  
+  
 stages:
     - build
     - test
@@ -13,32 +16,57 @@ job_build:
     before_script:
         - echo building...
         - dotnet --info
-        - dotnet restore
+        - dotnet restore %Solution%
     script:
-        - dotnet build
+        - dotnet build %Solution%
     tags:
-        - ly-runner
 
 job_test:
      stage: test
      script:
          - echo testing...
-     
-job_deploy:
-    stage: deploy
+ 
+
+job_build_image:
+  stage: build
+  image: docker:git
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - docker --version
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  script:
+    - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG} -f $DOCKERFILE .
+    - docker push ${CI_REGISTRY_IMAGE}:$IMAGE_NAME:${IMAGE_TAG}
+ 
+ 
+    
+publish_package:
+    stage: build
     script:
-        - dotnet build
+        - dotnet --info
+        - dotnet build %Solution%
         - dotnet publish -c Release -o ../publish
-        - pwd 
-        - cd src/publish/
-        - docker build -t blog-api .
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
         when: on_success
         expire_in: 1 mos and 2 weeks
         paths: 
           - publish/
-    tags:
-        - ly-runner
     only:
         - master
+        
+deploy_gdev:
+  image: ${CI_REGISTRY_IMAGE}:latest
+  stage: deploy
+  variables:
+    IMAGE_TAG: dev-$CI_PIPELINE_ID
+    DOMAIN: 47.101.152.254:8080
+  environment:
+    name: gdev
+    url: http://${DOMAIN}/swagger/
+  when: on_success
+  only:
+    - gdev
