@@ -13,9 +13,9 @@ job_build:
     before_script:
         - echo building...
         - dotnet --info
-        - dotnet restore %Solution%
+        - dotnet restore
     script:
-        - donet build %Solution%
+        - donet build
     tags:
         - ly-runner
 
@@ -27,7 +27,7 @@ job_test:
 job_deploy:
     stage: deploy
     script:
-        - donet build %Solution%
+        - donet build
         - dotnet publish -c Release -o ../publish
         - cd publish
         - pwd
