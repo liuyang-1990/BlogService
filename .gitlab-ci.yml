@@ -59,9 +59,9 @@ publish_package:
         
 deploy_gdev:
   stage: deploy
-  image: docker:git
-  services:
-    - docker:dind
+  #image: docker:git
+   #services:
+     #- docker:dind
   variables:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
@@ -71,5 +71,7 @@ deploy_gdev:
     name: gdev
     url: http://${DOMAIN}/swagger/
   when: on_success
+  tags:
+    - ly-runner
   only:
     - master
