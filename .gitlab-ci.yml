@@ -15,7 +15,7 @@ job_build:
         - dotnet --info
         - dotnet restore
     script:
-        - donet build
+        - dotnet build
     tags:
         - ly-runner
 
@@ -27,7 +27,7 @@ job_test:
 job_deploy:
     stage: deploy
     script:
-        - donet build
+        - dotnet build
         - dotnet publish -c Release -o ../publish
         - cd publish
         - pwd
