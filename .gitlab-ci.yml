@@ -38,8 +38,8 @@ job_build_image:
     - docker --version
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
   script:
-    - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t ${REGISTRY}/$IMAGE_NAME:${IMAGE_TAG} -f $DOCKERFILE .
-    - docker push ${REGISTRY}/$IMAGE_NAME:${IMAGE_TAG}
+    - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG} -f $DOCKERFILE .
+    - docker push ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
  
     
 publish_package:
@@ -58,13 +58,13 @@ publish_package:
         - master
         
 deploy_gdev:
-  image: ${REGISTRY}/$IMAGE_NAME:${IMAGE_TAG}
+  image: ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
   stage: deploy
   variables:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
   script:
-    - docker run -d -p 8080:80 --name blog ${REGISTRY}/$IMAGE_NAME:${IMAGE_TAG}
+    - docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
   environment:
     name: gdev
     url: http://${DOMAIN}/swagger/
