@@ -3,7 +3,7 @@ image: microsoft/dotnet:2.1-sdk
 variables:
   DOCKERFILE: src/Blog.Api/Dockerfile
   IMAGE_NAME: blog-api
-  REGISTRY:registry.gitlab.com/blog
+  REGISTRY: registry.gitlab.com/blog
   
 stages:
     - build
