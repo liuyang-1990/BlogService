@@ -29,7 +29,9 @@ job_deploy:
     script:
         - dotnet build
         - dotnet publish -c Release -o ../publish
-        - pwd
+        - cd /src/publish/
+        - pwd 
+        - docker build -t blog-api .
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
         when: on_success
