@@ -58,7 +58,6 @@ publish_package:
         - master
         
 deploy_gdev:
-  image: ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
   stage: deploy
   variables:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
