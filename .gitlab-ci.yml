@@ -66,6 +66,8 @@ deploy_gdev:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
   script:
+     # 删除已经在运行的容器
+     - if [ $(docker ps -aq --filter name= blog) ]; then docker rm -f blog;fi
      - docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
   environment:
     name: gdev
