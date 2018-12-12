@@ -24,24 +24,9 @@ job_test:
          - echo testing...
  
 
-job_build_image:
-  stage: build
-  image: docker:git
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    IMAGE_TAG: dev-$CI_PIPELINE_ID
-  before_script:
-    - docker --version
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-  script:
-    - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG} -f $DOCKERFILE .
-    - docker push ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
- 
     
 publish_package:
-    stage: build
+    stage: deploy
     script:
         - dotnet --info
         - dotnet build
@@ -54,6 +39,24 @@ publish_package:
           - publish/
     only:
         - master
+    
+
+job_build_image:
+  stage: deploy
+  image: docker:git
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    IMAGE_TAG: dev-$CI_PIPELINE_ID
+  before_script:
+    - docker --version
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  script:
+    - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG} -f $DOCKERFILE .
+    - docker push ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
+     
+        
         
 deploy_gdev:
   stage: deploy
@@ -61,10 +64,11 @@ deploy_gdev:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
   script:
-     - docker stop $(docker ps -a -q -f name=blog) 
-     - docker rm $(docker ps -a -q -f name=blog)
-     - docker image prune -f -a
+     - if [ $(docker ps -a -q -f name=blog) ]; then  docker stop $(docker ps -a -q -f name=blog);fi
+     - if [ $(docker ps -a -q -f name=blog) ]; then  docker rm $(docker ps -a -q -f name=blog);fi
      - docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
+     - docker images | grep "^none" | awk "{print $3}"
+     - docker image prune -f -a
   environment:
     name: gdev
     url: http://${DOMAIN}/swagger/
