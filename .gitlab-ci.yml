@@ -26,7 +26,7 @@ job_test:
 
     
 publish_package:
-    stage: deploy
+    stage: build
     script:
         - dotnet --info
         - dotnet build
@@ -42,7 +42,7 @@ publish_package:
     
 
 job_build_image:
-  stage: deploy
+  stage: build
   image: docker:git
   services:
     - docker:dind
@@ -64,6 +64,7 @@ deploy_gdev:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
   script:
+     - whoami
      - if [ $(docker ps -a -q -f name=blog) ]; then  docker stop $(docker ps -a -q -f name=blog);fi
      - if [ $(docker ps -a -q -f name=blog) ]; then  docker rm $(docker ps -a -q -f name=blog);fi
      - docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
