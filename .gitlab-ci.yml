@@ -75,6 +75,6 @@ deploy_gdev:
     url: http://${DOMAIN}/swagger/
   when: on_success
   tags:
-    - runner01
+    - ss-ly-runner01
   only:
     - master
