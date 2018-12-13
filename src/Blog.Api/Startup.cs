@@ -15,6 +15,8 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace Blog.Api
 {
@@ -154,6 +156,9 @@ namespace Blog.Api
                 option.RoutePrefix = "swagger";
             });
             #endregion
+
+            loggerFactory.AddNLog();
+            env.ConfigureNLog("nlog.config");
             //自定义异常处理
             app.UseMiddleware<ExceptionFilter>();
             //跨域
