@@ -73,7 +73,8 @@ deploy_gdev:
   script:  
      - if [ $(docker ps -a -q -f name=blog) ]; then  docker stop $(docker ps -a -q -f name=blog);fi
      - if [ $(docker ps -a -q -f name=blog) ]; then  docker rm $(docker ps -a -q -f name=blog);fi
-     - docker run --name=blog  -d -p 8080:80 -v /var/blog/blogapi:/app  ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}  
+     - docker run --name blog   -d -p 8080:80  ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}  
+     # -v /var/blog/blogapi:/app
   after_script:
      #- docker images | grep "^none" | awk "{print $3}"
      - docker image prune -f -a
