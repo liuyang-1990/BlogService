@@ -3,34 +3,42 @@ image: microsoft/dotnet:2.1-sdk
 variables:
   DOCKERFILE: src/Blog.Api/Dockerfile
   IMAGE_NAME: blog-api
-  
+  Solution: blog.sln
 stages:
-    - build
     - test
+    - build
     - deploy
 
 job_build:
-    stage: build
+    stage: test
     before_script:
         - echo building...
         - dotnet --info
-        - dotnet restore
+        - dotnet restore $Solution
     script:
-        - dotnet build
+        - dotnet build $Solution
 
-job_test:
+unit_test:
      stage: test
-     script:
-         - echo testing...
- 
+     before_script:
+        - dotnet restore $Solution
+     script: 
+        - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutputDirectory=../../coverage
+     artifacts:
+        when: on_success
+        name: "code-coverage-${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
+        expire_in: 1 mos and 2 weeks
+        paths:
+          - coverage/
+
 
     
 publish_package:
-    stage: build
+    stage: test
     script:
         - dotnet --info
-        - dotnet build
-        - dotnet publish -c Release -o ../publish
+        - dotnet build $Solution
+        - dotnet publish -c Release $Solution -o ../../publish
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
         when: on_success
@@ -57,18 +65,20 @@ job_build_image:
     - docker push ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
      
         
-        
 deploy_gdev:
   stage: deploy
   variables:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
     DOMAIN: 47.101.152.254:8080
-  script:
+  before_script:
      - whoami
+     - docker pull ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
+  script:  
      - if [ $(docker ps -a -q -f name=blog) ]; then  docker stop $(docker ps -a -q -f name=blog);fi
      - if [ $(docker ps -a -q -f name=blog) ]; then  docker rm $(docker ps -a -q -f name=blog);fi
      - docker run -d -p 8080:80 --name blog ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
-     - docker images | grep "^none" | awk "{print $3}"
+  after_script:
+     #- docker images | grep "^none" | awk "{print $3}"
      - docker image prune -f -a
   environment:
     name: gdev
