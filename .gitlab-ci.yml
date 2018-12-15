@@ -1,7 +1,6 @@
 image: microsoft/dotnet:2.1-sdk
 
 variables:
-  #DOCKERFILE: src/Blog.Api/Dockerfile
   IMAGE_NAME: blog-api
   Solution: blog.sln
 stages:
@@ -35,18 +34,27 @@ unit_test:
     
 publish_package:
     stage: test
-    script:
+    before_script:
         - dotnet --info
         - dotnet build $Solution
-        - dotnet publish -c Release $Solution -o ../../publish
+        - cd src/Blog.Api
+    script:
+        - dotnet publish -c Release  -o ../../publish
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
         when: on_success
         expire_in: 1 mos and 2 weeks
         paths: 
           - publish/
+    tags:
+        - runner01
 
-job_build_image:
+
+.job_deploy:
+    stage: deploy
+     
+
+.job_build_image:
   stage: build
   image: docker:git
   services:
@@ -62,7 +70,7 @@ job_build_image:
     - docker push ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
      
         
-deploy_gdev:
+.deploy_gdev:
   stage: deploy
   variables:
     IMAGE_TAG: dev-$CI_PIPELINE_ID
