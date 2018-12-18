@@ -1,4 +1,6 @@
-﻿USE blog;
+﻿create database blog CHARSET utf8;
+
+USE blog;
 
 CREATE TABLE `sys_user_info`(
   id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
