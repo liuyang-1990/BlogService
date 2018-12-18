@@ -11,6 +11,10 @@ services:
        - log-data:/app/log
     links:
        - db
+    depends_on:
+       - db
+    environment:
+       - ASPNETCORE_ENVIRONMENT=Production
   db:
      image: mysql:5.7
      #restart: always
@@ -18,7 +22,7 @@ services:
        - 3306:3306
      networks:
        - overlay
-     #container_name: mysql
+     command:"mysql -uroot -p123456 <db.sql"
      environment:
        - MYSQL_ROOT_PASSWORD="123456"
        - MYSQL_DATABASE="blog"
