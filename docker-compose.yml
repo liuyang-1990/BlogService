@@ -3,7 +3,7 @@ services:
   web:
     build: .
 	ports:
-	    - "8080:80"
+	    - 8080:80
 	volumes:
 		- var/blog/blogapi/log:/app/log
 	links:
@@ -12,11 +12,10 @@ services:
      image: mysql:5.7
 	 restart: always
 	 ports:
-	   - 0.0.0.0:6606:3306
+	   - 3306:3306
 	 container_name: mysql
 	 environment:
-	   MYSQL_ROOT_PASSWORD:""
-	   MYSQL_DATABASE
+	   MYSQL_ROOT_PASSWORD:"i<=2359loveN"
 	 volumes:
 	    - ./data:/var/lib/mysql
 
