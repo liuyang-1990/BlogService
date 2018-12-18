@@ -6,7 +6,7 @@ services:
        - 8080:80
     networks:
        - overlay
-    #container_name: blog
+    container_name: blog-api
     volumes:
        - log-data:/app/log
     links:
@@ -17,12 +17,12 @@ services:
        - ASPNETCORE_ENVIRONMENT=Production
   db:
      image: mysql:5.7
-     #restart: always
+     restart: always
      ports:
        - 3306:3306
      networks:
        - overlay
-     command: "mysql -uroot -p123456 <db.sql"
+     #command: "mysql -uroot -p123456 <db.sql"
      environment:
        - MYSQL_ROOT_PASSWORD="123456"
        - MYSQL_DATABASE="blog"
@@ -30,6 +30,7 @@ services:
        - MYSQL_PASSWORD="123456"
      volumes:
        - db-data:/var/lib/mysql
+       - ./db.sql:/docker-entrypoint-initdb.d/db.sql
 volumes:
    log-data:
    db-data:
