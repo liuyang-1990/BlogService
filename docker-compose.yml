@@ -4,18 +4,30 @@ services:
     build: .
     ports:
        - 8080:80
+    networks:
+       - overlay
+    container_name: blog
     volumes:
        - var/blog/blogapi/log:/app/log
-    links:
+    depends_on:
        - db
   db:
      image: mysql:5.7
      restart: always
      ports:
        - 3306:3306
-     container_name: mysql
+     networks:
+       - overlay
+     #container_name: mysql
      environment:
        - MYSQL_ROOT_PASSWORD:"i<=2359loveN"
      volumes:
-       - ./data:/var/lib/mysql
+       - db-data:/var/lib/mysql
+volumes:
+   db-data:
+   var/blog/blogapi/log:
+
+networks:
+  overlay:
+  
 
