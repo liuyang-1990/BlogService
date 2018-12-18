@@ -8,7 +8,7 @@ services:
        - overlay
     container_name: blog
     volumes:
-       - var/blog/blogapi/log:/app/log
+       - app/log:/var/blog/blogapi/log
     depends_on:
        - db
   db:
@@ -25,7 +25,7 @@ services:
        - db-data:/var/lib/mysql
 volumes:
    db-data:
-   var/blog/blogapi/log:
+   app/log:
 
 networks:
   overlay:
