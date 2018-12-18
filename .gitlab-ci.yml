@@ -70,8 +70,13 @@ deploy_gdev:
     variables:
         IMAGE_TAG: dev-$CI_PIPELINE_ID
         DOMAIN: 47.101.152.254:8080
+    before_script:
+        - docker-compose stop
+        - docker-compose rm
     script:
-         - docker-compose up -d
+         - docker-compose up -d --build
+    after_script:
+         - docker-compose logs
     environment:
         name: gdev
         url: http://${DOMAIN}/swagger/

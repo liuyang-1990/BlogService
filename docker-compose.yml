@@ -6,24 +6,24 @@ services:
        - 8080:80
     networks:
        - overlay
-    container_name: blog
+    #container_name: blog
     volumes:
        - log-data:/app/log
     links:
        - db
   db:
      image: mysql:5.7
-     restart: always
+     #restart: always
      ports:
        - 3306:3306
      networks:
        - overlay
      #container_name: mysql
      environment:
-       - MYSQL_ROOT_PASSWORD:"123456"
-       - MYSQL_DATABASE:"blog"
-       - MYSQL_USER:"root"
-       - MYSQL_PASSWORD:"123456"
+       - MYSQL_ROOT_PASSWORD="123456"
+       - MYSQL_DATABASE="blog"
+       - MYSQL_USER="root"
+       - MYSQL_PASSWORD="123456"
      volumes:
        - db-data:/var/lib/mysql
 volumes:
