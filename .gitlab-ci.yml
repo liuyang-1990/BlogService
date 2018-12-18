@@ -65,7 +65,7 @@ job_build_image:
     - docker push ${CI_REGISTRY_IMAGE}/$IMAGE_NAME:${IMAGE_TAG}
   
  
-.deploy_gdev:
+deploy_gdev:
     stage: deploy
     variables:
         IMAGE_TAG: dev-$CI_PIPELINE_ID
