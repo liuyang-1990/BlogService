@@ -1,5 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -31,20 +32,19 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> AddUser([FromBody]UserInfo user)
+        public async Task<BaseResponse> AddUser([FromBody]UserInfo user)
         {
-
             return await _userBusiness.Insert(user);
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteUser(int id)
+        public async Task<BaseResponse> DeleteUser(int id)
         {
             return await _userBusiness.Delete(id);
         }
 
         [HttpPut]
-        public async Task<bool> UpdateUser([FromBody]UserInfo user)
+        public async Task<BaseResponse> UpdateUser([FromBody]UserInfo user)
         {
             return await _userBusiness.Update(user);
         }

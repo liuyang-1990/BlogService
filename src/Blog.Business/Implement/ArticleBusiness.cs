@@ -1,6 +1,9 @@
 ﻿using Blog.Model.Db;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
+using System;
+using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
@@ -16,19 +19,20 @@ namespace Blog.Business.Implement
         }
 
 
-        public bool Insert(ArticleDto articleDto)
+        public async Task<BaseResponse> Insert(ArticleDto articleDto)
         {
             var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
                 Title = articleDto.Title
             };
-
             var content = new ArticleContent()
             {
                 Content = articleDto.Content
             };
-            return _articleRepository.Insert(article, content);
+            var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            return await _articleRepository.Insert(article, content, tagIds, categoryIds);
         }
 
         public bool Update(ArticleDto articleDto)

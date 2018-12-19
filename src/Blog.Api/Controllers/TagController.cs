@@ -4,6 +4,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Blog.Model.Response;
 
 namespace Blog.Api.Controllers
 {
@@ -31,20 +32,20 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> AddTag([FromBody]TagInfo tag)
+        public async Task<BaseResponse> AddTag([FromBody]TagInfo tag)
         {
 
             return await _tagBusiness.Insert(tag);
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteTag(int id)
+        public async Task<BaseResponse> DeleteTag(int id)
         {
             return await _tagBusiness.Delete(id);
         }
 
         [HttpPut]
-        public async Task<bool> UpdateTag([FromBody]TagInfo tag)
+        public async Task<BaseResponse> UpdateTag([FromBody]TagInfo tag)
         {
             return await _tagBusiness.Update(tag);
         }

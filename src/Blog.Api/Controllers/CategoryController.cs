@@ -3,10 +3,13 @@ using Blog.Model.Db;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Blog.Model.Response;
+using Microsoft.AspNetCore.Cors;
 
 namespace Blog.Api.Controllers
 {
     [BlogApiController]
+    [EnableCors("allowAll")]//支持跨域
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryBusiness _categoryBusiness;
@@ -29,20 +32,19 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> AddCategory([FromBody]CategoryInfo category)
+        public async Task<BaseResponse> AddCategory([FromBody]CategoryInfo category)
         {
-
             return await _categoryBusiness.Insert(category);
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteCategory(int id)
+        public async Task<BaseResponse> DeleteCategory(int id)
         {
             return await _categoryBusiness.Delete(id);
         }
 
         [HttpPut]
-        public async Task<bool> UpdateCategory([FromBody]CategoryInfo category)
+        public async Task<BaseResponse> UpdateCategory([FromBody]CategoryInfo category)
         {
             return await _categoryBusiness.Update(category);
         }

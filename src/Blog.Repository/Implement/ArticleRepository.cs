@@ -1,10 +1,10 @@
 ﻿using Blog.Model.Db;
 using Blog.Model.Settings;
-using Blog.Model.ViewModel;
 using Microsoft.Extensions.Options;
 using NLog;
 using SqlSugar;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
@@ -37,14 +37,17 @@ namespace Blog.Repository.Implement
         //}
 
 
-        public bool Insert(ArticleInfo article, ArticleContent content)
+        public Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds)
         {
             try
             {
                 Context.Db.Ado.BeginTran();
                 var id = Context.Db.Insertable(article).ExecuteReturnIdentity();
                 content.ArticleId = id;
-                Context.Db.Insertable(content).ExecuteCommand();
+                Context.Db.Insertable(content).ExecuteCommandAsync();
+                var articleTags = tagIds.Select(tagId => new ArticleTag() { TagId = tagId.ObjToInt(), ArticleId = id }).ToList();
+                var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()).ToList();
+                
                 Context.Db.Ado.CommitTran();
                 return true;
             }

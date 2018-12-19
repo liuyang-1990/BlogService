@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blog.Model;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
 
 namespace Blog.Business
@@ -13,11 +14,11 @@ namespace Blog.Business
 
         Task<T> GetDetail(int id);
 
-        Task<bool> Insert(T entity);
+        Task<BaseResponse> Insert(T entity);
 
-        Task<bool> Update(T entity);
+        Task<BaseResponse> Update(T entity);
 
-        Task<bool> Delete(int id);
+        Task<BaseResponse> Delete(int id);
 
 
     }

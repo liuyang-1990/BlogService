@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Blog.Model.Response;
 
 namespace Blog.Api.Controllers
 {
@@ -64,7 +65,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteArticle(int id)
+        public async Task<BaseResponse> DeleteArticle(int id)
         {
             return await _articleBusiness.Delete(id);
         }

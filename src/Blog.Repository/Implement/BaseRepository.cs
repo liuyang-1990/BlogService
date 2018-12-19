@@ -3,7 +3,6 @@ using Blog.Model.Settings;
 using Blog.Model.ViewModel;
 using Blog.Repository.Dao;
 using Microsoft.Extensions.Options;
-using NLog;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -14,7 +13,6 @@ namespace Blog.Repository.Implement
     {
         protected readonly DbContext<T> Context;
 
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         protected BaseRepository(IOptions<DbSetting> settings)
         {
             Context = new DbContext<T>(settings);
@@ -39,22 +37,23 @@ namespace Blog.Repository.Implement
         }
 
         /// <summary>
+        /// 是否存在
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> IsExist(T entity)
+        {
+            return await Context.Db.Queryable<T>().AnyAsync(x => x.Id == entity.Id && x.IsDeleted == 0);
+        }
+
+        /// <summary>
         /// 获取详细信息
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
         public virtual async Task<T> GetDetail(int id)
         {
-            try
-            {
-                return await Task.Run(() => Context.Db.Queryable<T>().InSingle(id));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return null;
-            }
-
+            return await Task.Run(() => Context.Db.Queryable<T>().InSingle(id));
         }
 
         /// <summary>
@@ -64,16 +63,8 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> Insert(T entity)
         {
-            try
-            {
-                var changes = await Context.Db.Insertable(entity).ExecuteCommandAsync();
-                return changes > 0;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return false;
-            }
+            var changes = await Context.Db.Insertable(entity).ExecuteCommandAsync();
+            return changes > 0;
         }
 
         /// <summary>
@@ -83,17 +74,8 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> Update(T entity)
         {
-            try
-            {
-                entity.ModifyTime = DateTime.Now;
-                return await Context.Db.Updateable(entity).IgnoreColumns(true).IgnoreColumns(it => it.CreateTime).ExecuteCommandHasChangeAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return false;
-            }
-
+            entity.ModifyTime = DateTime.Now;
+            return await Context.Db.Updateable(entity).IgnoreColumns(true).IgnoreColumns(it => it.CreateTime).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
@@ -103,15 +85,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> Delete(int id)
         {
-            try
-            {
-                return await Context.Db.Updateable<T>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return false;
-            }
+            return await Context.Db.Updateable<T>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
         }
     }
 }

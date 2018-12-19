@@ -1,6 +1,8 @@
 ﻿using Blog.Model;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
+using NLog;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -12,6 +14,8 @@ namespace Blog.Business.Implement
     {
         protected IBaseRepository<T> BaseRepository;
 
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+
         public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize, Expression<Func<T, bool>> expression)
         {
             return await BaseRepository.GetPageList(pageIndex, pageSize, expression);
@@ -22,19 +26,99 @@ namespace Blog.Business.Implement
             return await BaseRepository.GetDetail(id);
         }
 
-        public virtual async Task<bool> Insert(T entity)
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual async Task<BaseResponse> Insert(T entity)
         {
-            return await BaseRepository.Insert(entity);
+            var response = new BaseResponse();
+            try
+            {
+                var isSuccess = await BaseRepository.Insert(entity);
+                if (isSuccess)
+                {
+                    response.Code = (int)ResponseStatus.Ok;
+                    response.Msg = MessageConst.Created;
+                }
+                else
+                {
+                    response.Code = (int)ResponseStatus.Fail;
+                    response.Msg = MessageConst.Fail;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                response.Code = (int)ResponseStatus.Fail;
+                response.Msg = ex.Message;
+            }
+
+            return response;
         }
 
-        public virtual async Task<bool> Update(T entity)
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual async Task<BaseResponse> Update(T entity)
         {
-            return await BaseRepository.Update(entity);
+            var response = new BaseResponse();
+            try
+            {
+                var isSuccess = await BaseRepository.Update(entity);
+                if (isSuccess)
+                {
+                    response.Code = (int)ResponseStatus.Ok;
+                    response.Msg = MessageConst.Updated;
+                }
+                else
+                {
+                    response.Code = (int)ResponseStatus.Fail;
+                    response.Msg = MessageConst.Fail;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                response.Code = (int)ResponseStatus.Fail;
+                response.Msg = ex.Message;
+            }
+            return response;
         }
 
-        public virtual async Task<bool> Delete(int id)
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual async Task<BaseResponse> Delete(int id)
         {
-            return await BaseRepository.Delete(id);
+            var response = new BaseResponse();
+            try
+            {
+                var isSuccess = await BaseRepository.Delete(id);
+                if (isSuccess)
+                {
+                    response.Code = (int)ResponseStatus.Ok;
+                    response.Msg = MessageConst.Updated;
+                }
+                else
+                {
+                    response.Code = (int)ResponseStatus.Fail;
+                    response.Msg = MessageConst.Fail;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                response.Code = (int)ResponseStatus.Fail;
+                response.Msg = ex.Message;
+            }
+            return response;
         }
     }
 }
