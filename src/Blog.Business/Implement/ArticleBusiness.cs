@@ -21,6 +21,7 @@ namespace Blog.Business.Implement
 
         public async Task<BaseResponse> Insert(ArticleDto articleDto)
         {
+            var response = new BaseResponse();
             var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
@@ -32,29 +33,71 @@ namespace Blog.Business.Implement
             };
             var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
             var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            return await _articleRepository.Insert(article, content, tagIds, categoryIds);
+            try
+            {
+                var isSuccess = await _articleRepository.Insert(article, content, tagIds, categoryIds);
+                if (isSuccess)
+                {
+                    response.Code = (int)ResponseStatus.Ok;
+                    response.Msg = MessageConst.Created;
+                }
+                else
+                {
+                    response.Code = (int)ResponseStatus.Fail;
+                    response.Msg = MessageConst.Fail;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = (int)ResponseStatus.Fail;
+                response.Msg = ex.Message;
+            }
+            return response;
         }
 
-        public bool Update(ArticleDto articleDto)
+        public async Task<BaseResponse> Update(ArticleDto articleDto)
         {
+            var response = new BaseResponse();
             var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
-                //Categories = articleDto.Categories,
-                //Tags = articleDto.Tags,
                 Title = articleDto.Title,
-                Id = articleDto.Id
+                Id = articleDto.Id,
+                ModifyTime = DateTime.Now
             };
-
             var content = new ArticleContent()
             {
                 Content = articleDto.Content,
-                ArticleId = article.Id
+                ArticleId = article.Id,
+                ModifyTime = DateTime.Now
             };
-
-            return _articleRepository.Update(article, content);
+            var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            try
+            {
+                var isSuccess = await _articleRepository.Update(article, content, tagIds, categoryIds);
+                if (isSuccess)
+                {
+                    response.Code = (int)ResponseStatus.Ok;
+                    response.Msg = MessageConst.Created;
+                }
+                else
+                {
+                    response.Code = (int)ResponseStatus.Fail;
+                    response.Msg = MessageConst.Fail;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = (int)ResponseStatus.Fail;
+                response.Msg = ex.Message;
+            }
+            return response;
         }
 
-
+        public async Task<V_Article_Info> GetArticleDetail(int id)
+        {
+            return await _articleRepository.GetArticleDetail(id);
+        }
     }
 }

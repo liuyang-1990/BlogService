@@ -60,7 +60,7 @@ CREATE TABLE tbl_article_content (
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 article_id  INT(11) UNSIGNED COMMENT '文章id',
 is_deleted TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0 未删除 1 删除',
-content  LONG TEXT NOT NULL COMMENT '文章内容',
+content   TEXT NOT NULL COMMENT '文章内容',
 createtime DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY(id)
@@ -146,4 +146,4 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-
+CREATE VIEW `blog`.`V_Article_Info` AS SELECT id,title,abstract,createtime,content,is_deleted FROM tbl_article_info AS a INNER JOIN tbl_article_content c ON a.id=c.article_id AND c.is_deleted="0" WHERE a.is_deleted="0"; 

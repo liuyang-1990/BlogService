@@ -1,5 +1,6 @@
 ﻿using Blog.Model.Db;
 using Blog.Model.Settings;
+using Blog.Model.ViewModel;
 using Microsoft.Extensions.Options;
 using NLog;
 using SqlSugar;
@@ -18,36 +19,53 @@ namespace Blog.Repository.Implement
 
         }
 
-        public override Task<ArticleInfo> GetDetail(int id)
+        /// <summary>
+        /// 获取文章详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<V_Article_Info> GetArticleDetail(int id)
         {
-            return base.GetDetail(id);
+            try
+            {
+                return await Task.Run(() => Context.Db.Queryable<V_Article_Info>().InSingle(id));
+            }
+            catch (Exception ex)
+            {
+               _logger.Error(ex);
+                return null;
+            }
+
         }
 
-        //public override string GetDetail(int id)
-        //{
-        //    var info = Context.Db.Queryable<ArticleInfo, ArticleContent>((a, ac) => a.Id == ac.ArticleId)
-        //        .Where((a, ac) => a.Id == id)
-        //        .Select((a, ac) => new ArticleDto()
-        //        {
-        //            Id = SqlFunc.GetSelfAndAutoFill(a.Id),
-        //            Content = ac.Content
-        //        }).Single();
-        //    return Context.Db.Utilities.SerializeObject(info);
-
-        //}
-
-
-        public Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds)
+        /// <summary>
+        /// 插入文章
+        /// </summary>
+        /// <param name="article"></param>
+        /// <param name="content"></param>
+        /// <param name="tagIds"></param>
+        /// <param name="categoryIds"></param>
+        /// <returns></returns>
+        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds)
         {
             try
             {
                 Context.Db.Ado.BeginTran();
                 var id = Context.Db.Insertable(article).ExecuteReturnIdentity();
                 content.ArticleId = id;
-                Context.Db.Insertable(content).ExecuteCommandAsync();
-                var articleTags = tagIds.Select(tagId => new ArticleTag() { TagId = tagId.ObjToInt(), ArticleId = id }).ToList();
-                var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()).ToList();
-                
+                await Context.Db.Insertable(content).ExecuteCommandAsync();
+                var articleTags = tagIds.Select(tagId => new ArticleTag()
+                {
+                    TagId = tagId.ObjToInt(),
+                    ArticleId = id
+                }).ToList();
+                await Context.Db.Insertable(articleTags).ExecuteCommandAsync();
+                var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()
+                {
+                    ArticleId = id,
+                    CategoryId = categoryId.ObjToInt()
+                }).ToList();
+                await Context.Db.Insertable(articleCategories).ExecuteCommandAsync();
                 Context.Db.Ado.CommitTran();
                 return true;
             }
@@ -55,7 +73,7 @@ namespace Blog.Repository.Implement
             {
                 Context.Db.Ado.RollbackTran();
                 _logger.Error(ex.Message);
-                return false;
+                throw;
             }
         }
 
@@ -66,7 +84,6 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public override async Task<bool> Delete(int id)
         {
-
             try
             {
                 Context.Db.Ado.BeginTran();
@@ -82,19 +99,43 @@ namespace Blog.Repository.Implement
             {
                 _logger.Error(ex.Message);
                 Context.Db.Ado.RollbackTran();
-                return false;
+                throw;
             }
 
         }
 
-        public bool Update(ArticleInfo article, ArticleContent content)
+        /// <summary>
+        ///  更新文章
+        /// </summary>
+        /// <param name="article"></param>
+        /// <param name="content"></param>
+        /// <param name="tagIds"></param>
+        /// <param name="categoryIds"></param>
+        /// <returns></returns>
+        public async Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds)
         {
             try
             {
                 Context.Db.Ado.BeginTran();
-                Context.Db.Updateable(article).ExecuteCommand();
+                await Context.Db.Updateable(article).IgnoreColumns(x => x.CreateTime).ExecuteCommandAsync();
                 content.ArticleId = article.Id;
-                Context.Db.Updateable(content).WhereColumns(it => it.ArticleId).ExecuteCommand();
+                await Context.Db.Updateable(content).WhereColumns(it => it.ArticleId).ExecuteCommandAsync();
+                //先删除再添加
+                await Context.Db.Deleteable<ArticleTag>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
+                var articleTags = tagIds.Select(tagId => new ArticleTag()
+                {
+                    TagId = tagId.ObjToInt(),
+                    ArticleId = article.Id
+                }).ToList();
+                await Context.Db.Insertable(articleTags).ExecuteCommandAsync();
+
+                await Context.Db.Deleteable<ArticleCategory>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
+                var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()
+                {
+                    ArticleId = article.Id,
+                    CategoryId = categoryId.ObjToInt()
+                }).ToList();
+                await Context.Db.Insertable(articleCategories).ExecuteCommandAsync();
                 Context.Db.Ado.CommitTran();
                 return true;
             }
@@ -102,7 +143,7 @@ namespace Blog.Repository.Implement
             {
                 Context.Db.Ado.RollbackTran();
                 _logger.Error(ex.Message);
-                return false;
+                throw;
             }
         }
     }

@@ -10,6 +10,8 @@ namespace Blog.Business
 
         Task<BaseResponse> Insert(ArticleDto articleDto);
 
-        bool Update(ArticleDto articleDto);
+        Task<BaseResponse> Update(ArticleDto articleDto);
+
+        Task<V_Article_Info> GetArticleDetail(int id);
     }
 }

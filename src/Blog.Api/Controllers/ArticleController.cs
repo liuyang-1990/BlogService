@@ -1,11 +1,11 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Blog.Model.Response;
 
 namespace Blog.Api.Controllers
 {
@@ -53,10 +53,10 @@ namespace Blog.Api.Controllers
         /// <param name="articleDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public bool AddArticle([FromBody]ArticleDto articleDto)
+        public async Task<BaseResponse> AddArticle([FromBody]ArticleDto articleDto)
         {
 
-            return _articleBusiness.Insert(articleDto);
+            return await _articleBusiness.Insert(articleDto);
         }
 
         /// <summary>
@@ -76,9 +76,9 @@ namespace Blog.Api.Controllers
         /// <param name="articleDto"></param>
         /// <returns></returns>
         [HttpPut]
-        public bool UpdateArticle([FromBody]ArticleDto articleDto)
+        public async Task<BaseResponse> UpdateArticle([FromBody]ArticleDto articleDto)
         {
-            return _articleBusiness.Update(articleDto);
+            return await _articleBusiness.Update(articleDto);
         }
     }
 }
