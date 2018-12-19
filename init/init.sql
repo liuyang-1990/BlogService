@@ -1,4 +1,7 @@
-﻿create database blog CHARSET utf8;
+﻿use mysql;
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+
+create database blog CHARSET utf8;
 
 USE blog;
 
