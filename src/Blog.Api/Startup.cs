@@ -50,6 +50,7 @@ namespace Blog.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<JwtConfig>(jwtConfig);
+            services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
             #region 跨域
 
             services.AddCors(options =>
