@@ -124,7 +124,7 @@ namespace Blog.Api
             //  授权，就是根据令牌反向去解析出的用户身份，回应当前http请求的许可，表示可以使用当前接口，或者拒绝访问
             services.AddAuthorization(options =>
               {
-                  options.AddPolicy("admin", policy => policy.RequireRole("admin").Build());
+                  options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
               });
             #endregion
 
@@ -166,7 +166,7 @@ namespace Blog.Api
             //认证
             app.UseAuthentication();
             //授权
-            app.UseMiddleware<JwtTokenAuth>();
+           // app.UseMiddleware<JwtTokenAuth>();
             app.UseMvc();
 
         }

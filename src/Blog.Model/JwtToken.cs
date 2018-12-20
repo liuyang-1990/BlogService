@@ -5,7 +5,7 @@
         /// <summary>
         /// Id
         /// </summary>
-        public string Uid { get; set; }
+        public int Uid { get; set; }
         /// <summary>
         /// 角色
         /// </summary>

@@ -1,11 +1,13 @@
-﻿using System;
-using Blog.Model;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using Blog.Model;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
 
 namespace Blog.Infrastructure.Implement
 {
@@ -28,16 +30,16 @@ namespace Blog.Infrastructure.Implement
         public string IssueJwt(JwtToken tokenModel)
         {
             var dateTime = DateTime.UtcNow;
-            var claims = new Claim[]
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Jti,tokenModel.Uid),
-                new Claim("Role",tokenModel.Role),
+                new Claim(JwtRegisteredClaimNames.Jti,tokenModel.Uid.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,dateTime.ToString(),ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Iss, _jwtConfig.Value.Issuer),
+                new Claim(JwtRegisteredClaimNames.Aud,_jwtConfig.Value.Audience)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Value.SecurityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var jwt = new JwtSecurityToken(
-                issuer: _jwtConfig.Value.Issuer,
                 claims: claims,
                 expires: dateTime.AddHours(1),
                 signingCredentials: creds);
@@ -58,10 +60,9 @@ namespace Blog.Infrastructure.Implement
             jwtToken.Payload.TryGetValue("Role", out object role);
             var tm = new JwtToken()
             {
-                Uid = jwtToken.Id,
+                Uid = int.Parse(jwtToken.Id),
                 Role = role?.ToString()
             };
-
             return tm;
         }
     }

@@ -29,7 +29,7 @@ namespace Blog.Business.Implement
                 var isExist = await _userRepository.IsExist(user);
                 if (isExist)
                 {
-                    response.Code = (int) ResponseStatus.AlreadyExists;
+                    response.Code = (int)ResponseStatus.AlreadyExists;
                     response.Msg = string.Format(MessageConst.AlreadyExists, "user");
                     return response;
                 }
@@ -39,11 +39,24 @@ namespace Blog.Business.Implement
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                response.Code = (int) ResponseStatus.Fail;
+                response.Code = (int)ResponseStatus.Fail;
                 response.Msg = ex.Message;
             }
             return response;
         }
 
+
+        public async Task<UserInfo> GetUserByUserName(string userName, string password)
+        {
+            try
+            {
+                return await _userRepository.GetUserByUserName(userName, password);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return null;
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Blog.Model.Db;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Blog.Api.Controllers
 {
     [EnableCors("allowAll")]//支持跨域
     [BlogApiController]
+    [Authorize(Policy = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserBusiness _userBusiness;

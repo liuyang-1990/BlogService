@@ -12,5 +12,8 @@
 
         public static readonly string AlreadyExists = "{0} already exists";
 
+        public static readonly string Ok = "Ok";
+
+        public static readonly string LoginFail = "username or password is incorrect";
     }
 }
