@@ -48,8 +48,7 @@ publish_package:
           - publish/
 
 
-
-job_build_image:
+.job_build_image:
   stage: build
   image: docker:git
   services:
@@ -70,8 +69,9 @@ deploy_gdev:
     variables:
         IMAGE_TAG: dev-$CI_PIPELINE_ID
         DOMAIN: 47.101.152.254:8080 
+    before_script:
     script:
-         - docker-compose up -d
+         - docker-compose up -d  --build
     after_script:
          - docker-compose logs
     environment:
