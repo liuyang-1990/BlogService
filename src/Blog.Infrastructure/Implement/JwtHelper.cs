@@ -17,11 +17,11 @@ namespace Blog.Infrastructure.Implement
     public class JwtHelper : IJwtHelper
     {
         private readonly IOptions<JwtConfig> _jwtConfig;
-        private readonly IRedisCache _redisCache;
-        public JwtHelper(IOptions<JwtConfig> jwtConfig, IRedisCache redisCache)
+        private readonly IRedisHelper _redisHelper;
+        public JwtHelper(IOptions<JwtConfig> jwtConfig, IRedisHelper redisHelper)
         {
             _jwtConfig = jwtConfig;
-            _redisCache = redisCache;
+            _redisHelper = redisHelper;
         }
         /// <summary>
         /// 颁发JWT字符串
@@ -46,7 +46,7 @@ namespace Blog.Infrastructure.Implement
                 signingCredentials: creds);
             var jwtHandler = new JwtSecurityTokenHandler();
             var encodedJwt = jwtHandler.WriteToken(jwt);
-            _redisCache.Set(tokenModel.Uid.ToString(), encodedJwt, TimeSpan.FromMinutes(5));
+            _redisHelper.Set(tokenModel.Uid.ToString(), encodedJwt, TimeSpan.FromMinutes(5));
             return encodedJwt;
         }
 

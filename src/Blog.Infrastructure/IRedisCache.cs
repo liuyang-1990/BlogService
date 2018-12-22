@@ -2,7 +2,7 @@
 
 namespace Blog.Infrastructure
 {
-    public interface IRedisCache
+    public interface IRedisHelper
     {
         T Get<T>(string key);
         //设置

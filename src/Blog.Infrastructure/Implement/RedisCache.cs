@@ -6,7 +6,7 @@ using System;
 
 namespace Blog.Infrastructure.Implement
 {
-    public class RedisCache : IRedisCache
+    public class RedisHelper : IRedisHelper
     {
         private readonly string _redisConnenctionString;
 
@@ -14,7 +14,7 @@ namespace Blog.Infrastructure.Implement
         private readonly object _redisConnectionLock = new object();
 
         private readonly IDatabase _db;
-        public RedisCache(IOptions<RedisConn> redisConn)
+        public RedisHelper(IOptions<RedisConn> redisConn)
         {
             var redisConnenctionString = redisConn.Value.ConnectionString;
             if (string.IsNullOrWhiteSpace(redisConnenctionString))
