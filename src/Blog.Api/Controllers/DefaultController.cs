@@ -15,7 +15,7 @@ namespace Blog.Api.Controllers
         [HttpGet("/healthz")]
         public string Healthz()
         {
-            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            return "ok";
         }
     }
 }

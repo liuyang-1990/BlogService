@@ -50,6 +50,7 @@ namespace Blog.Business.Implement
         {
             try
             {
+                password = _md5Helper.Encrypt32(password);
                 return await _userRepository.GetUserByUserName(userName, password);
             }
             catch (Exception ex)

@@ -16,7 +16,7 @@ namespace Blog.Infrastructure.Implement
             var sBuilder = new StringBuilder();
             foreach (var t in data)
             {
-                sBuilder.Append(t.ToString("x"));
+                sBuilder.Append(t.ToString("x2"));
             }
             return sBuilder.ToString();
         }
