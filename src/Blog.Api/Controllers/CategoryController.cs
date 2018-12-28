@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Cors;
 namespace Blog.Api.Controllers
 {
     [BlogApiController]
-    [EnableCors("allowAll")]//支持跨域
+    [EnableCors("LimitRequests")]//支持跨域
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryBusiness _categoryBusiness;

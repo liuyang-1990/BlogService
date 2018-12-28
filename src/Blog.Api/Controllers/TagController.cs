@@ -8,7 +8,7 @@ using Blog.Model.Response;
 
 namespace Blog.Api.Controllers
 {
-    [EnableCors("allowAll")]//支持跨域
+    [EnableCors("LimitRequests")]//支持跨域
     [BlogApiController]
     public class TagController : ControllerBase
     {

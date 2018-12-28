@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
-    [EnableCors("allowAll")]//支持跨域
+    [EnableCors("LimitRequests")]//支持跨域
     [BlogApiController]
     [Authorize(Policy = "Admin")]
     public class UserController : ControllerBase

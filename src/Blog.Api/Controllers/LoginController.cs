@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Blog.Api.Controllers
 {
     [BlogApiController]
-    [EnableCors("allowAll")]//支持跨域
+    [EnableCors("LimitRequests")]//支持跨域
     public class LoginController : ControllerBase
     {
         private readonly IJwtHelper _jwtHelper;

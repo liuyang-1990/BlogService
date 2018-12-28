@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Blog.Api.AuthHelp;
 using Blog.Api.AutoFac;
 using Blog.Model.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,12 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NLog.Extensions.Logging;
-using NLog.Web;
 
 namespace Blog.Api
 {
@@ -55,10 +54,10 @@ namespace Blog.Api
 
             services.AddCors(options =>
             {
-                options.AddPolicy("allowAll", policy =>
+                options.AddPolicy("LimitRequests", policy =>
                     {
                         policy
-                            .AllowAnyOrigin()//允许任何源
+                            .WithOrigins("http://localhost:3000", "http://127.0.0.1:3000")//允许任何源
                             .AllowAnyMethod()//允许任何方式
                             .AllowAnyHeader()//允许任何头
                             .AllowCredentials();//允许cookie
@@ -167,7 +166,7 @@ namespace Blog.Api
             //认证
             app.UseAuthentication();
             //授权
-           // app.UseMiddleware<JwtTokenAuth>();
+            // app.UseMiddleware<JwtTokenAuth>();
             app.UseMvc();
 
         }

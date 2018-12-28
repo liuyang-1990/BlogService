@@ -12,9 +12,9 @@ namespace Blog.Api.Controllers
     /// <summary>
     /// 文章
     /// </summary>
-    [EnableCors("allowAll")]//支持跨域
+    [EnableCors("LimitRequests")]//支持跨域
     [BlogApiController]
-    [Authorize(Policy = "admin")]
+    [Authorize(Policy = "Admin")]
     public class ArticleController : ControllerBase
     {
         private readonly IArticleBusiness _articleBusiness;
