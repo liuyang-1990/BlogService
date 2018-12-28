@@ -70,9 +70,12 @@ deploy_gdev:
         IMAGE_TAG: dev-$CI_PIPELINE_ID
         DOMAIN: 47.101.152.254:8080 
     before_script:
+        - if [ $(docker ps -a -q -f name=blog) ];then  docker stop $(docker ps -a -q -f name=blog);fi
+        - if [ $(docker ps -a -q -f name=blog) ];then  docker rm $(docker ps -a -q -f name=blog);fi
     script:
          - docker-compose up -d  --build
     after_script:
+         - docker image prune -f -a
          - docker-compose logs
     environment:
         name: gdev
