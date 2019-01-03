@@ -54,9 +54,18 @@ namespace Blog.Infrastructure.Implement
 
         public void Set<T>(string key, T value)
         {
-            _db.StringSet(key, JsonConvert.SerializeObject(value), TimeSpan.FromHours(1));
-        }
 
+            _db.StringSet(key, JsonConvert.SerializeObject(value), TimeSpan.FromHours(1));
+
+        }
+        public void HashSet<T>(string key, string subkey, T value, TimeSpan timeSpan)
+        {
+            _db.HashSet(key, new[]
+            {
+                new HashEntry(subkey, JsonConvert.SerializeObject(value)),
+            });
+            _db.KeyExpire(key, timeSpan);
+        }
         public void Set<T>(string key, T value, TimeSpan timeSpan)
         {
             _db.StringSet(key, JsonConvert.SerializeObject(value), timeSpan);
@@ -71,5 +80,7 @@ namespace Blog.Infrastructure.Implement
         {
             _db.KeyDelete(key);
         }
+
+
     }
 }

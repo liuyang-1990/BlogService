@@ -1,6 +1,7 @@
 ﻿using Blog.Business;
 using Blog.Infrastructure;
 using Blog.Model;
+using Blog.Model.Request;
 using Blog.Model.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -26,11 +27,11 @@ namespace Blog.Api.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        [HttpGet("token")]
-        public async Task<ResultModel<string>> GetJwtStr(string userName, string password)
+        [HttpPost("token")]
+        public async Task<object> GetJwtStr([FromBody]UserRequest userRequest)
         {
             var response = new ResultModel<string>();
-            var userInfo = await _userBusiness.GetUserByUserName(userName, password);
+            var userInfo = await _userBusiness.GetUserByUserName(userRequest.UserName, userRequest.Password);
             if (userInfo == null)
             {
                 response.Code = (int)ResponseStatus.Fail;
@@ -39,16 +40,23 @@ namespace Blog.Api.Controllers
                 return response;
             }
             userInfo.LastLoginTime = DateTime.Now;
-            await _userBusiness.Update(userInfo);
+            var res = await _userBusiness.Update(userInfo);
+            if (res.Code != (int)ResponseStatus.Ok)
+            {
+                return res;
+            }
             var jwtStr = _jwtHelper.IssueJwt(new JwtToken()
             {
                 Uid = userInfo.Id,
                 Role = Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString()
             });
-            response.Code = (int)ResponseStatus.Ok;
-            response.Msg = MessageConst.Ok;
-            response.ResultInfo = jwtStr;
-            return response;
+
+            return new
+            {
+                access_token = jwtStr,
+                token_type = "Bearer",
+                refresh_token = Guid.NewGuid().ToString().Replace("-", "")
+            };
         }
     }
 }

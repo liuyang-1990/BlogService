@@ -124,7 +124,7 @@ namespace Blog.Api
             //  授权，就是根据令牌反向去解析出的用户身份，回应当前http请求的许可，表示可以使用当前接口，或者拒绝访问
             services.AddAuthorization(options =>
               {
-                  options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
+                  options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
               });
             #endregion
 
