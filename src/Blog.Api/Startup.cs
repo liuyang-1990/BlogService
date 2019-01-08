@@ -115,7 +115,8 @@ namespace Blog.Api
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     RequireExpirationTime = true,
-                    ValidateLifetime = true
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
             #endregion
@@ -165,8 +166,6 @@ namespace Blog.Api
             app.UseCors("allowAll");
             //认证
             app.UseAuthentication();
-            //授权
-            // app.UseMiddleware<JwtTokenAuth>();
             app.UseMvc();
 
         }

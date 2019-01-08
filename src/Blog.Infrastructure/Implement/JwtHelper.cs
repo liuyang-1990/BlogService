@@ -2,7 +2,6 @@
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,7 +29,7 @@ namespace Blog.Infrastructure.Implement
         /// </summary>
         /// <param name="tokenModel"></param>
         /// <returns></returns>
-        public string IssueJwt(JwtToken tokenModel)
+        public object IssueJwt(JwtToken tokenModel)
         {
             var dateTime = DateTime.UtcNow;
             var claims = new List<Claim>
@@ -52,36 +51,34 @@ namespace Blog.Infrastructure.Implement
                 signingCredentials: creds);
             var jwtHandler = new JwtSecurityTokenHandler();
             var encodedJwt = jwtHandler.WriteToken(jwt);
-            //  _redisHelper.Set(tokenModel.Uid.ToString(), encodedJwt, TimeSpan.FromMinutes(5));
-            return encodedJwt;
-        }
-
-        /// <summary>
-        /// 解析
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public JwtToken SerializeJwt(string token)
-        {
-            var jwtHandler = new JwtSecurityTokenHandler();
-            var jwtToken = jwtHandler.ReadJwtToken(token);
-
-            jwtToken.Payload.TryGetValue(ClaimTypes.Role, out object role);
-            var tm = new JwtToken()
+            var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
+            _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromMinutes(2));
+            return new
             {
-                Uid = int.Parse(jwtToken.Id),
-                Role = role != null ? role.ObjToString() : ""
+                access_token = encodedJwt,
+                token_type = "Bearer",
+                expire_in = 7200,
+                refresh_token = refreshToken
             };
-            return tm;
         }
 
         /// <summary>
         /// 刷新token
         /// </summary>
         /// <returns></returns>
-        public void RefreshJwt()
+        public object RefreshJwt(string refreshToken, JwtToken tokenModel)
         {
-
+            if (!_redisHelper.ContainsKey($"refresh_token_{tokenModel.Uid}"))
+            {
+                return null;
+            }
+            var val = _redisHelper.Get<string>($"refresh_token_{tokenModel.Uid}");
+            if (string.IsNullOrEmpty(val))
+            {
+                _redisHelper.Remove($"refresh_token_{tokenModel.Uid}");
+                return null;
+            }
+            return IssueJwt(tokenModel);
         }
     }
 }

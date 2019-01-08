@@ -51,12 +51,7 @@ namespace Blog.Api.Controllers
                 Role = Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString()
             });
 
-            return new
-            {
-                access_token = jwtStr,
-                token_type = "Bearer",
-                refresh_token = Guid.NewGuid().ToString().Replace("-", "")
-            };
+            return jwtStr;
         }
     }
 }

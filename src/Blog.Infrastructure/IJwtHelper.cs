@@ -4,8 +4,8 @@ namespace Blog.Infrastructure
 {
     public interface IJwtHelper
     {
-        string IssueJwt(JwtToken tokenModel);
+        object IssueJwt(JwtToken tokenModel);
 
-        JwtToken SerializeJwt(string token);
+        object RefreshJwt(string refreshToken, JwtToken tokenModel);
     }
 }
