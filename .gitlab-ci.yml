@@ -46,6 +46,8 @@ publish_package:
         expire_in: 1 mos and 2 weeks
         paths: 
           - publish/
+    only:
+        - master   
 
 
 .job_build_image:
