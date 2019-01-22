@@ -28,7 +28,7 @@ namespace Blog.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("token")]
-        public async Task<object> GetJwtStr([FromBody]UserRequest userRequest)
+        public async Task<object> GetJwtStr([FromBody]LoginRequest userRequest)
         {
             var response = new ResultModel<string>();
             var userInfo = await _userBusiness.GetUserByUserName(userRequest.UserName, userRequest.Password);

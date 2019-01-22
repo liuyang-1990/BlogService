@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Blog.Api.AutoFac;
 using Blog.Model.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -129,6 +130,8 @@ namespace Blog.Api
               });
             #endregion
 
+            //AutoMapper
+            services.AddAutoMapper(typeof(Startup));
             #region Ioc
             var builder = new ContainerBuilder();
             builder.Populate(services);

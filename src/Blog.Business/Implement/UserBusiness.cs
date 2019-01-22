@@ -1,10 +1,13 @@
 ﻿using Blog.Infrastructure;
 using Blog.Model.Db;
 using Blog.Model.Response;
+using Blog.Model.ViewModel;
 using Blog.Repository;
 using NLog;
+using SqlSugar;
 using System;
 using System.Threading.Tasks;
+using Blog.Model.Request;
 
 namespace Blog.Business.Implement
 {
@@ -18,6 +21,15 @@ namespace Blog.Business.Implement
             BaseRepository = repository;
             _md5Helper = md5Helper;
             _userRepository = repository;
+        }
+
+
+        public Task<JsonResultModel<UserInfo>> GetPageList(int pageIndex, int pageSize, UserRequest userInfo)
+        {
+            var exp = Expressionable.Create<UserInfo>()
+                .OrIF(!string.IsNullOrEmpty(userInfo.UserName), it => it.UserName.Contains(userInfo.UserName))
+                .AndIF(true, it => it.Status == userInfo.Status).ToExpression();
+            return base.GetPageList(pageIndex, pageSize, exp);
         }
 
         /// <inheritdoc cref="BaseBusiness{T}" />

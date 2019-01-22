@@ -3,6 +3,7 @@ using Blog.Model.Settings;
 using Blog.Model.ViewModel;
 using Blog.Repository.Dao;
 using Microsoft.Extensions.Options;
+using SqlSugar;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -27,8 +28,11 @@ namespace Blog.Repository.Implement
         public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize = 10, Expression<Func<T, bool>> expression = null)
         {
             const int totalNumber = 0;
-
-            var pageInfo = await Context.Db.Queryable<T>().ToPageListAsync(pageIndex, pageSize, totalNumber);
+            if (expression == null)
+            {
+                expression = Expressionable.Create<T>().And(it => true).ToExpression();
+            }
+            var pageInfo = await Context.Db.Queryable<T>().Where(expression).ToPageListAsync(pageIndex, pageSize, totalNumber);
             return new JsonResultModel<T>()
             {
                 Rows = pageInfo.Key,
@@ -43,7 +47,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> IsExist(T entity)
         {
-            return await Context.Db.Queryable<T>().AnyAsync(x => x.Id == entity.Id && x.IsDeleted == 0);
+            return await Context.Db.Queryable<T>().AnyAsync(x => x.Id == entity.Id);
         }
 
         /// <summary>
@@ -53,7 +57,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<T> GetDetail(int id)
         {
-            return await Task.Run(() => Context.Db.Queryable<T>().InSingle(id));
+            return await Context.Db.Queryable<T>().SingleAsync(x => x.Id == id);
         }
 
         /// <summary>
