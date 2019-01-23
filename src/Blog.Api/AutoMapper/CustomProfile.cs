@@ -12,6 +12,8 @@ namespace Blog.Api.AutoMapper
         public CustomProfile()
         {
             CreateMap<UserRequest, UserInfo>();
+            CreateMap<UserInfo, UserInfoBase>();
+            //CreateMap<, UserInfoBase>();
         }
     }
 }

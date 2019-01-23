@@ -32,9 +32,10 @@ namespace Blog.Api.Controllers
         /// <param name="user">过滤条件</param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<UserInfo>> GetPageList(int pageIndex, int pageSize, UserRequest user)
+        public async Task<JsonResultModel<UserInfoBase>> GetPageList(int pageIndex, int pageSize, UserRequest user)
         {
-            return await _userBusiness.GetPageList(pageIndex, pageSize, user);
+            var ss = await _userBusiness.GetPageList(pageIndex, pageSize, user);
+            return _mapper.Map<JsonResultModel<UserInfoBase>>(ss);
         }
 
         /// <summary>
@@ -43,9 +44,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<UserInfo> GetDetailInfo(int id)
+        public async Task<UserInfoBase> GetDetailInfo(int id)
         {
-            return await _userBusiness.GetDetail(id);
+            var user = await _userBusiness.GetDetail(id);
+            return _mapper.Map<UserInfoBase>(user);
         }
 
         /// <summary>
