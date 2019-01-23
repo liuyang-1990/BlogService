@@ -1,4 +1,5 @@
-﻿using Blog.Model.Db;
+﻿using Blog.Model;
+using Blog.Model.Db;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
@@ -13,9 +14,13 @@ namespace Blog.Repository.Implement
         }
 
         /// <inheritdoc cref="BaseRepository{T}" />
-        public override async Task<bool> IsExist(UserInfo entity)
+        public async Task<bool> IsExist(UserInfo entity, UserAction userAction)
         {
-            return await Context.Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName && x.IsDeleted == 0);
+            if (userAction == UserAction.Add)
+            {
+                return await Context.Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName);
+            }
+            return await Context.Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName && x.Id != entity.Id);
         }
 
 

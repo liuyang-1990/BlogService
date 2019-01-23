@@ -34,8 +34,8 @@ namespace Blog.Api.Controllers
         [HttpGet("page")]
         public async Task<JsonResultModel<UserInfoBase>> GetPageList(int pageIndex, int pageSize, UserRequest user)
         {
-            var ss = await _userBusiness.GetPageList(pageIndex, pageSize, user);
-            return _mapper.Map<JsonResultModel<UserInfoBase>>(ss);
+            var userInfos = await _userBusiness.GetPageList(pageIndex, pageSize, user);
+            return _mapper.Map<JsonResultModel<UserInfoBase>>(userInfos);
         }
 
         /// <summary>

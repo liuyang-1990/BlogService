@@ -1,4 +1,5 @@
-﻿using SqlSugar;
+﻿using Newtonsoft.Json;
+using SqlSugar;
 using System;
 
 namespace Blog.Model
@@ -14,6 +15,7 @@ namespace Blog.Model
         /// <summary>
         /// 是否删除 0 未删除 1 已删除
         /// </summary>
+        [JsonIgnore]
         [SugarColumn(ColumnName = "is_deleted")]
         public int IsDeleted { get; set; }
 

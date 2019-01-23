@@ -41,16 +41,6 @@ namespace Blog.Repository.Implement
         }
 
         /// <summary>
-        /// 是否存在
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public virtual async Task<bool> IsExist(T entity)
-        {
-            return await Context.Db.Queryable<T>().AnyAsync(x => x.Id == entity.Id);
-        }
-
-        /// <summary>
         /// 获取详细信息
         /// </summary>
         /// <param name="id">主键</param>

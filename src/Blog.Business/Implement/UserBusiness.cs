@@ -1,5 +1,7 @@
 ﻿using Blog.Infrastructure;
+using Blog.Model;
 using Blog.Model.Db;
+using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
@@ -7,7 +9,6 @@ using NLog;
 using SqlSugar;
 using System;
 using System.Threading.Tasks;
-using Blog.Model.Request;
 
 namespace Blog.Business.Implement
 {
@@ -24,12 +25,12 @@ namespace Blog.Business.Implement
         }
 
 
-        public Task<JsonResultModel<UserInfo>> GetPageList(int pageIndex, int pageSize, UserRequest userInfo)
+        public async Task<JsonResultModel<UserInfo>> GetPageList(int pageIndex, int pageSize, UserRequest userInfo)
         {
             var exp = Expressionable.Create<UserInfo>()
                 .OrIF(!string.IsNullOrEmpty(userInfo.UserName), it => it.UserName.Contains(userInfo.UserName))
                 .AndIF(true, it => it.Status == userInfo.Status).ToExpression();
-            return base.GetPageList(pageIndex, pageSize, exp);
+            return await base.GetPageList(pageIndex, pageSize, exp);
         }
 
         /// <inheritdoc cref="BaseBusiness{T}" />
@@ -38,7 +39,7 @@ namespace Blog.Business.Implement
             var response = new BaseResponse();
             try
             {
-                var isExist = await _userRepository.IsExist(user);
+                var isExist = await _userRepository.IsExist(user, UserAction.Add);
                 if (isExist)
                 {
                     response.Code = (int)ResponseStatus.AlreadyExists;
@@ -47,6 +48,28 @@ namespace Blog.Business.Implement
                 }
                 user.Password = _md5Helper.Encrypt32(user.Password);
                 return await base.Insert(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                response.Code = (int)ResponseStatus.Fail;
+                response.Msg = ex.Message;
+            }
+            return response;
+        }
+        public override async Task<BaseResponse> Update(UserInfo user)
+        {
+            var response = new BaseResponse();
+            try
+            {
+                var isExist = await _userRepository.IsExist(user, UserAction.Update);
+                if (isExist)
+                {
+                    response.Code = (int)ResponseStatus.AlreadyExists;
+                    response.Msg = string.Format(MessageConst.AlreadyExists, "user");
+                    return response;
+                }
+                return await base.Update(user);
             }
             catch (Exception ex)
             {

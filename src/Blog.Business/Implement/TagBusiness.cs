@@ -1,4 +1,5 @@
-﻿using Blog.Model.Db;
+﻿using Blog.Model;
+using Blog.Model.Db;
 using Blog.Model.Response;
 using Blog.Repository;
 using NLog;
@@ -23,7 +24,7 @@ namespace Blog.Business.Implement
             var response = new BaseResponse();
             try
             {
-                var isExist = await _tagRespoitory.IsExist(entity);
+                var isExist = await _tagRespoitory.IsExist(entity, UserAction.Add);
                 if (!isExist) return await base.Insert(entity);
                 response.Code = (int)ResponseStatus.AlreadyExists;
                 response.Msg = string.Format(MessageConst.AlreadyExists, "tag");
@@ -32,7 +33,7 @@ namespace Blog.Business.Implement
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                response.Code = (int) ResponseStatus.Fail;
+                response.Code = (int)ResponseStatus.Fail;
                 response.Msg = ex.Message;
             }
             return response;

@@ -1,10 +1,11 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.Request;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Blog.Model.Response;
-using Microsoft.AspNetCore.Cors;
 
 namespace Blog.Api.Controllers
 {
@@ -20,9 +21,9 @@ namespace Blog.Api.Controllers
         }
 
         [HttpGet("page")]
-        public async Task<JsonResultModel<CategoryInfo>> GetPageList(int pageIndex, int pageSize)
+        public async Task<JsonResultModel<CategoryInfo>> GetPageList(int pageIndex, int pageSize, string categoryName)
         {
-            return await _categoryBusiness.GetPageList(pageIndex, pageSize, null);
+            return await _categoryBusiness.GetPageList(pageIndex, pageSize, categoryName);
         }
 
         [HttpGet("{id}")]
@@ -32,9 +33,9 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> AddCategory([FromBody]CategoryInfo category)
+        public async Task<BaseResponse> AddCategory(CategoryRequest category)
         {
-            return await _categoryBusiness.Insert(category);
+            return await _categoryBusiness.Insert(category.CategoryName);
         }
 
         [HttpDelete("{id}")]

@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
 {
@@ -13,9 +14,13 @@ namespace Blog.Repository.Implement
 
 
         /// <inheritdoc cref="BaseRepository{T}" />
-        public override async Task<bool> IsExist(CategoryInfo entity)
+        public async Task<bool> IsExist(CategoryInfo entity, UserAction userAction)
         {
-            return await Context.Db.Queryable<CategoryInfo>().AnyAsync(x => x.CategoryName == entity.CategoryName && x.IsDeleted == 0);
+            if (userAction == UserAction.Add)
+            {
+                return await Context.Db.Queryable<CategoryInfo>().AnyAsync(x => x.CategoryName == entity.CategoryName);
+            }
+            return await Context.Db.Queryable<CategoryInfo>().AnyAsync(x => x.CategoryName == entity.CategoryName && x.Id != entity.Id);
         }
     }
 }

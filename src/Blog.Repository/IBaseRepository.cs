@@ -10,7 +10,6 @@ namespace Blog.Repository
     {
         Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize, Expression<Func<T, bool>> expression);
 
-        Task<bool> IsExist(T entity);
 
         Task<T> GetDetail(int id);
 
