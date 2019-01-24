@@ -3,6 +3,7 @@ using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace Blog.Api.Controllers
 {
     [BlogApiController]
     [EnableCors("LimitRequests")]//支持跨域
+    [Authorize(Policy = "Admin")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryBusiness _categoryBusiness;

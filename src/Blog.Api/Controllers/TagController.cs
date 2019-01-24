@@ -1,15 +1,17 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Blog.Model.Response;
 
 namespace Blog.Api.Controllers
 {
     [EnableCors("LimitRequests")]//支持跨域
     [BlogApiController]
+    [Authorize(Policy = "Admin")]
     public class TagController : ControllerBase
     {
         private readonly ITagBusiness _tagBusiness;
@@ -20,9 +22,9 @@ namespace Blog.Api.Controllers
 
 
         [HttpGet("page")]
-        public async Task<JsonResultModel<TagInfo>> GetPageList(int pageIndex, int pageSize)
+        public async Task<JsonResultModel<TagInfo>> GetPageList(int pageIndex, int pageSize, string tagName)
         {
-            return await _tagBusiness.GetPageList(pageIndex, pageSize, null);
+            return await _tagBusiness.GetPageList(pageIndex, pageSize, tagName);
         }
 
         [HttpGet("{id}")]
@@ -34,7 +36,6 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<BaseResponse> AddTag([FromBody]TagInfo tag)
         {
-
             return await _tagBusiness.Insert(tag);
         }
 
