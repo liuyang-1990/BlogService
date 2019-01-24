@@ -5,6 +5,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -79,6 +80,20 @@ namespace Blog.Api.Controllers
         public async Task<BaseResponse> UpdateArticle([FromBody]ArticleDto articleDto)
         {
             return await _articleBusiness.Update(articleDto);
+        }
+
+        [HttpGet("category/{categoryId}")]
+        [AllowAnonymous]
+        public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        {
+            return await _articleBusiness.GetArticleByCategory(categoryId, pageIndex, pageSize);
+        }
+
+        [HttpGet("tag/{tagId}")]
+        [AllowAnonymous]
+        public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        {
+            return await _articleBusiness.GetArticleByTag(tagId, pageIndex, pageSize);
         }
     }
 }

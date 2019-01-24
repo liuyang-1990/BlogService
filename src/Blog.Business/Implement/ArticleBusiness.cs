@@ -3,6 +3,7 @@ using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -98,6 +99,16 @@ namespace Blog.Business.Implement
         public async Task<V_Article_Info> GetArticleDetail(int id)
         {
             return await _articleRepository.GetArticleDetail(id);
+        }
+
+        public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        {
+            return await _articleRepository.GetArticleByCategory(categoryId, pageIndex, pageSize);
+        }
+
+        public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        {
+            return await _articleRepository.GetArticleByTag(tagId, pageIndex, pageSize);
         }
     }
 }

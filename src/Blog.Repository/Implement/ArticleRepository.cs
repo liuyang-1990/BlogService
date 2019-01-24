@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using NLog;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace Blog.Repository.Implement
             }
             catch (Exception ex)
             {
-               _logger.Error(ex);
+                _logger.Error(ex);
                 return null;
             }
 
@@ -145,6 +146,22 @@ namespace Blog.Repository.Implement
                 _logger.Error(ex.Message);
                 throw;
             }
+        }
+
+
+        public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        {
+            var articleIds = await Context.Db.Queryable<ArticleCategory>().Where(i => i.CategoryId == categoryId)
+                .GroupBy(x => x.ArticleId).Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
+            return await Context.Db.Queryable<ArticleInfo>().In(articleIds).ToListAsync();
+        }
+
+        public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        {
+            var articleIds = await Context.Db.Queryable<ArticleTag>().Where(i => i.TagId == tagId)
+                .GroupBy(x => x.ArticleId)
+                .Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
+            return await Context.Db.Queryable<ArticleInfo>().In(articleIds).ToListAsync();
         }
     }
 }
