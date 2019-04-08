@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Blog.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Blog.Api.AutoFac.AutofacModuleRegister.GetAssemblyByName(System.String)">
+            <summary>
+            根据程序集名称获取程序集
+            </summary>
+            <param name="assemblyName">程序集名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.AutoMapper.CustomProfile.#ctor">
+            <summary>
+            配置构造函数，用来创建关系映射
+            </summary>
+        </member>
+        <member name="T:Blog.Api.Controllers.ArticleController">
+            <summary>
+            文章
+            </summary>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.GetPageList(System.Int32,System.Int32)">
+            <summary>
+            分页获取文章
+            </summary>
+            <param name="pageIndex">当前页码</param>
+            <param name="pageSize">页大小</param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.GetDetailInfo(System.Int32)">
+            <summary>
+            获取详细信息
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.AddArticle(Blog.Model.ViewModel.ArticleDto)">
+            <summary>
+            新增
+            </summary>
+            <param name="articleDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.DeleteArticle(System.Int32)">
+            <summary>
+            删除
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.ArticleController.UpdateArticle(Blog.Model.ViewModel.ArticleDto)">
+            <summary>
+            更新
+            </summary>
+            <param name="articleDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.LoginController.GetJwtStr(Blog.Model.Request.LoginRequest)">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.UserController.GetPageList(System.Int32,System.Int32,Blog.Model.Request.UserRequest)">
+            <summary>
+            分页获取用户信息
+            </summary>
+            <param name="pageIndex"></param>
+            <param name="pageSize"></param>
+            <param name="user">过滤条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.UserController.GetDetailInfo(System.Int32)">
+            <summary>
+            获取某个用户信息
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Controllers.UserController.AddUser(Blog.Model.Request.UserRequest)">
+            <summary>
+            新增用户信息
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Blog.Api.Startup">
+            <summary>
+            启动配置类
+            </summary>
+        </member>
+        <member name="M:Blog.Api.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            ctor
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="P:Blog.Api.Startup.Configuration">
+            <summary>
+            Configuration属性
+            </summary>
+        </member>
+        <member name="M:Blog.Api.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+             This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+            <param name="loggerFactory"></param>
+        </member>
+    </members>
+</doc>

@@ -11,11 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Blog.Api
@@ -47,7 +49,11 @@ namespace Blog.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var jwtConfig = Configuration.GetSection("JwtAuth");
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
             services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<JwtConfig>(jwtConfig);
             services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
@@ -81,8 +87,8 @@ namespace Blog.Api
                  });
 
                  var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
-                 // var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
-                 // option.IncludeXmlComments(xmlPath, true);
+                 var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
+                 option.IncludeXmlComments(xmlPath, true);
                  //添加header验证信息
                  var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
                  option.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
@@ -163,12 +169,19 @@ namespace Blog.Api
 
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");
+            app.UseHsts();
             //自定义异常处理
             app.UseMiddleware<ExceptionFilter>();
             //跨域
-            app.UseCors("allowAll");
+            app.UseCors("LimitRequests");
             //认证
+            app.UseMiddleware<AuthenticationMiddleware>();
             app.UseAuthentication();
+            // 跳转https
+            app.UseHttpsRedirection();
+            // 返回错误码
+            app.UseStatusCodePages();
+
             app.UseMvc();
 
         }

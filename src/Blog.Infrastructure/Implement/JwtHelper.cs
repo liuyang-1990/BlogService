@@ -2,6 +2,8 @@
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,12 +26,14 @@ namespace Blog.Infrastructure.Implement
             _jwtConfig = jwtConfig;
             _redisHelper = redisHelper;
         }
+
         /// <summary>
         /// 颁发JWT字符串
         /// </summary>
         /// <param name="tokenModel"></param>
+        /// <param name="isRefresh"></param>
         /// <returns></returns>
-        public object IssueJwt(JwtToken tokenModel)
+        public object IssueJwt(JwtToken tokenModel, bool isRefresh = false)
         {
             var dateTime = DateTime.UtcNow;
             var claims = new List<Claim>
@@ -47,12 +51,15 @@ namespace Blog.Infrastructure.Implement
             var jwt = new JwtSecurityToken(
                 notBefore: dateTime,
                 claims: claims,
-                expires: dateTime.AddSeconds(15),
+                expires: dateTime.AddHours(2),
                 signingCredentials: creds);
             var jwtHandler = new JwtSecurityTokenHandler();
             var encodedJwt = jwtHandler.WriteToken(jwt);
             var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
-            _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromMinutes(2));
+            if (!isRefresh)
+            {
+                _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromDays(15));
+            }
             return new
             {
                 access_token = encodedJwt,
@@ -66,7 +73,7 @@ namespace Blog.Infrastructure.Implement
         /// 刷新token
         /// </summary>
         /// <returns></returns>
-        public object RefreshJwt(string refreshToken, JwtToken tokenModel)
+        public JObject RefreshJwt(string refreshToken, JwtToken tokenModel)
         {
             if (!_redisHelper.ContainsKey($"refresh_token_{tokenModel.Uid}"))
             {
@@ -78,7 +85,8 @@ namespace Blog.Infrastructure.Implement
                 _redisHelper.Remove($"refresh_token_{tokenModel.Uid}");
                 return null;
             }
-            return IssueJwt(tokenModel);
+            var tokenStr = JsonConvert.SerializeObject(IssueJwt(tokenModel, true));
+            return JObject.Parse(tokenStr);
         }
     }
 }
