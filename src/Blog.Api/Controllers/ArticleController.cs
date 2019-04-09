@@ -32,6 +32,7 @@ namespace Blog.Api.Controllers
         /// <param name="pageSize">页大小</param>
         /// <returns></returns>
         [HttpGet("page")]
+        [AllowAnonymous]
         public async Task<JsonResultModel<ArticleInfo>> GetPageList(int pageIndex, int pageSize)
         {
             return await _articleBusiness.GetPageList(pageIndex, pageSize, null);
@@ -43,6 +44,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ArticleInfo> GetDetailInfo(int id)
         {
             return await _articleBusiness.GetDetail(id);
@@ -81,7 +83,13 @@ namespace Blog.Api.Controllers
         {
             return await _articleBusiness.Update(articleDto);
         }
-
+        /// <summary>
+        /// 根据种类获取文章信息
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
         public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
@@ -89,6 +97,13 @@ namespace Blog.Api.Controllers
             return await _articleBusiness.GetArticleByCategory(categoryId, pageIndex, pageSize);
         }
 
+        /// <summary>
+        /// 根据标签获取文章信息
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
         public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)

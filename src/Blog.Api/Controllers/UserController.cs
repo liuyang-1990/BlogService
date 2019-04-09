@@ -62,12 +62,21 @@ namespace Blog.Api.Controllers
             return await _userBusiness.Insert(userInfo);
         }
 
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<BaseResponse> DeleteUser(int id)
         {
             return await _userBusiness.Delete(id);
         }
-
+        /// <summary>
+        /// 更新用户
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<BaseResponse> UpdateUser([FromBody]UserRequest user)
         {

@@ -21,31 +21,53 @@ namespace Blog.Api.Controllers
         {
             _categoryBusiness = categoryBusiness;
         }
-
+        /// <summary>
+        /// 分页获取分类信息
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="categoryName"></param>
+        /// <returns></returns>
         [HttpGet("page")]
         public async Task<JsonResultModel<CategoryInfo>> GetPageList(int pageIndex, int pageSize, string categoryName)
         {
             return await _categoryBusiness.GetPageList(pageIndex, pageSize, categoryName);
         }
-
+        /// <summary>
+        /// 获取某个分类的信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<CategoryInfo> GetDetailInfo(int id)
         {
             return await _categoryBusiness.GetDetail(id);
         }
-
+        /// <summary>
+        /// 新增分类
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<BaseResponse> AddCategory(CategoryRequest category)
         {
             return await _categoryBusiness.Insert(category.CategoryName);
         }
-
+        /// <summary>
+        /// 删除分类
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<BaseResponse> DeleteCategory(int id)
         {
             return await _categoryBusiness.Delete(id);
         }
-
+        /// <summary>
+        /// 更新分类
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<BaseResponse> UpdateCategory([FromBody]CategoryInfo category)
         {

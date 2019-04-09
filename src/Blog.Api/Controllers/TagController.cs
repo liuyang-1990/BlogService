@@ -20,31 +20,54 @@ namespace Blog.Api.Controllers
             _tagBusiness = tagBusiness;
         }
 
-
+        /// <summary>
+        /// 分页获取标签信息
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         [HttpGet("page")]
         public async Task<JsonResultModel<TagInfo>> GetPageList(int pageIndex, int pageSize, string tagName)
         {
             return await _tagBusiness.GetPageList(pageIndex, pageSize, tagName);
         }
-
+        /// <summary>
+        /// 获取某个标签的信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<TagInfo> GetDetailInfo(int id)
         {
             return await _tagBusiness.GetDetail(id);
         }
-
+        /// <summary>
+        /// 新增标签
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<BaseResponse> AddTag([FromBody]TagInfo tag)
         {
             return await _tagBusiness.Insert(tag);
         }
 
+        /// <summary>
+        /// 删除标签
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<BaseResponse> DeleteTag(int id)
         {
             return await _tagBusiness.Delete(id);
         }
-
+        /// <summary>
+        /// 更新标签
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<BaseResponse> UpdateTag([FromBody]TagInfo tag)
         {

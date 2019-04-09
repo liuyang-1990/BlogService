@@ -24,7 +24,7 @@ namespace Blog.Api.Controllers
         }
 
         /// <summary>
-        /// 
+        /// 登录获取token
         /// </summary>
         /// <returns></returns>
         [HttpPost("token")]
