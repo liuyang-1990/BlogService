@@ -15,7 +15,7 @@ namespace Blog.Api.Controllers
     [Authorize(Policy = "Admin")]
     public class ImageController : ControllerBase
     {
-        private readonly string[] _pictureFormatArray = { "png", "jpg", "jpeg", "bmp", "gif", "ico", "PNG", "JPG", "JPEG", "BMP", "GIF", "ICO" };
+        private readonly string[] _pictureFormatArray = { "png", "jpg", "jpeg", "bmp", "gif", "ico" };
 
         private readonly IHostingEnvironment _environment;
         private readonly IConfiguration _configuration;
@@ -25,19 +25,22 @@ namespace Blog.Api.Controllers
             _configuration = configuration;
         }
 
-
+        /// <summary>
+        /// 上传图片
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("upload")]
         public async Task<IActionResult> Upload()
         {
             var files = Request.Form.Files;
             var webRootPath = _environment.WebRootPath;
-            if (files == null)
+            if (files == null || !files.Any())
             {
                 return null;
             }
             var formFile = files[0];
             var ext = Path.GetExtension(formFile.FileName);
-            if (!_pictureFormatArray.Contains(ext.Substring(1)))
+            if (!_pictureFormatArray.Contains(ext.Substring(1).ToLower()))
             {
                 return new JsonResult(new
                 {
@@ -70,8 +73,6 @@ namespace Blog.Api.Controllers
                 Message = "Success"
             });
         }
-
-
 
     }
 }
