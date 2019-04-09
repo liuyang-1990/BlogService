@@ -2,10 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591;</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>E:\Project\C#\blog\src\Blog.Api\Blog.Api.xml</DocumentationFile>
+     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,9 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Blog.Api.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
