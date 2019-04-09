@@ -182,6 +182,7 @@ namespace Blog.Api
             // 返回错误码
             app.UseStatusCodePages();
 
+            app.UseStaticFiles();
             app.UseMvc();
 
         }
