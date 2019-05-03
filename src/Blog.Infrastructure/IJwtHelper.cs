@@ -1,12 +1,12 @@
 ﻿using Blog.Model;
-using Newtonsoft.Json.Linq;
+using Blog.Model.Response;
 
 namespace Blog.Infrastructure
 {
     public interface IJwtHelper
     {
-        object IssueJwt(JwtToken tokenModel, bool isRefresh = false);
+        LoginResponse IssueJwt(JwtToken tokenModel, bool isRefresh = false);
 
-        JObject RefreshJwt(string refreshToken, JwtToken tokenModel);
+        string RefreshJwt(string refreshToken, JwtToken tokenModel);
     }
 }

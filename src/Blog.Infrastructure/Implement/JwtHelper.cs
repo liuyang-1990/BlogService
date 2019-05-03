@@ -1,9 +1,8 @@
 ﻿using Blog.Model;
+using Blog.Model.Response;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -33,7 +32,7 @@ namespace Blog.Infrastructure.Implement
         /// <param name="tokenModel"></param>
         /// <param name="isRefresh"></param>
         /// <returns></returns>
-        public object IssueJwt(JwtToken tokenModel, bool isRefresh = false)
+        public LoginResponse IssueJwt(JwtToken tokenModel, bool isRefresh = false)
         {
             var dateTime = DateTime.UtcNow;
             var claims = new List<Claim>
@@ -55,17 +54,19 @@ namespace Blog.Infrastructure.Implement
                 signingCredentials: creds);
             var jwtHandler = new JwtSecurityTokenHandler();
             var encodedJwt = jwtHandler.WriteToken(jwt);
-            var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
-            if (!isRefresh)
+            if (isRefresh)
             {
-                _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromDays(15));
+                return new LoginResponse()
+                {
+                    AccessToken = "Bearer " + encodedJwt,
+                };
             }
-            return new
+            var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
+            _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromDays(15));
+            return new LoginResponse()
             {
-                access_token = encodedJwt,
-                token_type = "Bearer",
-                expire_in = 7200,
-                refresh_token = refreshToken
+                AccessToken = "Bearer " + encodedJwt,
+                RefreshToken = refreshToken
             };
         }
 
@@ -73,7 +74,7 @@ namespace Blog.Infrastructure.Implement
         /// 刷新token
         /// </summary>
         /// <returns></returns>
-        public JObject RefreshJwt(string refreshToken, JwtToken tokenModel)
+        public string RefreshJwt(string refreshToken, JwtToken tokenModel)
         {
             if (!_redisHelper.ContainsKey($"refresh_token_{tokenModel.Uid}"))
             {
@@ -85,8 +86,8 @@ namespace Blog.Infrastructure.Implement
                 _redisHelper.Remove($"refresh_token_{tokenModel.Uid}");
                 return null;
             }
-            var tokenStr = JsonConvert.SerializeObject(IssueJwt(tokenModel, true));
-            return JObject.Parse(tokenStr);
+            var loginResponse = IssueJwt(tokenModel, true);
+            return loginResponse.AccessToken;
         }
     }
 }

@@ -45,8 +45,8 @@ namespace Blog.Api
             {
                 return _next(httpContext);
             }
-            httpContext.Request.Headers["Authorization"] = "Bearer " + token.Value<string>("access_token");
-            httpContext.Response.Headers.Add("Authorization", token.Value<string>("access_token"));
+            httpContext.Request.Headers["Authorization"] = token;
+            httpContext.Response.Headers.Add("Authorization", token);
             return _next(httpContext);
         }
 
