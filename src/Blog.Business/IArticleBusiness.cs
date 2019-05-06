@@ -9,9 +9,9 @@ namespace Blog.Business
     public interface IArticleBusiness : IBaseBusiness<ArticleInfo>
     {
 
-        Task<BaseResponse> Insert(ArticleDto articleDto);
+        Task<ResultModel<string>> Insert(ArticleDto articleDto);
 
-        Task<BaseResponse> Update(ArticleDto articleDto);
+        Task<ResultModel<string>> Update(ArticleDto articleDto);
 
         Task<V_Article_Info> GetArticleDetail(int id);
 

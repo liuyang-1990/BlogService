@@ -1,5 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -28,14 +29,13 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 分页获取文章
         /// </summary>
-        /// <param name="pageIndex">当前页码</param>
-        /// <param name="pageSize">页大小</param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("page")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetPageList(int pageIndex, int pageSize)
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param)
         {
-            return await _articleBusiness.GetPageList(pageIndex, pageSize, null);
+            return await _articleBusiness.GetPageList(param, null);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Blog.Api.Controllers
         /// <param name="articleDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> AddArticle([FromBody]ArticleDto articleDto)
+        public async Task<ResultModel<string>> AddArticle([FromBody]ArticleDto articleDto)
         {
 
             return await _articleBusiness.Insert(articleDto);
@@ -68,7 +68,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<BaseResponse> DeleteArticle(int id)
+        public async Task<ResultModel<string>> DeleteArticle(int id)
         {
             return await _articleBusiness.Delete(id);
         }
@@ -79,7 +79,7 @@ namespace Blog.Api.Controllers
         /// <param name="articleDto"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<BaseResponse> UpdateArticle([FromBody]ArticleDto articleDto)
+        public async Task<ResultModel<string>> UpdateArticle([FromBody]ArticleDto articleDto)
         {
             return await _articleBusiness.Update(articleDto);
         }

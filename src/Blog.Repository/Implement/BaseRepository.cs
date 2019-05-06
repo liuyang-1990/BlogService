@@ -1,9 +1,9 @@
 ﻿using Blog.Model;
+using Blog.Model.Request;
 using Blog.Model.Settings;
 using Blog.Model.ViewModel;
 using Blog.Repository.Dao;
 using Microsoft.Extensions.Options;
-using SqlSugar;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -21,18 +21,15 @@ namespace Blog.Repository.Implement
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="param"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize = 10, Expression<Func<T, bool>> expression = null)
+        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression)
         {
             const int totalNumber = 0;
-            if (expression == null)
-            {
-                expression = Expressionable.Create<T>().And(it => true).ToExpression();
-            }
-            var pageInfo = await Context.Db.Queryable<T>().Where(expression).ToPageListAsync(pageIndex, pageSize, totalNumber);
+            var pageInfo = await Context.Db.Queryable<T>().WhereIF(expression != null, expression)
+            .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder), param.SortField + " " + param.SortOrder)
+            .ToPageListAsync(param.PageNum, param.PageSize, totalNumber);
             return new JsonResultModel<T>()
             {
                 Rows = pageInfo.Key,

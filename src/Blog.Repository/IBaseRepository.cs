@@ -1,4 +1,5 @@
 ﻿using Blog.Model;
+using Blog.Model.Request;
 using Blog.Model.ViewModel;
 using System;
 using System.Linq.Expressions;
@@ -8,8 +9,7 @@ namespace Blog.Repository
 {
     public interface IBaseRepository<T> where T : BaseEntity, new()
     {
-        Task<JsonResultModel<T>> GetPageList(int pageIndex, int pageSize, Expression<Func<T, bool>> expression);
-
+        Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression);
 
         Task<T> GetDetail(int id);
 

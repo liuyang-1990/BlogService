@@ -25,59 +25,47 @@ namespace Blog.Business.Implement
         }
 
 
-        public async Task<JsonResultModel<UserInfo>> GetPageList(int pageIndex, int pageSize, UserRequest userInfo)
+        public async Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param)
         {
             var exp = Expressionable.Create<UserInfo>()
-                .OrIF(!string.IsNullOrEmpty(userInfo.UserName), it => it.UserName.Contains(userInfo.UserName))
-                .AndIF(true, it => it.Status == userInfo.Status).ToExpression();
-            return await base.GetPageList(pageIndex, pageSize, exp);
+                .OrIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
+                .AndIF(true, it => it.Status == searchParams.Status).ToExpression();
+            return await base.GetPageList(param, exp);
         }
 
-        /// <inheritdoc cref="BaseBusiness{T}" />
-        public override async Task<BaseResponse> Insert(UserInfo user)
+
+        public override async Task<ResultModel<string>> Insert(UserInfo user)
         {
-            var response = new BaseResponse();
-            try
+            var response = new ResultModel<string>();
+            var isExist = await _userRepository.IsExist(user, UserAction.Add);
+            if (isExist)
             {
-                var isExist = await _userRepository.IsExist(user, UserAction.Add);
-                if (isExist)
-                {
-                    response.Code = (int)ResponseStatus.AlreadyExists;
-                    response.Msg = string.Format(MessageConst.AlreadyExists, "user");
-                    return response;
-                }
-                user.Password = _md5Helper.Encrypt32(user.Password);
-                return await base.Insert(user);
+                response.IsSuccess = false;
+                response.Status = "2";//已经存在
+                return response;
             }
-            catch (Exception ex)
+            if (string.IsNullOrEmpty(user.Password))
             {
-                _logger.Error(ex);
-                response.Code = (int)ResponseStatus.Fail;
-                response.Msg = ex.Message;
+                user.Password = "123456"; //默认密码
             }
-            return response;
+            user.Password = _md5Helper.Encrypt32(user.Password);
+            return await base.Insert(user);
         }
-        public override async Task<BaseResponse> Update(UserInfo user)
+        public override async Task<ResultModel<string>> Update(UserInfo user)
         {
-            var response = new BaseResponse();
-            try
+            var response = new ResultModel<string>();
+            var isExist = await _userRepository.IsExist(user, UserAction.Update);
+            if (isExist)
             {
-                var isExist = await _userRepository.IsExist(user, UserAction.Update);
-                if (isExist)
-                {
-                    response.Code = (int)ResponseStatus.AlreadyExists;
-                    response.Msg = string.Format(MessageConst.AlreadyExists, "user");
-                    return response;
-                }
-                return await base.Update(user);
+                response.IsSuccess = false;
+                response.Status = "2";//已经存在
+                return response;
             }
-            catch (Exception ex)
+            if (!string.IsNullOrEmpty(user.Password))
             {
-                _logger.Error(ex);
-                response.Code = (int)ResponseStatus.Fail;
-                response.Msg = ex.Message;
+                user.Password = _md5Helper.Encrypt32(user.Password);
             }
-            return response;
+            return await base.Update(user);
         }
 
 

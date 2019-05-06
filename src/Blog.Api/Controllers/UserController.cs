@@ -27,14 +27,13 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 分页获取用户信息
         /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="user">过滤条件</param>
+        /// <param name="searchParams"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<UserInfoBase>> GetPageList(int pageIndex, int pageSize, UserRequest user)
+        public async Task<JsonResultModel<UserInfoBase>> GetPageList(UserRequest searchParams, GridParams param)
         {
-            var userInfos = await _userBusiness.GetPageList(pageIndex, pageSize, user);
+            var userInfos = await _userBusiness.GetPageList(searchParams, param);
             return _mapper.Map<JsonResultModel<UserInfoBase>>(userInfos);
         }
 
@@ -56,7 +55,7 @@ namespace Blog.Api.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> AddUser([FromBody]UserRequest user)
+        public async Task<ResultModel<string>> AddUser([FromBody]UserRequest user)
         {
             var userInfo = _mapper.Map<UserInfo>(user);
             return await _userBusiness.Insert(userInfo);
@@ -68,7 +67,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<BaseResponse> DeleteUser(int id)
+        public async Task<ResultModel<string>> DeleteUser(int id)
         {
             return await _userBusiness.Delete(id);
         }
@@ -78,7 +77,7 @@ namespace Blog.Api.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<BaseResponse> UpdateUser([FromBody]UserRequest user)
+        public async Task<ResultModel<string>> UpdateUser([FromBody]UserRequest user)
         {
             var userInfo = _mapper.Map<UserInfo>(user);
             return await _userBusiness.Update(userInfo);

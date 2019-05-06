@@ -20,9 +20,9 @@ namespace Blog.Business.Implement
         }
 
 
-        public async Task<BaseResponse> Insert(ArticleDto articleDto)
+        public async Task<ResultModel<string>> Insert(ArticleDto articleDto)
         {
-            var response = new BaseResponse();
+            var response = new ResultModel<string>();
             var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
@@ -34,31 +34,15 @@ namespace Blog.Business.Implement
             };
             var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
             var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            try
-            {
-                var isSuccess = await _articleRepository.Insert(article, content, tagIds, categoryIds);
-                if (isSuccess)
-                {
-                    response.Code = (int)ResponseStatus.Ok;
-                    response.Msg = MessageConst.Created;
-                }
-                else
-                {
-                    response.Code = (int)ResponseStatus.Fail;
-                    response.Msg = MessageConst.Fail;
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Code = (int)ResponseStatus.Fail;
-                response.Msg = ex.Message;
-            }
+            response.IsSuccess = await _articleRepository.Insert(article, content, tagIds, categoryIds);
+            response.Status = response.IsSuccess ? "0" : "1";
+
             return response;
         }
 
-        public async Task<BaseResponse> Update(ArticleDto articleDto)
+        public async Task<ResultModel<string>> Update(ArticleDto articleDto)
         {
-            var response = new BaseResponse();
+            var response = new ResultModel<string>();
             var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
@@ -74,25 +58,8 @@ namespace Blog.Business.Implement
             };
             var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
             var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            try
-            {
-                var isSuccess = await _articleRepository.Update(article, content, tagIds, categoryIds);
-                if (isSuccess)
-                {
-                    response.Code = (int)ResponseStatus.Ok;
-                    response.Msg = MessageConst.Created;
-                }
-                else
-                {
-                    response.Code = (int)ResponseStatus.Fail;
-                    response.Msg = MessageConst.Fail;
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Code = (int)ResponseStatus.Fail;
-                response.Msg = ex.Message;
-            }
+            response.IsSuccess = await _articleRepository.Update(article, content, tagIds, categoryIds);
+            response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
 

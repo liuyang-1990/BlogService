@@ -1,5 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
+using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -23,14 +24,13 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 分页获取标签信息
         /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="param"></param>
         /// <param name="tagName"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<TagInfo>> GetPageList(int pageIndex, int pageSize, string tagName)
+        public async Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName)
         {
-            return await _tagBusiness.GetPageList(pageIndex, pageSize, tagName);
+            return await _tagBusiness.GetPageList(param, tagName);
         }
         /// <summary>
         /// 获取某个标签的信息
@@ -48,7 +48,7 @@ namespace Blog.Api.Controllers
         /// <param name="tag"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> AddTag([FromBody]TagInfo tag)
+        public async Task<ResultModel<string>> AddTag([FromBody]TagInfo tag)
         {
             return await _tagBusiness.Insert(tag);
         }
@@ -59,7 +59,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<BaseResponse> DeleteTag(int id)
+        public async Task<ResultModel<string>> DeleteTag(int id)
         {
             return await _tagBusiness.Delete(id);
         }
@@ -69,7 +69,7 @@ namespace Blog.Api.Controllers
         /// <param name="tag"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<BaseResponse> UpdateTag([FromBody]TagInfo tag)
+        public async Task<ResultModel<string>> UpdateTag([FromBody]TagInfo tag)
         {
             return await _tagBusiness.Update(tag);
         }

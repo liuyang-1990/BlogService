@@ -25,14 +25,21 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ResultModel<LoginResponse>> Login(LoginRequest loginRequest)
+        public async Task<ResultModel<LoginResponse>> Login([FromBody]LoginRequest loginRequest)
         {
             var response = new ResultModel<LoginResponse>();
             var userInfo = await _userBusiness.GetUserByUserName(loginRequest.UserName, loginRequest.Password);
             if (userInfo == null)
             {
                 response.IsSuccess = false;
-                response.Status = "-1";
+                response.Status = "1";
+                return response;
+            }
+            //用户被禁用
+            if (userInfo.Status == 0)
+            {
+                response.IsSuccess = false;
+                response.Status = "2";
                 return response;
             }
             var loginResponse = _jwtHelper.IssueJwt(new JwtToken()

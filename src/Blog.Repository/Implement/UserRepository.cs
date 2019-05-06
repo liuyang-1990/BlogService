@@ -13,7 +13,6 @@ namespace Blog.Repository.Implement
 
         }
 
-        /// <inheritdoc cref="BaseRepository{T}" />
         public async Task<bool> IsExist(UserInfo entity, UserAction userAction)
         {
             if (userAction == UserAction.Add)

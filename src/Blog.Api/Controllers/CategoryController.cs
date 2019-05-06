@@ -24,14 +24,13 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 分页获取分类信息
         /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="param"></param>
         /// <param name="categoryName"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<CategoryInfo>> GetPageList(int pageIndex, int pageSize, string categoryName)
+        public async Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName)
         {
-            return await _categoryBusiness.GetPageList(pageIndex, pageSize, categoryName);
+            return await _categoryBusiness.GetPageList(param, categoryName);
         }
         /// <summary>
         /// 获取某个分类的信息
@@ -49,7 +48,7 @@ namespace Blog.Api.Controllers
         /// <param name="category"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> AddCategory(CategoryRequest category)
+        public async Task<ResultModel<string>> AddCategory(CategoryRequest category)
         {
             return await _categoryBusiness.Insert(category.CategoryName);
         }
@@ -59,7 +58,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<BaseResponse> DeleteCategory(int id)
+        public async Task<ResultModel<string>> DeleteCategory(int id)
         {
             return await _categoryBusiness.Delete(id);
         }
@@ -69,7 +68,7 @@ namespace Blog.Api.Controllers
         /// <param name="category"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<BaseResponse> UpdateCategory([FromBody]CategoryInfo category)
+        public async Task<ResultModel<string>> UpdateCategory([FromBody]CategoryInfo category)
         {
             return await _categoryBusiness.Update(category);
         }
