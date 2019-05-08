@@ -82,5 +82,22 @@ namespace Blog.Business.Implement
                 return null;
             }
         }
+
+        public async Task<ResultModel<string>> UpdatePassword(ChangePasswordRequest request)
+        {
+            var response = new ResultModel<string>();
+            var userInfo = await GetUserByUserName(request.UserName, request.OldPassword);
+            if (userInfo == null)
+            {
+                response.IsSuccess = false;
+                response.Status = "2"; //旧密码不正确
+                return response;
+            }
+            userInfo.Password = _md5Helper.Encrypt32(request.Password);
+            response.IsSuccess = await _userRepository.ChangePassword(userInfo);
+            response.Status = response.IsSuccess ? "0" : "1";
+            return response;
+
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Blog.Model.Request;
 using Blog.Model.ViewModel;
 using System.Threading.Tasks;
+using Blog.Model.Response;
 
 namespace Blog.Business
 {
@@ -10,5 +11,7 @@ namespace Blog.Business
 
         Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param);
         Task<UserInfo> GetUserByUserName(string userName, string password);
+
+        Task<ResultModel<string>> UpdatePassword(ChangePasswordRequest request);
     }
 }

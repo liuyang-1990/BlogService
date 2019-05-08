@@ -82,5 +82,13 @@ namespace Blog.Api.Controllers
             var userInfo = _mapper.Map<UserInfo>(user);
             return await _userBusiness.Update(userInfo);
         }
+
+        [HttpPost("chgPassword")]
+        public async Task<ResultModel<string>> UpdatePassword([FromBody]ChangePasswordRequest request)
+        {
+            return await _userBusiness.UpdatePassword(request);
+        }
+
+
     }
 }

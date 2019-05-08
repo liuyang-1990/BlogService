@@ -27,6 +27,11 @@ namespace Blog.Repository.Implement
         {
             return await Context.Db.Queryable<UserInfo>().SingleAsync(x => x.UserName == userName && x.Password == password);
         }
+
+        public async Task<bool> ChangePassword(UserInfo userInfo)
+        {
+            return await Context.Db.Updateable(userInfo).UpdateColumns(it => new { it.Password }).ExecuteCommandHasChangeAsync();
+        }
     }
 
 }
