@@ -14,6 +14,6 @@ namespace Blog.Model.Db
         [SugarColumn(ColumnName = "tag_name")]
         public string TagName { get; set; }
 
-
+        public string Description { get; set; }
     }
 }

@@ -13,5 +13,7 @@ namespace Blog.Model.Db
         /// </summary>
         [SugarColumn(ColumnName = "category_name")]
         public string CategoryName { get; set; }
+
+        public string Description { get; set; }
     }
 }

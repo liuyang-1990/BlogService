@@ -29,16 +29,17 @@ namespace Blog.Business.Implement
             return await base.GetPageList(param, exp);
         }
 
-        public async Task<ResultModel<string>> Insert(string categoryName)
+        public  async Task<ResultModel<string>> Insert(CategoryRequest category)
         {
-            if (string.IsNullOrEmpty(categoryName))
+            if (string.IsNullOrEmpty(category.CategoryName))
             {
-                throw new ArgumentNullException(nameof(categoryName));
+                throw new ArgumentNullException(nameof(category.CategoryName));
             }
             var response = new ResultModel<string>();
             var entity = new CategoryInfo()
             {
-                CategoryName = categoryName
+                CategoryName = category.CategoryName,
+                Description = category.Description
             };
             var isExist = await _categoryRepository.IsExist(entity, UserAction.Add);
             if (!isExist) return await base.Insert(entity);

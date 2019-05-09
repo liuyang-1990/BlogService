@@ -50,7 +50,7 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<ResultModel<string>> AddCategory(CategoryRequest category)
         {
-            return await _categoryBusiness.Insert(category.CategoryName);
+            return await _categoryBusiness.Insert(category);
         }
         /// <summary>
         /// 删除分类
