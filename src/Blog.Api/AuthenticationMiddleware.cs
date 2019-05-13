@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Blog.Api
@@ -23,20 +25,32 @@ namespace Blog.Api
 
         public Task Invoke(HttpContext httpContext)
         {
-
             if (!httpContext.Request.Headers.ContainsKey("Authorization"))
             {
                 return _next(httpContext);
             }
             var tokenHeader = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var jwtArr = tokenHeader.Split('.');
-            //var header = JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(jwtArr[0]));
+            if (jwtArr.Length != 3)
+            {
+                return _next(httpContext);
+            }
+            //首先验证签名是否正确
+            var hs256 = new HMACSHA256(Encoding.ASCII.GetBytes(_jwtHelper.SecurityKey));
+            var success = string.Equals(jwtArr[2],
+                Base64UrlEncoder.Encode(hs256.ComputeHash(Encoding.UTF8.GetBytes(string.Concat(jwtArr[0], ".", jwtArr[1])))));
+            if (!success)
+            {
+                //签名不正确
+                return _next(httpContext);
+            }
             var payLoad = JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(jwtArr[1]));
-            //验证是否在有效期内（也应该必须）
+            //其次验证是否在有效期内
             var now = ToUnixEpochDate(DateTime.UtcNow);
-            var success = (now >= long.Parse(payLoad["nbf"].ToString()) && now < long.Parse(payLoad["exp"].ToString()));
+            success = (now >= long.Parse(payLoad["nbf"].ToString()) && now < long.Parse(payLoad["exp"].ToString()));
             if (success) return _next(httpContext);
-            var token = _jwtHelper.RefreshJwt(tokenHeader, new JwtToken()
+            var refreshToken = httpContext.Request.Headers["refresh_token"].ToString();
+            var token = _jwtHelper.RefreshJwt(refreshToken, new JwtToken()
             {
                 Uid = int.Parse(payLoad["jti"].ToString()),
                 Role = payLoad[ClaimTypes.Role].ToString()

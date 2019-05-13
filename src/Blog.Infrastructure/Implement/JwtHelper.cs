@@ -20,11 +20,17 @@ namespace Blog.Infrastructure.Implement
     {
         private readonly IOptions<JwtConfig> _jwtConfig;
         private readonly IRedisHelper _redisHelper;
+
+
+        public string SecurityKey { get; set; }
+
         public JwtHelper(IOptions<JwtConfig> jwtConfig, IRedisHelper redisHelper)
         {
             _jwtConfig = jwtConfig;
             _redisHelper = redisHelper;
+            SecurityKey = jwtConfig.Value.SecurityKey;
         }
+
 
         /// <summary>
         /// 颁发JWT字符串
@@ -84,6 +90,10 @@ namespace Blog.Infrastructure.Implement
             if (string.IsNullOrEmpty(val))
             {
                 _redisHelper.Remove($"refresh_token_{tokenModel.Uid}");
+                return null;
+            }
+            if (!string.Equals(refreshToken, val, StringComparison.OrdinalIgnoreCase))
+            {
                 return null;
             }
             var loginResponse = IssueJwt(tokenModel, true);
