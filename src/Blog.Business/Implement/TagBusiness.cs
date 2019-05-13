@@ -43,7 +43,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Update(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRespoitory.IsExist(entity, UserAction.Add);
+            var isExist = await _tagRespoitory.IsExist(entity, UserAction.Update);
             if (!isExist) return await base.Update(entity);
             response.IsSuccess = false;
             response.Status = "2";//已经存在
