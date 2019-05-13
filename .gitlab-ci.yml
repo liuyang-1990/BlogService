@@ -74,8 +74,7 @@ deploy_gdev:
         DOMAIN: 47.101.152.254:8080 
     before_script:
          - docker-compose ps
-         - docker-compose stop web
-         - docker-compose rm web -f 
+         - docker-compose rm web -f -s
     script:
          - docker-compose up -d  --build
     after_script:
