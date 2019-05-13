@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    build: .
+    images: ${VPC_CI_REGISTRY_IMAGE}:${IMAGE_TAG}
     ports:
        - 8080:80
     networks:

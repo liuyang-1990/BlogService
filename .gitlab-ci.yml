@@ -3,7 +3,7 @@ image: microsoft/dotnet:2.1-sdk
 variables:
   IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
   Solution: ./src/Blog.Api/Blog.Api.csproj
-  Registry: registry-vpc.cn-shanghai.aliyuncs.com
+
 stages:
     - test
     - build
@@ -49,20 +49,24 @@ publish_package:
     only:
         - master   
 
-.job_build_image:
-    stage: build
-    before_script:
-      - docker --version
-      - docker login -u 南宫伊沫 -p $CIPASSWORD $registry
-    script:
-      - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t $registry/liuyang/blog:${IMAGE_TAG} .
-      - docker push $registry/liuyang/blog:${IMAGE_TAG}
-    only:
+job_build_image:
+  stage: build
+  image: docker:git
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - docker --version
+    - docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD} ${REGISTRY_URL}
+  script:
+      - docker build --build-arg GIT_COMMIT=$CI_COMMIT_SHA -t ${CI_REGISTRY_IMAGE}:${IMAGE_TAG} .
+      - docker images
+      - docker push ${CI_REGISTRY_IMAGE}:${IMAGE_TAG}
+  only:
       - master 
       - /^feature-.*$/
-    allow_failure: false
-    tags:
-      - runner02
+  allow_failure: false
  
 deploy_gdev:
     stage: deploy
