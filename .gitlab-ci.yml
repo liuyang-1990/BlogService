@@ -74,8 +74,8 @@ deploy_gdev:
         DOMAIN: 47.101.152.254:8080 
     before_script:
          - docker-compose ps
-         - docker-compose stop blog-api
-         - docker-compose rm blog-api
+         - if [ $(docker ps -a -q -f name=blog-api) ];then  docker-compose stop blog-api;fi
+         - if [ $(docker ps -a -q -f name=blog-api) ];then  docker-compose rm blog-api;fi
     script:
          - docker-compose up -d  --build
     after_script:
