@@ -15,6 +15,7 @@ services:
        - redis
     environment:
        - ASPNETCORE_ENVIRONMENT=Production
+       - Version = ${CI_COMMIT_SHA:0:8}
     privileged: true
   db:
      image: mysql:5.7
@@ -28,7 +29,9 @@ services:
      environment:
        - MYSQL_ROOT_PASSWORD=123456
      volumes:
+       - "./conf/my.cnf:/etc/my.cnf"
        - "./init:/docker-entrypoint-initdb.d/"
+       - "./mysql:/var/lib/mysql"
   redis: 
      image: redis
      restart: always
@@ -38,6 +41,8 @@ services:
      container_name: redis
      networks:
        - overlay
+     volumes:
+       - "./redis/data:/data"
 networks:
   overlay:
   
