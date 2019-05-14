@@ -31,8 +31,8 @@ services:
      environment:
        - MYSQL_ROOT_PASSWORD=123456
      volumes:
-       - "./db/init:/docker-entrypoint-initdb.d/"
-       - "./db/data:/var/lib/mysql"
+       - "/db/init:/docker-entrypoint-initdb.d/"
+       - "/db/data:/var/lib/mysql"
   redis: 
      image: redis
      restart: always
@@ -43,7 +43,7 @@ services:
      networks:
        - overlay
      volumes:
-       - "./redis/data:/data"
+       - "/redis/data:/data"
 networks:
   overlay:
   
