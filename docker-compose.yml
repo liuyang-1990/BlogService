@@ -15,11 +15,12 @@ services:
        - redis
     environment:
        - ASPNETCORE_ENVIRONMENT=Production
-       - Version = ${CI_COMMIT_SHA:0:8}
+       - Version=${CI_COMMIT_SHA:0:8}
     privileged: true
   db:
      image: mysql:5.7
      privileged: true
+     command: --default-authentication-plugin=mysql_native_password
      restart: always
      ports:
        - 3306:3306
@@ -29,9 +30,8 @@ services:
      environment:
        - MYSQL_ROOT_PASSWORD=123456
      volumes:
-       - "./conf/my.cnf:/etc/my.cnf"
-       - "./init:/docker-entrypoint-initdb.d/"
-       - "./mysql:/var/lib/mysql"
+       - "./db/init:/docker-entrypoint-initdb.d/"
+       - "./db/data:/var/lib/mysql"
   redis: 
      image: redis
      restart: always
