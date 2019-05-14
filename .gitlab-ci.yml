@@ -74,6 +74,7 @@ deploy_gdev:
         DOMAIN: 47.101.152.254:8080 
     before_script:
          - docker-compose ps
+         - echo Versoin=${CI_COMMIT_SHA:0:8} > .env
          - docker-compose down
     script:
          - docker-compose up -d

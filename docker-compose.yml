@@ -13,9 +13,10 @@ services:
     depends_on:
        - db
        - redis
+    env_file:
+       - ./.env
     environment:
        - ASPNETCORE_ENVIRONMENT=Production
-       - Version=${CI_COMMIT_SHA:0:8}
     privileged: true
   db:
      image: mysql:5.7
