@@ -34,6 +34,9 @@ namespace Blog.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            this.Name = configuration["Name"] ?? "Blog Service";
+            this.Version = configuration["Version"] ?? "v0";
+            this.Description = Configuration["Description"] ?? string.Empty;
         }
 
         /// <summary>
@@ -41,6 +44,11 @@ namespace Blog.Api
         /// </summary>
         public IConfiguration Configuration { get; }
 
+        public string Name { get; set; }
+
+        public string Version { get; set; }
+
+        public string Description { get; set; }
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
@@ -79,11 +87,11 @@ namespace Blog.Api
              {
                  option.CustomSchemaIds(x => x.FullName);
                  option.DescribeAllEnumsAsStrings();
-                 option.SwaggerDoc("v1", new Info()
+                 option.SwaggerDoc(Version, new Info()
                  {
-                     Title = "BlogService",
-                     Version = "V1",
-                     Description = "框架说明文档",
+                     Title = Name,
+                     Version = Version,
+                     Description = Description
                  });
 
                  var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
@@ -162,8 +170,8 @@ namespace Blog.Api
             app.UseSwagger();
             app.UseSwaggerUI(option =>
             {
-                option.SwaggerEndpoint("/swagger/v1/swagger.json", "blog");
-                option.RoutePrefix = "swagger";
+                option.DocumentTitle = Name;
+                option.SwaggerEndpoint($"/swagger/{Version}/swagger.json", $"{Name} {Version}");
             });
             #endregion
 

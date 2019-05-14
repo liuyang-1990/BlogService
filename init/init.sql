@@ -1,11 +1,11 @@
 ﻿use mysql;
 ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
 
-create database blog CHARSET utf8;
+create database IF NOT EXISTS blog CHARSET utf8;
 
 USE blog;
 
-CREATE TABLE `sys_user_info`(
+CREATE TABLE  IF NOT EXISTS `sys_user_info`(
   id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
   username VARCHAR(20) NOT NULL COMMENT '用户名称',
   `password` CHAR(32)  NOT NULL COMMENT '密码',
@@ -20,7 +20,7 @@ CREATE TABLE `sys_user_info`(
 
 
 
-CREATE TABLE tbl_tag_info(
+CREATE TABLE  IF NOT EXISTS tbl_tag_info(
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 tag_name VARCHAR(20) NOT NULL COMMENT '标签内容',
 description VARCHAR(50) null COMMENT '描述',
@@ -31,7 +31,7 @@ description VARCHAR(50) null COMMENT '描述',
 )ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT '标签表';
 
 
-CREATE TABLE tbl_category_info(
+CREATE TABLE  IF NOT EXISTS tbl_category_info(
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 category_name VARCHAR(20) NOT NULL COMMENT '分类名称',
 description VARCHAR(50) null COMMENT '描述',
@@ -43,7 +43,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-CREATE TABLE tbl_article_info (
+CREATE TABLE  IF NOT EXISTS tbl_article_info (
  id INT(11) UNSIGNED AUTO_INCREMENT COMMENT '文章id',
  title VARCHAR(200) NOT NULL COMMENT '文章标题',
  abstract VARCHAR(500) NOT NULL COMMENT '文章摘要',
@@ -57,7 +57,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT '文章表';
 
 
-CREATE TABLE tbl_article_content (
+CREATE TABLE  IF NOT EXISTS tbl_article_content (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 article_id  INT(11) UNSIGNED COMMENT '文章id',
@@ -69,7 +69,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT '文章内容表';
 
 
-CREATE TABLE tbl_article_image (
+CREATE TABLE  IF NOT EXISTS tbl_article_image (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 article_id  INT(11) UNSIGNED COMMENT '文章id',
@@ -82,7 +82,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-CREATE TABLE tbl_article_tag (
+CREATE TABLE  IF NOT EXISTS tbl_article_tag (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 article_id  INT(11) UNSIGNED COMMENT '文章id',
@@ -94,7 +94,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT '文章标签表';
 
 
-CREATE TABLE tbl_article_category (
+CREATE TABLE  IF NOT EXISTS tbl_article_category (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 article_id  INT(11) UNSIGNED COMMENT '文章id',
@@ -108,7 +108,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-CREATE TABLE tbl_article_comment (
+CREATE TABLE  IF NOT EXISTS tbl_article_comment (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 article_id  INT(11) UNSIGNED COMMENT '文章id',
@@ -122,7 +122,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-CREATE TABLE tbl_comment (
+CREATE TABLE  IF NOT EXISTS tbl_comment (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 parent_id  INT(11) UNSIGNED NULL COMMENT '父id',
@@ -136,7 +136,7 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-CREATE TABLE sys_view (
+CREATE TABLE  IF NOT EXISTS sys_view (
 
 id INT(11) UNSIGNED AUTO_INCREMENT COMMENT 'id',
 ip CHAR(15) NOT NULL COMMENT '访问ip',
@@ -148,4 +148,4 @@ modifytime DATETIME  NULL   ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
 
 
-CREATE VIEW `blog`.`V_Article_Info` AS SELECT id,title,abstract,createtime,content,is_deleted FROM tbl_article_info AS a INNER JOIN tbl_article_content c ON a.id=c.article_id AND c.is_deleted="0" WHERE a.is_deleted="0"; 
+CREATE VIEW IF NOT EXISTS  `blog`.`V_Article_Info` AS SELECT id,title,abstract,createtime,content,is_deleted FROM tbl_article_info AS a INNER JOIN tbl_article_content c ON a.id=c.article_id AND c.is_deleted="0" WHERE a.is_deleted="0"; 
