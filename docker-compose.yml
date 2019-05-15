@@ -44,6 +44,21 @@ services:
        - overlay
      volumes:
        - "/redis/data:/data"
+  nginx:
+    image: nginx
+    restart: always
+    privileged: true
+    ports:
+        - 80:80
+        - 443:443
+    container_name: nginx
+    links:
+        - web
+    networks:
+       - overlay
+    volumes:
+       - /nginx-about/nginx.conf:/etc/nginx/nginx.conf:ro
+
 networks:
   overlay:
   
