@@ -25,6 +25,16 @@ namespace Blog.Model.Db
         public int IsOriginal { get; set; }
 
         /// <summary>
+        /// 文章状态 1 发布 0 草稿
+        /// </summary>
+        public int Status { get; set; }
+
+        /// <summary>
+        /// 摘要右侧图片
+        /// </summary>
+        [SugarColumn(ColumnName = "image_url")]
+        public string ImageUrl { get; set; }
+        /// <summary>
         /// 是否置顶
         /// </summary>
         [SugarColumn(ColumnName = "is_top")]
