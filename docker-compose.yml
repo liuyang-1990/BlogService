@@ -4,8 +4,10 @@ services:
     image: ${VPC_CI_REGISTRY_IMAGE}:${IMAGE_TAG}
     ports:
        - 8080:80
+       - 8081:443
     networks:
        - overlay
+    privileged: true
     container_name: blog-api
     links:
        - db
@@ -13,11 +15,11 @@ services:
     depends_on:
        - db
        - redis
-    env_file:
-       - ./.env
     environment:
        - ASPNETCORE_ENVIRONMENT=Production
-    privileged: true
+    env_file:
+       - web-variables.env
+  
   db:
      image: mysql:5.7
      privileged: true
@@ -28,8 +30,8 @@ services:
      networks:
        - overlay
      container_name: mysql
-     environment:
-       - MYSQL_ROOT_PASSWORD=123456
+     env_file:
+       - db-variables.env
      volumes:
        - "/db/init:/docker-entrypoint-initdb.d/"
        - "/db/data:/var/lib/mysql"
@@ -49,8 +51,8 @@ services:
     restart: always
     privileged: true
     ports:
-        - 80:80
-        - 443:443
+        - 80:8080
+        - 443:8081
     container_name: nginx
     links:
         - web

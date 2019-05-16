@@ -7,4 +7,5 @@ ARG GIT_COMMIT=unspecifid
 LABEL gitcommithash=$GIT_COMMIT
 COPY publish/ .
 EXPOSE 80
+EXPOSE 443
 ENTRYPOINT ["dotnet", "Blog.Api.dll"]

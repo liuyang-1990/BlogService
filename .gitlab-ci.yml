@@ -73,7 +73,8 @@ deploy_gdev:
     variables:
         DOMAIN: 47.101.152.254:8080 
     before_script:
-        - echo Versoin=${CI_COMMIT_SHA:0:8} > .env
+        - echo Version=${CI_COMMIT_SHA:0:8} > web-variables.env
+        - echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} > db-variables.env
     script:
          - docker-compose ps
          - docker-compose down
