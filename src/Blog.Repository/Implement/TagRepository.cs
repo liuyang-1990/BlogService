@@ -2,6 +2,7 @@
 using Blog.Model.Db;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
@@ -20,6 +21,11 @@ namespace Blog.Repository.Implement
                 return await Context.Db.Queryable<TagInfo>().AnyAsync(x => x.TagName == entity.TagName);
             }
             return await Context.Db.Queryable<TagInfo>().AnyAsync(x => x.TagName == entity.TagName && x.Id != entity.Id);
+        }
+
+        public async Task<IEnumerable<TagInfo>> GetAllTags()
+        {
+            return await Context.Db.Queryable<TagInfo>().ToListAsync();
         }
     }
 }

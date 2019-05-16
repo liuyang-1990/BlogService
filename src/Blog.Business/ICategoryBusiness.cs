@@ -1,8 +1,9 @@
 ﻿using Blog.Model.Db;
 using Blog.Model.Request;
-using Blog.Model.ViewModel;
-using System.Threading.Tasks;
 using Blog.Model.Response;
+using Blog.Model.ViewModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Blog.Business
 {
@@ -10,5 +11,7 @@ namespace Blog.Business
     {
         Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName);
         Task<ResultModel<string>> Insert(CategoryRequest category);
+
+        Task<IEnumerable<CategoryInfo>> GetAllCategoryInfos();
     }
 }

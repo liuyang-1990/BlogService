@@ -6,6 +6,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -31,6 +32,11 @@ namespace Blog.Api.Controllers
         public async Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName)
         {
             return await _categoryBusiness.GetPageList(param, categoryName);
+        }
+        [HttpGet("all")]
+        public async Task<IEnumerable<CategoryInfo>> GetAll()
+        {
+            return await _categoryBusiness.GetAllCategoryInfos();
         }
         /// <summary>
         /// 获取某个分类的信息

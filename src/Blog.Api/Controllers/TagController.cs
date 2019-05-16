@@ -6,6 +6,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -31,6 +32,12 @@ namespace Blog.Api.Controllers
         public async Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName)
         {
             return await _tagBusiness.GetPageList(param, tagName);
+        }
+
+        [HttpGet("all")]
+        public async Task<IEnumerable<TagInfo>> GetAll()
+        {
+            return await _tagBusiness.GetAllTags();
         }
         /// <summary>
         /// 获取某个标签的信息

@@ -2,6 +2,7 @@
 using Blog.Model.Db;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
@@ -21,6 +22,11 @@ namespace Blog.Repository.Implement
                 return await Context.Db.Queryable<CategoryInfo>().AnyAsync(x => x.CategoryName == entity.CategoryName);
             }
             return await Context.Db.Queryable<CategoryInfo>().AnyAsync(x => x.CategoryName == entity.CategoryName && x.Id != entity.Id);
+        }
+
+        public async Task<IEnumerable<CategoryInfo>> GetAllCategory()
+        {
+            return await Context.Db.Queryable<CategoryInfo>().ToListAsync();
         }
     }
 }

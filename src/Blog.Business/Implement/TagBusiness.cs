@@ -4,8 +4,8 @@ using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
-using NLog;
 using SqlSugar;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -13,7 +13,6 @@ namespace Blog.Business.Implement
     public class TagBusiness : BaseBusiness<TagInfo>, ITagBusiness
     {
         private readonly ITagRespoitory _tagRespoitory;
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
         public TagBusiness(ITagRespoitory respoitory)
         {
@@ -37,6 +36,11 @@ namespace Blog.Business.Implement
                 .OrIF(!string.IsNullOrEmpty(tagName),
                     it => it.TagName.Contains(tagName)).ToExpression();
             return await base.GetPageList(param, exp);
+        }
+
+        public async Task<IEnumerable<TagInfo>> GetAllTags()
+        {
+            return await _tagRespoitory.GetAllTags();
         }
 
 

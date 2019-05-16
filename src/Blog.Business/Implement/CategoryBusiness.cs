@@ -4,16 +4,15 @@ using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
-using NLog;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
     public class CategoryBusiness : BaseBusiness<CategoryInfo>, ICategoryBusiness
     {
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private readonly ICategoryRepository _categoryRepository;
         public CategoryBusiness(ICategoryRepository respoitory)
         {
@@ -29,7 +28,7 @@ namespace Blog.Business.Implement
             return await base.GetPageList(param, exp);
         }
 
-        public  async Task<ResultModel<string>> Insert(CategoryRequest category)
+        public async Task<ResultModel<string>> Insert(CategoryRequest category)
         {
             if (string.IsNullOrEmpty(category.CategoryName))
             {
@@ -46,6 +45,11 @@ namespace Blog.Business.Implement
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;
+        }
+
+        public async Task<IEnumerable<CategoryInfo>> GetAllCategoryInfos()
+        {
+            return await _categoryRepository.GetAllCategory();
         }
 
 
