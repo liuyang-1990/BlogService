@@ -20,7 +20,6 @@ services:
        - web-variables.env
     volumes:
       - "/blog/api/appsettings.Production.json:/app/appsettings.Production.json"
-      - "/blog/api/wwwroot:ap/wwwroot"
   
   db:
      image: mysql:5.7
