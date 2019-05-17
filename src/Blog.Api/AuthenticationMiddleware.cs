@@ -60,6 +60,10 @@ namespace Blog.Api
                 return _next(httpContext);
             }
             httpContext.Request.Headers["Authorization"] = token;
+            //在使用CORS方式跨域时，浏览器只会返回以下默认头部header:  
+            // 1.Content-Language 2. Content - Type 3. Expires     4.Last - Modified  5. Pragma
+            //在客户端获取自定义的header信息，需要在服务器端header中添加Access-Control-Expose-Headers
+            httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
             httpContext.Response.Headers.Add("Authorization", token);
             return _next(httpContext);
         }
