@@ -1,5 +1,7 @@
 ﻿
 
+using System.Collections.Generic;
+
 namespace Blog.Model.ViewModel
 {
     public class ArticleDto : V_Article_Info
@@ -13,7 +15,7 @@ namespace Blog.Model.ViewModel
         /// <summary>
         /// 分类
         /// </summary>
-        public string Categories { get; set; }
+        public List<int> Category { get; set; }
 
     }
 }

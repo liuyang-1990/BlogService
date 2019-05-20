@@ -13,7 +13,7 @@ namespace Blog.Business
 
         Task<ResultModel<string>> Update(ArticleDto articleDto);
 
-        Task<V_Article_Info> GetArticleDetail(int id);
+        Task<ArticleDetailResponse> GetArticleDetail(int id);
 
         Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize);
 

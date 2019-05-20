@@ -1,4 +1,5 @@
 ﻿using Blog.Model.Db;
+using Blog.Model.Response;
 using Blog.Model.Settings;
 using Blog.Model.ViewModel;
 using Microsoft.Extensions.Options;
@@ -25,18 +26,31 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<V_Article_Info> GetArticleDetail(int id)
+        public async Task<ArticleDetailResponse> GetArticleDetail(int id)
         {
+            var response = new ArticleDetailResponse();
             try
             {
-                return await Task.Run(() => Context.Db.Queryable<V_Article_Info>().InSingle(id));
+                response.ArticleInfo = await Context.Db.Queryable<V_Article_Info>().FirstAsync(x => x.Id == id);
+                var cid = await Context.Db.Queryable<ArticleCategory>().Where(x => x.ArticleId == id).Select(x => x.CategoryId).ToListAsync();
+                response.Categories = await Context.Db.Queryable<CategoryInfo>().In(cid).Select(x => new Property()
+                {
+                    Key = x.Id,
+                    Value = x.CategoryName
+                }).ToListAsync();
+                var tids = await Context.Db.Queryable<ArticleTag>().Where(x => x.ArticleId == id).Select(x => x.TagId).ToListAsync();
+                var tags = await Context.Db.Queryable<TagInfo>().In(tids).OrderBy(x => x.CreateTime).Select(x => new Property()
+                {
+                    Key = x.Id,
+                    Value = x.TagName
+                }).ToListAsync();
+                response.Tags = tids.Select(tid => tags.FirstOrDefault(x => x.Key == tid)).Where(tagInfo => tagInfo != null).ToList();
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                return null;
             }
-
+            return response;
         }
 
         /// <summary>
@@ -44,20 +58,35 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="article"></param>
         /// <param name="content"></param>
-        /// <param name="tagIds"></param>
+        /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds)
+        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds)
         {
             try
             {
                 Context.Db.Ado.BeginTran();
-                var id = Context.Db.Insertable(article).ExecuteReturnIdentity();
+                var id = await Context.Db.Insertable(article).ExecuteReturnIdentityAsync();
                 content.ArticleId = id;
                 await Context.Db.Insertable(content).ExecuteCommandAsync();
+                var tagIds = new List<int>();
+                foreach (var tag in tags)
+                {
+                    if (!Context.Db.Queryable<TagInfo>().Any(i => i.TagName == tag))
+                    {
+                        //需要新增的tag
+                        var tagId = await Context.Db.Insertable(new TagInfo() { TagName = tag }).ExecuteReturnIdentityAsync();
+                        tagIds.Add(tagId);
+                    }
+                    else
+                    {
+                        var tagInfo = await Context.Db.Queryable<TagInfo>().FirstAsync(i => i.TagName == tag);
+                        tagIds.Add(tagInfo.Id);
+                    }
+                }
                 var articleTags = tagIds.Select(tagId => new ArticleTag()
                 {
-                    TagId = tagId.ObjToInt(),
+                    TagId = tagId,
                     ArticleId = id
                 }).ToList();
                 await Context.Db.Insertable(articleTags).ExecuteCommandAsync();
@@ -89,10 +118,8 @@ namespace Blog.Repository.Implement
             {
                 Context.Db.Ado.BeginTran();
                 await Context.Db.Updateable<ArticleInfo>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandAsync();
-                await Context.Db.Updateable<ArticleContent>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
-                await Context.Db.Updateable<ArticleImage>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
-                await Context.Db.Updateable<ArticleCategory>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
-                await Context.Db.Updateable<ArticleTag>().UpdateColumns(it => it.IsDeleted == 1).WhereColumns(it => it.ArticleId == id).ExecuteCommandAsync();
+                //var content = new ArticleContent() { ArticleId = id, IsDeleted = 1, ModifyTime = DateTime.Now };
+                //await Context.Db.Updateable(content).UpdateColumns(s => new { s.IsDeleted, s.ModifyTime, s.ArticleId }).WhereColumns(it => new { it.ArticleId }).ExecuteCommandAsync();
                 Context.Db.Ado.CommitTran();
                 return true;
             }
@@ -100,7 +127,7 @@ namespace Blog.Repository.Implement
             {
                 _logger.Error(ex.Message);
                 Context.Db.Ado.RollbackTran();
-                throw;
+                return false;
             }
 
         }
@@ -113,7 +140,7 @@ namespace Blog.Repository.Implement
         /// <param name="tagIds"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds)
+        public async Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tagIds, List<int> categoryIds)
         {
             try
             {

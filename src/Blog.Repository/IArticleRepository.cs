@@ -2,16 +2,17 @@
 using Blog.Model.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blog.Model.Response;
 
 namespace Blog.Repository
 {
     public interface IArticleRepository : IBaseRepository<ArticleInfo>
     {
-        Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds);
+        Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds);
 
-        Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tagIds, string[] categoryIds);
+        Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds);
 
-        Task<V_Article_Info> GetArticleDetail(int id);
+        Task<ArticleDetailResponse> GetArticleDetail(int id);
 
         Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize);
 

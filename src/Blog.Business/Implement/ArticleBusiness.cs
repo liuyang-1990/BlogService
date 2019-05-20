@@ -26,15 +26,18 @@ namespace Blog.Business.Implement
             var article = new ArticleInfo()
             {
                 Abstract = articleDto.Abstract,
-                Title = articleDto.Title
+                Title = articleDto.Title,
+                IsOriginal = articleDto.IsOriginal,
+                Status = articleDto.Status,
+                ImageUrl = articleDto.ImageUrl
             };
             var content = new ArticleContent()
             {
                 Content = articleDto.Content
             };
             var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            response.IsSuccess = await _articleRepository.Insert(article, content, tagIds, categoryIds);
+            // var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            response.IsSuccess = await _articleRepository.Insert(article, content, tagIds, articleDto.Category);
             response.Status = response.IsSuccess ? "0" : "1";
 
             return response;
@@ -57,13 +60,13 @@ namespace Blog.Business.Implement
                 ModifyTime = DateTime.Now
             };
             var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            response.IsSuccess = await _articleRepository.Update(article, content, tagIds, categoryIds);
+            //var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            response.IsSuccess = await _articleRepository.Update(article, content, tagIds, articleDto.Category);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
 
-        public async Task<V_Article_Info> GetArticleDetail(int id)
+        public async Task<ArticleDetailResponse> GetArticleDetail(int id)
         {
             return await _articleRepository.GetArticleDetail(id);
         }
