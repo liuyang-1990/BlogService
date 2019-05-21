@@ -30,12 +30,13 @@ namespace Blog.Api.Controllers
         /// 分页获取文章
         /// </summary>
         /// <param name="param"></param>
+        /// <param name="searchParmas"></param>
         /// <returns></returns>
         [HttpGet("page")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas)
         {
-            return await _articleBusiness.GetPageList(param, null);
+            return await _articleBusiness.GetPageList(param, searchParmas);
         }
 
         /// <summary>

@@ -1,7 +1,9 @@
 ﻿using Blog.Model.Db;
+using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
+using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +21,35 @@ namespace Blog.Business.Implement
             _articleRepository = articleRepository;
         }
 
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas)
+        {
+            var exp = Expressionable.Create<ArticleInfo>().AndIF(true, it => it.Status == searchParmas.Status);
+            if (!string.IsNullOrEmpty(searchParmas.StartTime) && string.IsNullOrEmpty(searchParmas.EndTime))
+            {
+                exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate());
+            }
+            else if (!string.IsNullOrEmpty(searchParmas.EndTime) && DateTime.TryParse(searchParmas.EndTime, out _) && string.IsNullOrEmpty(searchParmas.StartTime))
+            {
+                exp.AndIF(true, it => it.CreateTime <= searchParmas.EndTime.ObjToDate());
+            }
+            else if (!string.IsNullOrEmpty(searchParmas.StartTime) && !string.IsNullOrEmpty(searchParmas.EndTime))
+            {
+                var res = DateTime.Compare(searchParmas.StartTime.ObjToDate(), searchParmas.EndTime.ObjToDate());
+                if (res < 0)
+                {
+                    exp.AndIF(true, it => it.CreateTime > searchParmas.StartTime.ObjToDate() && it.CreateTime < searchParmas.EndTime.ObjToDate());
+                }
+                else if (res == 0)
+                {
+                    exp.AndIF(true, it => it.CreateTime > searchParmas.StartTime.ObjToDate() && it.CreateTime < searchParmas.StartTime.ObjToDate().AddDays(1));
+                }
+                else if (res > 0)
+                {
+                    exp.AndIF(true, it => it.CreateTime > searchParmas.EndTime.ObjToDate() && it.CreateTime < searchParmas.StartTime.ObjToDate());
+                }
+            }
+            return await base.GetPageList(param, exp.ToExpression());
+        }
 
         public async Task<ResultModel<string>> Insert(ArticleDto articleDto)
         {
