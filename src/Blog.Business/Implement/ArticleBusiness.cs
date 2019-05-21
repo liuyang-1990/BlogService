@@ -51,6 +51,9 @@ namespace Blog.Business.Implement
                 Abstract = articleDto.Abstract,
                 Title = articleDto.Title,
                 Id = articleDto.Id,
+                IsOriginal = articleDto.IsOriginal,
+                Status = articleDto.Status,
+                ImageUrl = articleDto.ImageUrl,
                 ModifyTime = DateTime.Now
             };
             var content = new ArticleContent()

@@ -4,7 +4,6 @@ using Blog.Model.Settings;
 using Blog.Model.ViewModel;
 using Microsoft.Extensions.Options;
 using NLog;
-using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,7 +92,7 @@ namespace Blog.Repository.Implement
                 var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = id,
-                    CategoryId = categoryId.ObjToInt()
+                    CategoryId = categoryId
                 }).ToList();
                 await Context.Db.Insertable(articleCategories).ExecuteCommandAsync();
                 Context.Db.Ado.CommitTran();
@@ -137,10 +136,10 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="article"></param>
         /// <param name="content"></param>
-        /// <param name="tagIds"></param>
+        /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tagIds, List<int> categoryIds)
+        public async Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds)
         {
             try
             {
@@ -150,18 +149,33 @@ namespace Blog.Repository.Implement
                 await Context.Db.Updateable(content).WhereColumns(it => it.ArticleId).ExecuteCommandAsync();
                 //先删除再添加
                 await Context.Db.Deleteable<ArticleTag>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
+                await Context.Db.Deleteable<ArticleCategory>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
+                var tagIds = new List<int>();
+                foreach (var tag in tags)
+                {
+                    if (!Context.Db.Queryable<TagInfo>().Any(i => i.TagName == tag))
+                    {
+                        //需要新增的tag
+                        var tagId = await Context.Db.Insertable(new TagInfo() { TagName = tag }).ExecuteReturnIdentityAsync();
+                        tagIds.Add(tagId);
+                    }
+                    else
+                    {
+                        var tagInfo = await Context.Db.Queryable<TagInfo>().FirstAsync(i => i.TagName == tag);
+                        tagIds.Add(tagInfo.Id);
+                    }
+                }
                 var articleTags = tagIds.Select(tagId => new ArticleTag()
                 {
-                    TagId = tagId.ObjToInt(),
-                    ArticleId = article.Id
+                    TagId = tagId,
+                    ArticleId = article.Id,
                 }).ToList();
                 await Context.Db.Insertable(articleTags).ExecuteCommandAsync();
 
-                await Context.Db.Deleteable<ArticleCategory>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
                 var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = article.Id,
-                    CategoryId = categoryId.ObjToInt()
+                    CategoryId = categoryId
                 }).ToList();
                 await Context.Db.Insertable(articleCategories).ExecuteCommandAsync();
                 Context.Db.Ado.CommitTran();
@@ -171,7 +185,7 @@ namespace Blog.Repository.Implement
             {
                 Context.Db.Ado.RollbackTran();
                 _logger.Error(ex.Message);
-                throw;
+                return false;
             }
         }
 
