@@ -72,7 +72,7 @@ namespace Blog.Api
                 options.AddPolicy("LimitRequests", policy =>
                     {
                         policy
-                            .WithOrigins("http://localhost:3000", "http://127.0.0.1:3000")//允许任何源
+                            .WithOrigins(Configuration["Origins"])
                             .AllowAnyMethod()//允许任何方式
                             .AllowAnyHeader()//允许任何头
                             .AllowCredentials();//允许cookie
