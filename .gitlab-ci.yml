@@ -3,6 +3,7 @@ image: microsoft/dotnet:2.1-sdk
 variables:
   IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
   Solution: ./src/Blog.Api/Blog.Api.csproj
+  TestSolution: ./test/Blog.Test/Blog.Test.csproj
 
 stages:
     - test
@@ -21,9 +22,10 @@ job_build:
 unit_test:
      stage: test
      before_script:
-        - dotnet restore $Solution
+        - dotnet restore $TestSolution
+        - dotnet build $TestSolution
      script: 
-        - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutputDirectory=../../coverage
+        - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
      artifacts:
         when: on_success
         name: "code-coverage-${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
