@@ -66,17 +66,18 @@ namespace Blog.Api
             services.Configure<JwtConfig>(jwtConfig);
             services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
             #region 跨域
-
             services.AddCors(options =>
             {
                 options.AddPolicy("LimitRequests", policy =>
-                    {
-                        policy
-                            .WithOrigins(Configuration["Origins"])
-                            .AllowAnyMethod()//允许任何方式
-                            .AllowAnyHeader()//允许任何头
-                            .AllowCredentials();//允许cookie
-                    });
+                {
+                    policy
+                        .WithOrigins("http://www.nayoung515.top", "http://www.nayoung515.top:3000",
+                            "http://47.101.152.254", "http://47.101.152.254:3000", Configuration["Origins"])
+                        .AllowAnyMethod() //允许任何方式
+                        .AllowAnyHeader() //允许任何头
+                        .WithExposedHeaders("Authorization") //返回自定义Header
+                        .AllowCredentials();
+                });
             });
 
             #endregion
