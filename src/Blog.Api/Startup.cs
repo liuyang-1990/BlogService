@@ -144,8 +144,16 @@ namespace Blog.Api
               });
             #endregion
 
-            //AutoMapper
+            #region AutoMapper
             services.AddAutoMapper(typeof(Startup));
+            #endregion
+
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.RedirectStatusCode = StatusCodes.Status301MovedPermanently;
+            //    options.HttpsPort = 3001;
+            //});
+
             #region Ioc
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -156,6 +164,8 @@ namespace Blog.Api
             //第三方IOC接管 core内置DI容器 
             return new AutofacServiceProvider(container);
             #endregion
+
+
         }
 
         /// <summary>
@@ -166,6 +176,16 @@ namespace Blog.Api
         /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHsts();
+            }
+
             #region Swagger
             app.UseSwagger();
             app.UseSwaggerUI(option =>
@@ -177,13 +197,14 @@ namespace Blog.Api
 
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");
-            app.UseHsts();
             //自定义异常处理
             app.UseMiddleware<ExceptionFilter>();
             //跨域
             app.UseCors("LimitRequests");
-            //认证
+
+            //自定义认证
             app.UseMiddleware<AuthenticationMiddleware>();
+            //认证
             app.UseAuthentication();
             // 跳转https
             app.UseHttpsRedirection();
@@ -191,6 +212,7 @@ namespace Blog.Api
             app.UseStatusCodePages();
 
             app.UseStaticFiles();
+            app.UseCookiePolicy();
             app.UseMvc();
 
         }
