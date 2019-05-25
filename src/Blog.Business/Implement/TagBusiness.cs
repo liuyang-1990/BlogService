@@ -12,19 +12,22 @@ namespace Blog.Business.Implement
 {
     public class TagBusiness : BaseBusiness<TagInfo>, ITagBusiness
     {
-        private readonly ITagRespoitory _tagRespoitory;
+        private readonly ITagRepository _tagRepository;
 
-        public TagBusiness(ITagRespoitory respoitory)
+        public TagBusiness(ITagRepository repository)
         {
-            base.BaseRepository = respoitory;
-            _tagRespoitory = respoitory;
+            base.BaseRepository = repository;
+            _tagRepository = repository;
         }
 
         public override async Task<ResultModel<string>> Insert(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRespoitory.IsExist(entity, UserAction.Add);
-            if (!isExist) return await base.Insert(entity);
+            var isExist = await _tagRepository.IsExist(entity, UserAction.Add);
+            if (!isExist)
+            {
+                return await base.Insert(entity);
+            }
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;
@@ -40,15 +43,19 @@ namespace Blog.Business.Implement
 
         public async Task<IEnumerable<TagInfo>> GetAllTags()
         {
-            return await _tagRespoitory.GetAllTags();
+            return await _tagRepository.GetAllTags();
         }
 
 
         public override async Task<ResultModel<string>> Update(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRespoitory.IsExist(entity, UserAction.Update);
-            if (!isExist) return await base.Update(entity);
+            var isExist = await _tagRepository.IsExist(entity, UserAction.Update);
+            if (!isExist)
+            {
+                return await base.Update(entity);
+            }
+
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;

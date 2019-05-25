@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
 {
-    public class TagRepository : BaseRepository<TagInfo>, ITagRespoitory
+    public class TagRepository : BaseRepository<TagInfo>, ITagRepository
     {
         public TagRepository(IOptions<DbSetting> settings) : base(settings)
         {

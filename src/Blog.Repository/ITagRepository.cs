@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Repository
 {
-    public interface ITagRespoitory : IBaseRepository<TagInfo>
+    public interface ITagRepository : IBaseRepository<TagInfo>
     {
         Task<bool> IsExist(TagInfo entity, UserAction userAction);
 
