@@ -25,16 +25,16 @@ unit_test:
         - dotnet restore $TestSolution
         - dotnet build $TestSolution
      script: 
-        - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=[xunit.*]*
+        - cd ./test/Blog.Test
+        - dotnet /root/.nuget/packages/reportgenerator/4.1.7/tools/netcoreapp2.1/ReportGenerator.dll -reports:coverage.opencover.xml -targetdir:../../coverage 
      artifacts:
         when: on_success
         name: "code-coverage-${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
         expire_in: 1 mos and 2 weeks
         paths:
           - coverage/
-
-
-    
+  
 publish_package:
     stage: test
     before_script:
@@ -69,8 +69,9 @@ job_build_image:
       - master 
       - /^feature-.*$/
   allow_failure: false
- 
-deploy_gdev:
+
+# ========== deploy stage jobs ============
+.deploy_job_template: &job_deploy_definition
     stage: deploy
     variables:
         DOMAIN: 47.101.152.254:8080 
@@ -87,8 +88,14 @@ deploy_gdev:
         name: gdev
         url: http://${DOMAIN}/swagger/
     when: on_success
+    dependencies: []
+    allow_failure: false
     tags:
         - runner02
+
+deploy_prd:
+    <<: *job_deploy_definition
+    when: manual
     only:
-        - master   
+     - master
 
