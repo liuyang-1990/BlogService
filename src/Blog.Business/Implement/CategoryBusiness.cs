@@ -28,20 +28,14 @@ namespace Blog.Business.Implement
             return await base.GetPageList(param, exp);
         }
 
-        public async Task<ResultModel<string>> Insert(CategoryRequest category)
+        public override async Task<ResultModel<string>> Insert(CategoryInfo entity)
         {
-            if (string.IsNullOrEmpty(category.CategoryName))
-            {
-                throw new ArgumentNullException(nameof(category.CategoryName));
-            }
             var response = new ResultModel<string>();
-            var entity = new CategoryInfo()
-            {
-                CategoryName = category.CategoryName,
-                Description = category.Description
-            };
             var isExist = await _categoryRepository.IsExist(entity, UserAction.Add);
-            if (!isExist) return await base.Insert(entity);
+            if (!isExist)
+            {
+                return await base.Insert(entity);
+            }
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;
@@ -57,7 +51,11 @@ namespace Blog.Business.Implement
         {
             var response = new ResultModel<string>();
             var isExist = await _categoryRepository.IsExist(entity, UserAction.Update);
-            if (!isExist) return await base.Update(entity);
+            if (!isExist)
+            {
+                return await base.Update(entity);
+            }
+
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;

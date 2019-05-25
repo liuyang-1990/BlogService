@@ -54,7 +54,7 @@ namespace Blog.Api.Controllers
         /// <param name="category"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddCategory([FromBody]CategoryRequest category)
+        public async Task<ResultModel<string>> AddCategory([FromBody]CategoryInfo category)
         {
             return await _categoryBusiness.Insert(category);
         }
