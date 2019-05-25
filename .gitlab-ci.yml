@@ -74,7 +74,7 @@ job_build_image:
 .deploy_job_template: &job_deploy_definition
     stage: deploy
     variables:
-        DOMAIN: 47.101.152.254:8080 
+        DOMAIN: 47.101.152.254:8081
     before_script:
         - echo Version=${CI_COMMIT_SHA:0:8} > web-variables.env
         - echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} > db-variables.env
@@ -85,7 +85,7 @@ job_build_image:
     after_script:
          - docker image prune -f -a
     environment:
-        name: gdev
+        name: prod
         url: http://${DOMAIN}/swagger/
     when: on_success
     dependencies: []
