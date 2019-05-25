@@ -3,7 +3,7 @@ services:
   web:
     image: ${VPC_CI_REGISTRY_IMAGE}:${IMAGE_TAG}
     ports:
-       - 8080:80
+       - 8081:80
     networks:
        - overlay
     privileged: true
