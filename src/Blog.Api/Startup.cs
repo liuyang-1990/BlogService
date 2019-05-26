@@ -14,11 +14,13 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using StackExchange.Profiling.Storage;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using SqlSugar;
 
 namespace Blog.Api
 {
@@ -65,6 +67,15 @@ namespace Blog.Api
             services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<JwtConfig>(jwtConfig);
             services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
+
+            services.AddMiniProfiler(options =>
+            {
+                options.RouteBasePath = "/profiler";
+                var memoryCacheStorage = options.Storage as MemoryCacheStorage;
+                if (memoryCacheStorage != null)
+                    memoryCacheStorage.CacheDuration = TimeSpan.FromMinutes(10);
+            });
+
             #region 跨域
             services.AddCors(options =>
             {
@@ -149,6 +160,7 @@ namespace Blog.Api
             services.AddAutoMapper(typeof(Startup));
             #endregion
 
+         
             //services.AddHttpsRedirection(options =>
             //{
             //    options.RedirectStatusCode = StatusCodes.Status301MovedPermanently;
@@ -193,6 +205,8 @@ namespace Blog.Api
             {
                 option.DocumentTitle = Name;
                 option.SwaggerEndpoint($"/swagger/{Version}/swagger.json", $"{Name} {Version}");
+                option.RoutePrefix = "swagger";
+                option.IndexStream = () => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("Blog.Api.index.html");
             });
             #endregion
 
@@ -211,7 +225,8 @@ namespace Blog.Api
             app.UseHttpsRedirection();
             // 返回错误码
             app.UseStatusCodePages();
-
+            //miniProfiler
+            app.UseMiniProfiler();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseMvc();
