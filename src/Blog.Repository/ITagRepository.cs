@@ -9,6 +9,6 @@ namespace Blog.Repository
     {
         Task<bool> IsExist(TagInfo entity, UserAction userAction);
 
-        Task<IEnumerable<TagInfo>> GetAllTags();
+        Task<List<TagInfo>> GetAllTags();
     }
 }

@@ -5,9 +5,10 @@ namespace Blog.Infrastructure
     public interface IRedisHelper
     {
         T Get<T>(string key);
+
+        string Get(string key);
         //设置
         void Set<T>(string key, T value);
-
         void Set<T>(string key, T value, TimeSpan timeSpan);
 
         void HashSet<T>(string key, string subkey, T value, TimeSpan timeSpan);

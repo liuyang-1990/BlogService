@@ -23,7 +23,7 @@ namespace Blog.Repository.Implement
             return await Context.Db.Queryable<TagInfo>().AnyAsync(x => x.TagName == entity.TagName && x.Id != entity.Id);
         }
 
-        public async Task<IEnumerable<TagInfo>> GetAllTags()
+        public async Task<List<TagInfo>> GetAllTags()
         {
             return await Context.Db.Queryable<TagInfo>().ToListAsync();
         }

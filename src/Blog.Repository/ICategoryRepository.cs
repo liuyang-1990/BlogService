@@ -9,6 +9,6 @@ namespace Blog.Repository
     {
         Task<bool> IsExist(CategoryInfo entity, UserAction userAction);
 
-        Task<IEnumerable<CategoryInfo>> GetAllCategory();
+        Task<List<CategoryInfo>> GetAllCategory();
     }
 }

@@ -24,7 +24,7 @@ namespace Blog.Repository.Implement
             return await Context.Db.Queryable<CategoryInfo>().AnyAsync(x => x.CategoryName == entity.CategoryName && x.Id != entity.Id);
         }
 
-        public async Task<IEnumerable<CategoryInfo>> GetAllCategory()
+        public async Task<List<CategoryInfo>> GetAllCategory()
         {
             return await Context.Db.Queryable<CategoryInfo>().ToListAsync();
         }

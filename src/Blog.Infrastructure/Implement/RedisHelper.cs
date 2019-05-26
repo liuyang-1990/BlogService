@@ -52,6 +52,11 @@ namespace Blog.Infrastructure.Implement
             return JsonConvert.DeserializeObject<T>(_db.StringGet(key));
         }
 
+        public string Get(string key)
+        {
+            return _db.StringGet(key);
+        }
+
         public void Set<T>(string key, T value)
         {
 

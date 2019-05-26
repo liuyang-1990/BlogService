@@ -93,7 +93,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
-        public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
         {
             return await _articleBusiness.GetArticleByCategory(categoryId, pageIndex, pageSize);
         }
@@ -107,7 +107,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
-        public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
         {
             return await _articleBusiness.GetArticleByTag(tagId, pageIndex, pageSize);
         }

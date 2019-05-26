@@ -1,8 +1,7 @@
 ﻿using Blog.Model.Db;
-using Blog.Model.ViewModel;
+using Blog.Model.Response;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blog.Model.Response;
 
 namespace Blog.Repository
 {

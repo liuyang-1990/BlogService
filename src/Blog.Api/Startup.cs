@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Blog.Api.AOP;
 using SqlSugar;
 
 namespace Blog.Api
@@ -170,8 +171,10 @@ namespace Blog.Api
             #region Ioc
             var builder = new ContainerBuilder();
             builder.Populate(services);
+            builder.RegisterType<BlogRedisCacheAOP>();
             //新模块组件注册    
             builder.RegisterModule<AutofacModuleRegister>();
+          
             //创建容器
             var container = builder.Build();
             //第三方IOC接管 core内置DI容器 

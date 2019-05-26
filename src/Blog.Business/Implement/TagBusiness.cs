@@ -1,4 +1,5 @@
 ﻿using Blog.Model;
+using Blog.Model.Attribute;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
@@ -41,7 +42,8 @@ namespace Blog.Business.Implement
             return await base.GetPageList(param, exp);
         }
 
-        public async Task<IEnumerable<TagInfo>> GetAllTags()
+        [Caching]
+        public async Task<List<TagInfo>> GetAllTags()
         {
             return await _tagRepository.GetAllTags();
         }

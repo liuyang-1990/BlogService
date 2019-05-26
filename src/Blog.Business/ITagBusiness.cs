@@ -10,6 +10,6 @@ namespace Blog.Business
     {
         Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName);
 
-        Task<IEnumerable<TagInfo>> GetAllTags();
+        Task<List<TagInfo>> GetAllTags();
     }
 }
