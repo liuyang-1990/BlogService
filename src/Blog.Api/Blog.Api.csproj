@@ -46,7 +46,7 @@
     <Content Update="skywalking.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\init.sql">
+    <Content Update="wwwroot\init\init.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
