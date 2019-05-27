@@ -13,7 +13,7 @@ namespace Blog.Api.Controllers
 {
     [EnableCors("LimitRequests")]//支持跨域
     [BlogApiController]
-    //[Authorize(Policy = "Admin")]
+    [Authorize(Policy = "Admin")]
     public class TagController : ControllerBase
     {
         private readonly ITagBusiness _tagBusiness;

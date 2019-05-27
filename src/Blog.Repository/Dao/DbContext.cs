@@ -1,7 +1,7 @@
 ﻿using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
 using SqlSugar;
-using System;
+using StackExchange.Profiling;
 using System.Linq;
 
 namespace Blog.Repository.Dao
@@ -44,8 +44,7 @@ namespace Blog.Repository.Dao
             {
                 var sqlP = sql + "\r\n" +
                            Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
-                Console.WriteLine();
-                Console.WriteLine(sqlP);
+                MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
             };
         }
     }

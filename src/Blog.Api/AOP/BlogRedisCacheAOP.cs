@@ -4,7 +4,6 @@ using Castle.DynamicProxy;
 using Newtonsoft.Json;
 using SqlSugar;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,8 +20,7 @@ namespace Blog.Api.AOP
         {
             var method = invocation.MethodInvocationTarget ?? invocation.Method;
 
-            var attribute = method.GetCustomAttributes(typeof(CachingAttribute), true).FirstOrDefault() as CachingAttribute;
-            if (attribute != null)
+            if (method.GetCustomAttributes(typeof(CachingAttribute), true).FirstOrDefault() is CachingAttribute attribute)
             {
                 var key = GetCustomKey(invocation);
                 var cacheValue = _redisHelper.Get(key);
@@ -42,7 +40,6 @@ namespace Blog.Api.AOP
                         if (resultTypes.Any())
                         {
                             var resultType = resultTypes.FirstOrDefault();
-                            // 核心1，直接获取 dynamic 类型
                             dynamic temp = JsonConvert.DeserializeObject(cacheValue, resultType);
                             response = Task.FromResult(temp);
 
@@ -55,8 +52,8 @@ namespace Blog.Api.AOP
                     }
                     else
                     {
-                        // 核心2，要进行 ChangeType
-                        response = Convert.ChangeType(_redisHelper.Get<object>(key), type);
+                        dynamic temp = JsonConvert.DeserializeObject(cacheValue, type);
+                        response = temp;
                     }
                     invocation.ReturnValue = response;
                 }

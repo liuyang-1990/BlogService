@@ -1,27 +1,31 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
+using Blog.Api.AOP;
 using Blog.Api.AutoFac;
+using Blog.Infrastructure;
+using Blog.Infrastructure.Implement;
 using Blog.Model.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using SqlSugar;
 using StackExchange.Profiling.Storage;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Blog.Api.AOP;
-using SqlSugar;
 
 namespace Blog.Api
 {
@@ -161,20 +165,23 @@ namespace Blog.Api
             services.AddAutoMapper(typeof(Startup));
             #endregion
 
-         
+
             //services.AddHttpsRedirection(options =>
             //{
             //    options.RedirectStatusCode = StatusCodes.Status301MovedPermanently;
             //    options.HttpsPort = 3001;
             //});
 
+            services.TryAddSingleton<IRedisHelper, RedisHelper>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             #region Ioc
             var builder = new ContainerBuilder();
             builder.Populate(services);
             builder.RegisterType<BlogRedisCacheAOP>();
+            builder.RegisterType<MiniProfilerAOP>();
             //新模块组件注册    
             builder.RegisterModule<AutofacModuleRegister>();
-          
+
             //创建容器
             var container = builder.Build();
             //第三方IOC接管 core内置DI容器 

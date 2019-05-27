@@ -11,13 +11,16 @@ namespace Blog.Api.AutoFac
         //重写Autofac管道Load方法，在这里注册注入
         protected override void Load(ContainerBuilder builder)
         {
-            //注册Service中的对象,Service中的类要以Business结尾，否则注册失败
-            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Business")).Where(a => a.Name.EndsWith("Business"))
-                .AsImplementedInterfaces().InstancePerLifetimeScope().EnableInterfaceInterceptors().InterceptedBy(typeof(BlogRedisCacheAOP));
-            //注册Repository中的对象,Repository中的类要以Repository结尾，否则注册失败
-            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Repository")).Where(a => a.Name.EndsWith("Repository")).AsImplementedInterfaces();
+            //注册Service中的对象,
+            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Business"))
+                .AsImplementedInterfaces().InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(BlogRedisCacheAOP), typeof(MiniProfilerAOP));
 
-            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Infrastructure")).Where(a => a.Name.EndsWith("Helper")).AsImplementedInterfaces();
+            //注册Repository中的对象
+            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Repository")).AsImplementedInterfaces();
+
+            builder.RegisterAssemblyTypes(GetAssemblyByName("Blog.Infrastructure")).AsImplementedInterfaces();
 
         }
         /// <summary>
