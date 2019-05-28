@@ -83,10 +83,26 @@ namespace Blog.Api.Controllers
             return await _userBusiness.Update(userInfo);
         }
 
-        [HttpPost("chgPassword")]
+        /// <summary>
+        /// 更新密码
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("password")]
         public async Task<ResultModel<string>> UpdatePassword([FromBody]ChangePasswordRequest request)
         {
             return await _userBusiness.UpdatePassword(request);
+        }
+
+        /// <summary>
+        /// 更新状态
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("status")]
+        public async Task<ResultModel<string>> UpdateStatus([FromBody]UpdateStatusRequest request)
+        {
+            return await _userBusiness.UpdateStatus(request);
         }
 
 

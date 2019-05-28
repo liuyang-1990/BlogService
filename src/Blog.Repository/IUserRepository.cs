@@ -1,5 +1,6 @@
 ﻿using Blog.Model;
 using Blog.Model.Db;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Repository
@@ -10,5 +11,7 @@ namespace Blog.Repository
         Task<UserInfo> GetUserByUserName(string userName, string password);
 
         Task<bool> ChangePassword(UserInfo userInfo);
+
+        Task<bool> UpdateStatus(List<int> ids, int status);
     }
 }

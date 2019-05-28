@@ -2,6 +2,7 @@
 using Blog.Model.Db;
 using Blog.Model.Settings;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
@@ -31,6 +32,11 @@ namespace Blog.Repository.Implement
         public async Task<bool> ChangePassword(UserInfo userInfo)
         {
             return await Context.Db.Updateable(userInfo).UpdateColumns(it => new { it.Password }).ExecuteCommandHasChangeAsync();
+        }
+
+        public Task<bool> UpdateStatus(List<int> ids, int status)
+        {
+            return Context.Db.Updateable<UserInfo>().UpdateColumns(it => it.Status).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
     }
 

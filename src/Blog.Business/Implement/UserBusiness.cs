@@ -99,5 +99,13 @@ namespace Blog.Business.Implement
             return response;
 
         }
+
+        public async Task<ResultModel<string>> UpdateStatus(UpdateStatusRequest request)
+        {
+            var response = new ResultModel<string>();
+            response.IsSuccess = await _userRepository.UpdateStatus(request.Ids, request.Status);
+            response.Status = response.IsSuccess ? "0" : "1";
+            return response;
+        }
     }
 }
