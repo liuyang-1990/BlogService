@@ -69,7 +69,8 @@ namespace Blog.Api.Controllers
             var url = "/images/" + DateTime.Now.ToString("yyyy-MM-dd") + "/" + fileName;
             return new JsonResult(new
             {
-                Result = domain + url,
+                Url = url,
+                WebUrl = domain + url,
                 Message = "Success"
             });
         }

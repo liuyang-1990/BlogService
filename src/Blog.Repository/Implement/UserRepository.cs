@@ -36,8 +36,8 @@ namespace Blog.Repository.Implement
 
         public Task<bool> UpdateStatus(List<int> ids, int status)
         {
-            return Context.Db.Updateable<UserInfo>().UpdateColumns(it => it.Status).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return Context.Db.Updateable<UserInfo>().UpdateColumns(it => new UserInfo() { Status = status }).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
     }
-
 }
+
