@@ -76,11 +76,11 @@ namespace Blog.Api
             services.AddMiniProfiler(options =>
             {
                 options.RouteBasePath = "/profiler";
-                var memoryCacheStorage = options.Storage as MemoryCacheStorage;
-                if (memoryCacheStorage != null)
+                if (options.Storage is MemoryCacheStorage memoryCacheStorage)
+                {
                     memoryCacheStorage.CacheDuration = TimeSpan.FromMinutes(10);
+                }
             });
-
             #region 跨域
             services.AddCors(options =>
             {
@@ -88,7 +88,7 @@ namespace Blog.Api
                 {
                     policy
                         .WithOrigins("http://www.nayoung515.top", "http://www.nayoung515.top:3000",
-                            "http://47.101.152.254", "http://47.101.152.254:3000", Configuration["Origins"])
+                            "http://47.101.152.254", "http://47.101.152.254:3000", "http://localhost:3000", "http://127.0.0.1:3000")
                         .AllowAnyMethod() //允许任何方式
                         .AllowAnyHeader() //允许任何头
                         .WithExposedHeaders("Authorization") //返回自定义Header
