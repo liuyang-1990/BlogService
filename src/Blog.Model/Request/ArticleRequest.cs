@@ -6,7 +6,6 @@
 
         public string EndTime { get; set; }
 
-        public int Status { get; set; } = 1;
-
+        public int? Status { get; set; }
     }
 }
