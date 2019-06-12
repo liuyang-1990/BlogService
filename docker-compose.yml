@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   web:
     image: ${VPC_CI_REGISTRY_IMAGE}:${IMAGE_TAG}
@@ -48,7 +48,24 @@ services:
        - overlay
      volumes:
        - "/blog/redis/data:/data"
+  nginx:
+    build: Dockerfile.nginx
+    restart: always
+    container_name: nginx
+    networks:
+       - overlay
+    ports:
+       - 80:80
+       - 443:443
+    links:
+       - web
+    volumes:
+      - /blog/nginx-about/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /blog/nginx-about/cert:/etc/nginx/cert
+      - /blog/www:/usr/share/nginx/html/
+     command: /bin/bash -c "nginx -g 'daemon off;'"
 
+  
 networks:
   overlay:
   

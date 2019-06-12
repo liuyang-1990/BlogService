@@ -1,0 +1,7 @@
+FROM nginx
+WORKDIR /usr/src/app/
+RUN mkdir -p /etc/nginx/cert
+RUN mkdir -p /etc/nginx/log
+EXPOSE 80
+EXPOSE 443
+CMD ["nginx", "-g", "daemon off;"]
