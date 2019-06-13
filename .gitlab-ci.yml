@@ -82,6 +82,7 @@ job_build_image:
          - docker-compose ps
          - docker-compose down
          - docker-compose up -d
+         - docker-compose logs
     after_script:
          - docker image prune -f -a
     environment:

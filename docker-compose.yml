@@ -65,7 +65,6 @@ services:
       - /blog/nginx-about/nginx.conf:/etc/nginx/conf.d/default.conf
       - /blog/nginx-about/cert:/etc/nginx/cert
       - /blog/www:/usr/share/nginx/html/
-    command: /bin/bash -c "nginx -g 'daemon off;'"
 
   
 networks:
