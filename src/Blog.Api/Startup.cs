@@ -64,7 +64,7 @@ namespace Blog.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var jwtConfig = Configuration.GetSection("JwtAuth");
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
