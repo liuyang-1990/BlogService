@@ -28,7 +28,7 @@ unit_test:
      script: 
         - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=[xunit.*]*
         - cd ./test/Blog.Test
-        - dotnet /root/.nuget/packages/reportgenerator/4.2.5/tools/netcoreapp2.2/ReportGenerator.dll -reports:coverage.opencover.xml -targetdir:../../coverage 
+        - dotnet /root/.nuget/packages/reportgenerator/4.2.5/tools/netcoreapp2.1/ReportGenerator.dll -reports:coverage.opencover.xml -targetdir:../../coverage 
      artifacts:
         when: on_success
         name: "code-coverage-${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
