@@ -116,9 +116,7 @@ namespace Blog.Repository.Implement
             try
             {
                 Context.Db.Ado.BeginTran();
-                await Context.Db.Updateable<ArticleInfo>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandAsync();
-                //var content = new ArticleContent() { ArticleId = id, IsDeleted = 1, ModifyTime = DateTime.Now };
-                //await Context.Db.Updateable(content).UpdateColumns(s => new { s.IsDeleted, s.ModifyTime, s.ArticleId }).WhereColumns(it => new { it.ArticleId }).ExecuteCommandAsync();
+                await  Context.Db.Updateable<ArticleInfo>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandAsync();
                 Context.Db.Ado.CommitTran();
                 return true;
             }

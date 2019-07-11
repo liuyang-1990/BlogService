@@ -32,8 +32,8 @@ namespace Blog.Repository.Implement
             .ToPageListAsync(param.PageNum, param.PageSize, totalNumber);
             return new JsonResultModel<T>()
             {
-                Rows = pageInfo.Key,
-                TotalRows = pageInfo.Value
+                Rows = pageInfo,
+                TotalRows = totalNumber
             };
         }
 
@@ -76,7 +76,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> Delete(int id)
         {
-            return await Context.Db.Updateable<T>().UpdateColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
+            return await Context.Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
         }
     }
 }

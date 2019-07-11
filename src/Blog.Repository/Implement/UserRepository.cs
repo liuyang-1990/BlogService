@@ -31,12 +31,12 @@ namespace Blog.Repository.Implement
 
         public async Task<bool> ChangePassword(UserInfo userInfo)
         {
-            return await Context.Db.Updateable(userInfo).UpdateColumns(it => new { it.Password }).ExecuteCommandHasChangeAsync();
+            return await Context.Db.Updateable(userInfo).SetColumns(it => new UserInfo { Password = userInfo.Password }).ExecuteCommandHasChangeAsync();
         }
 
         public Task<bool> UpdateStatus(List<int> ids, int status)
         {
-            return Context.Db.Updateable<UserInfo>().UpdateColumns(it => new UserInfo() { Status = status }).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return Context.Db.Updateable<UserInfo>().SetColumns(it => new UserInfo() { Status = status }).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
     }
 }
