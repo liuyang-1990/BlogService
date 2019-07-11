@@ -24,7 +24,7 @@ unit_test:
      before_script:
         - dotnet restore $TestSolution
         - dotnet build $TestSolution
-        - grep ReportGenerator.dll /root/*
+        - find /root -iname ReportGenerator.dll 
      script: 
         - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=[xunit.*]*
         - cd ./test/Blog.Test
