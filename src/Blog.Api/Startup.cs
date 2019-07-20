@@ -174,17 +174,18 @@ namespace Blog.Api
             services.TryAddSingleton<IRedisHelper, RedisHelper>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             #region Ioc
-            var builder = new ContainerBuilder();
-            builder.Populate(services);
-            builder.RegisterType<BlogRedisCacheAOP>();
-            builder.RegisterType<MiniProfilerAOP>();
-            //新模块组件注册    
-            builder.RegisterModule<AutofacModuleRegister>();
+            //var builder = new ContainerBuilder();
+            //builder.Populate(services);
+            //builder.RegisterType<BlogRedisCacheAOP>();
+            //builder.RegisterType<MiniProfilerAOP>();
+            ////新模块组件注册    
+            //builder.RegisterModule<AutofacModuleRegister>();
 
-            //创建容器
-            var container = builder.Build();
-            //第三方IOC接管 core内置DI容器 
-            return new AutofacServiceProvider(container);
+            ////创建容器
+            //var container = builder.Build();
+            ////第三方IOC接管 core内置DI容器 
+            //return new AutofacServiceProvider(container);
+            return CoreContainer.Init(services);
             #endregion
 
 
