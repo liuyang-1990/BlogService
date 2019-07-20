@@ -1,9 +1,8 @@
 ﻿using Blog.Model;
 using Blog.Model.Request;
-using Blog.Model.Settings;
 using Blog.Model.ViewModel;
 using Blog.Repository.Dao;
-using Microsoft.Extensions.Options;
+using SqlSugar;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -12,11 +11,11 @@ namespace Blog.Repository.Implement
 {
     public class BaseRepository<T> where T : BaseEntity, new()
     {
-        protected readonly DbContext<T> Context;
-
-        protected BaseRepository(IOptions<DbSetting> settings)
+        protected SqlSugarClient Db;
+        
+        protected BaseRepository()
         {
-            Context = new DbContext<T>(settings);
+            Db = DbContext.GetDbContext();
         }
         /// <summary>
         /// 分页获取
@@ -27,7 +26,7 @@ namespace Blog.Repository.Implement
         public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression)
         {
             const int totalNumber = 0;
-            var pageInfo = await Context.Db.Queryable<T>().WhereIF(expression != null, expression)
+            var pageInfo = await Db.Queryable<T>().WhereIF(expression != null, expression)
             .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder), param.SortField + " " + param.SortOrder)
             .ToPageListAsync(param.PageNum, param.PageSize, totalNumber);
             return new JsonResultModel<T>()
@@ -44,7 +43,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<T> GetDetail(int id)
         {
-            return await Context.Db.Queryable<T>().SingleAsync(x => x.Id == id);
+            return await Db.Queryable<T>().SingleAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -54,7 +53,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> Insert(T entity)
         {
-            var changes = await Context.Db.Insertable(entity).ExecuteCommandAsync();
+            var changes = await Db.Insertable(entity).ExecuteCommandAsync();
             return changes > 0;
         }
 
@@ -66,7 +65,7 @@ namespace Blog.Repository.Implement
         public virtual async Task<bool> Update(T entity)
         {
             entity.ModifyTime = DateTime.Now;
-            return await Context.Db.Updateable(entity).IgnoreColumns(true).IgnoreColumns(it => it.CreateTime).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(entity).IgnoreColumns(true).IgnoreColumns(it => it.CreateTime).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> Delete(int id)
         {
-            return await Context.Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
         }
     }
 }

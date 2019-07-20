@@ -28,7 +28,7 @@ namespace Blog.Infrastructure
             return new AutofacServiceProvider(Instance);
         }
 
-        public static void AutofacBuild(this ContainerBuilder builder)
+        private static void AutofacBuild(this ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(GetAssemblies())
                 .Where(x => x.Name.EndsWith("Business") || x.Name.EndsWith("Repository") || x.Name.EndsWith("Helper"))
@@ -41,7 +41,7 @@ namespace Blog.Infrastructure
         }
 
 
-        public static Assembly[] GetAssemblies()
+        private static Assembly[] GetAssemblies()
         {
             var assemblies = new List<Assembly>();
             assemblies.Add(Assembly.GetExecutingAssembly());

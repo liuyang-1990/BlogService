@@ -87,7 +87,7 @@ namespace Blog.Api
                 options.AddPolicy("LimitRequests", policy =>
                 {
                     policy
-                        .WithOrigins("https://www.nayoung515.top", "https://admin.nayoung515.top",Configuration["Origins"])
+                        .WithOrigins("https://www.nayoung515.top", "https://admin.nayoung515.top", Configuration["Origins"])
                         .AllowAnyMethod() //允许任何方式
                         .AllowAnyHeader() //允许任何头
                         .WithExposedHeaders("Authorization") //返回自定义Header
@@ -164,12 +164,7 @@ namespace Blog.Api
             services.AddAutoMapper(typeof(Startup));
             #endregion
 
-
-            //services.AddHttpsRedirection(options =>
-            //{
-            //    options.RedirectStatusCode = StatusCodes.Status301MovedPermanently;
-            //    options.HttpsPort = 3001;
-            //});
+            services.AddHttpClient();
 
             services.TryAddSingleton<IRedisHelper, RedisHelper>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -208,7 +203,6 @@ namespace Blog.Api
             {
                 app.UseHsts();
             }
-
             #region Swagger
             app.UseSwagger();
             app.UseSwaggerUI(option =>

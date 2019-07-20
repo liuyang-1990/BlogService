@@ -1,34 +1,32 @@
-﻿using Blog.Model.Settings;
-using Microsoft.Extensions.Options;
+﻿using Blog.Infrastructure;
 using SqlSugar;
 using StackExchange.Profiling;
 using System.Linq;
+using Autofac;
+using Microsoft.Extensions.Configuration;
 
 namespace Blog.Repository.Dao
 {
-    public class DbContext<T> where T : class, new()
+    public class DbContext
     {
         /// <summary>
         /// 用来处理事务多表查询和复杂的操作
         /// </summary>
-        public SqlSugarClient Db;
+        private SqlSugarClient _db;
 
-        /// <summary>
-        /// 用来处理T表的常用操作
-        /// </summary>
-        public SimpleClient<T> CurrentDb => new SimpleClient<T>(Db);
 
-        public DbContext(IOptions<DbSetting> settings)
+        private DbContext()
         {
-            Db = new SqlSugarClient(new ConnectionConfig()
+            var configuration = CoreContainer.Instance.Resolve<IConfiguration>();
+            _db = new SqlSugarClient(new ConnectionConfig()
             {
-                ConnectionString = settings.Value.ConnectionString,
+                ConnectionString = configuration["ConnectionStrings:ConnectionString"],
                 DbType = DbType.MySql,
                 InitKeyType = InitKeyType.SystemTable,
                 IsAutoCloseConnection = true
             });
 
-            Db.QueryFilter.Add(new SqlFilterItem()
+            _db.QueryFilter.Add(new SqlFilterItem()
             {
                 //单表全局过滤器
                 FilterValue = filterdb => new SqlFilterResult() { Sql = "   is_deleted=0" },
@@ -40,12 +38,20 @@ namespace Blog.Repository.Dao
                 IsJoinQuery = true
             });
             //调式代码 用来打印SQL 
-            Db.Aop.OnLogExecuting = (sql, pars) =>
+            _db.Aop.OnLogExecuting = (sql, pars) =>
             {
                 var sqlP = sql + "\r\n" +
-                           Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
+                           _db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
                 MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
             };
+        }
+
+        public static SqlSugarClient GetDbContext()
+        {
+
+            var dbContext = new DbContext();
+            return dbContext._db;
+
         }
     }
 }
