@@ -1,11 +1,6 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
-using Blog.Api.AOP;
-using Blog.Api.AutoFac;
+﻿using AutoMapper;
 using Blog.Infrastructure;
 using Blog.Infrastructure.Implement;
-using Blog.Model.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -69,9 +64,9 @@ namespace Blog.Api
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
-            services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
-            services.Configure<JwtConfig>(jwtConfig);
-            services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
+            //services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
+            //services.Configure<JwtConfig>(jwtConfig);
+            //services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
 
             services.AddMiniProfiler(options =>
             {

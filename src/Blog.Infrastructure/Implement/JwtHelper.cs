@@ -1,7 +1,6 @@
 ﻿using Blog.Model;
 using Blog.Model.Response;
-using Blog.Model.Settings;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -18,17 +17,13 @@ namespace Blog.Infrastructure.Implement
     /// </summary>
     public class JwtHelper : IJwtHelper
     {
-        private readonly IOptions<JwtConfig> _jwtConfig;
+
         private readonly IRedisHelper _redisHelper;
-
-
-        public string SecurityKey { get; set; }
-
-        public JwtHelper(IOptions<JwtConfig> jwtConfig, IRedisHelper redisHelper)
+        private readonly IConfiguration _configuration;
+        public JwtHelper(IConfiguration configuration, IRedisHelper redisHelper)
         {
-            _jwtConfig = jwtConfig;
+            _configuration = configuration;
             _redisHelper = redisHelper;
-            SecurityKey = jwtConfig.Value.SecurityKey;
         }
 
 
@@ -45,13 +40,13 @@ namespace Blog.Infrastructure.Implement
             {
                 new Claim(JwtRegisteredClaimNames.Jti,tokenModel.Uid.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,dateTime.ToUniversalTime().ToString(),ClaimValueTypes.Integer64),
-                new Claim(JwtRegisteredClaimNames.Iss, _jwtConfig.Value.Issuer),
-                new Claim(JwtRegisteredClaimNames.Aud,_jwtConfig.Value.Audience),
+                new Claim(JwtRegisteredClaimNames.Iss, _configuration["JwtAuth:Issuer"]),
+                new Claim(JwtRegisteredClaimNames.Aud,_configuration["JwtAuth:Audience"]),
             };
             // 可以将一个用户的多个角色全部赋予
             claims.AddRange(tokenModel.Role.Split(",").Select(s => new Claim(ClaimTypes.Role, s)));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Value.SecurityKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtAuth:SecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var jwt = new JwtSecurityToken(
                 notBefore: dateTime,

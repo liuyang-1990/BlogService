@@ -1,6 +1,7 @@
 ﻿using Blog.Infrastructure;
 using Blog.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -17,10 +18,15 @@ namespace Blog.Api
         private readonly RequestDelegate _next;
 
         private readonly IJwtHelper _jwtHelper;
-        public AuthenticationMiddleware(RequestDelegate next, IJwtHelper jwtHelper)
+
+        private readonly IConfiguration _configuration;
+        public AuthenticationMiddleware(RequestDelegate next,
+            IJwtHelper jwtHelper,
+           IConfiguration configuration)
         {
             _next = next;
             _jwtHelper = jwtHelper;
+            _configuration = configuration;
         }
 
         public Task Invoke(HttpContext httpContext)
@@ -36,7 +42,7 @@ namespace Blog.Api
                 return _next(httpContext);
             }
             //首先验证签名是否正确
-            var hs256 = new HMACSHA256(Encoding.ASCII.GetBytes(_jwtHelper.SecurityKey));
+            var hs256 = new HMACSHA256(Encoding.ASCII.GetBytes(_configuration["JwtAuth:SecurityKey"]));
             var success = string.Equals(jwtArr[2],
                 Base64UrlEncoder.Encode(hs256.ComputeHash(Encoding.UTF8.GetBytes(string.Concat(jwtArr[0], ".", jwtArr[1])))));
             if (!success)
@@ -63,7 +69,7 @@ namespace Blog.Api
             //在使用CORS方式跨域时，浏览器只会返回以下默认头部header:  
             // 1.Content-Language 2. Content - Type 3. Expires     4.Last - Modified  5. Pragma
             //在客户端获取自定义的header信息，需要在服务器端header中添加Access-Control-Expose-Headers
-           // httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
+            // httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
             httpContext.Response.Headers.Add("Authorization", token);
             return _next(httpContext);
         }

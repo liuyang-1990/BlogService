@@ -1,8 +1,7 @@
 ﻿using Blog.Infrastructure;
 using Blog.Infrastructure.Implement;
 using Blog.Model;
-using Blog.Model.Settings;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,18 +11,15 @@ namespace Blog.Test.Infrastructure
 {
     public class JwtHelperUnitTest
     {
-        private readonly Mock<IOptions<JwtConfig>> _jwtConfig;
+        private readonly Mock<IConfiguration> _configuration;
         private readonly Mock<IRedisHelper> _redisHelper;
         public JwtHelperUnitTest()
         {
-            _jwtConfig = new Mock<IOptions<JwtConfig>>();
+            _configuration = new Mock<IConfiguration>();
             _redisHelper = new Mock<IRedisHelper>();
-            _jwtConfig.Setup(x => x.Value).Returns(() => new JwtConfig()
-            {
-                Audience = "test",
-                Issuer = "test",
-                SecurityKey = Guid.NewGuid().ToString()
-            });
+            _configuration.Setup(x => x["JwtAuth:Issuer"]).Returns("test");
+            _configuration.Setup(x => x["JwtAuth:Audience"]).Returns("test");
+            _configuration.Setup(x => x["JwtAuth:SecurityKey"]).Returns(Guid.NewGuid().ToString());
         }
 
         [Theory]
@@ -31,7 +27,7 @@ namespace Blog.Test.Infrastructure
         [InlineData(false)]
         public void IssueJwt_Test(bool isRefresh)
         {
-            var helper = new JwtHelper(_jwtConfig.Object, _redisHelper.Object);
+            var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
             var res = helper.IssueJwt(new JwtToken()
             {
                 Uid = 1,
@@ -46,7 +42,7 @@ namespace Blog.Test.Infrastructure
         {
             _redisHelper.Setup(x => x.ContainsKey("refresh_token_1")).Returns(contains);
             _redisHelper.Setup(x => x.Get<string>("refresh_token_1")).Returns(value);
-            var helper = new JwtHelper(_jwtConfig.Object, _redisHelper.Object);
+            var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
             var res = helper.RefreshJwt("test", new JwtToken()
             {
                 Uid = 1,
@@ -81,7 +77,7 @@ namespace Blog.Test.Infrastructure
         {
             _redisHelper.Setup(x => x.ContainsKey("refresh_token_1")).Returns(true);
             _redisHelper.Setup(x => x.Get<string>("refresh_token_1")).Returns("test");
-            var helper = new JwtHelper(_jwtConfig.Object, _redisHelper.Object);
+            var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
             var res = helper.RefreshJwt("test", new JwtToken()
             {
                 Uid = 1,

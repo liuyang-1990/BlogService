@@ -1,7 +1,5 @@
 ﻿using Blog.Model;
 using Blog.Model.Db;
-using Blog.Model.Settings;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

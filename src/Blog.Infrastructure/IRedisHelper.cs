@@ -11,8 +11,6 @@ namespace Blog.Infrastructure
         void Set<T>(string key, T value);
         void Set<T>(string key, T value, TimeSpan timeSpan);
 
-        void HashSet<T>(string key, string subkey, T value, TimeSpan timeSpan);
-
         bool ContainsKey(string key);
 
         //移除
