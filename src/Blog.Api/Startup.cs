@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Blog.Api.Filters;
 using Blog.Infrastructure;
 using Blog.Infrastructure.Implement;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,13 +30,11 @@ namespace Blog.Api
     /// </summary>
     public class Startup
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="configuration"></param>
-        public Startup(IConfiguration configuration)
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
             this.Name = configuration["Name"] ?? "Blog Service";
             this.Version = configuration["Version"] ?? "v0";
             this.Description = Configuration["Description"] ?? string.Empty;
@@ -46,6 +45,10 @@ namespace Blog.Api
         /// </summary>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        /// Hosting Environment属性
+        /// </summary>
+        public IHostingEnvironment Env { get; }
         public string Name { get; set; }
 
         public string Version { get; set; }
@@ -58,15 +61,22 @@ namespace Blog.Api
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            var jwtConfig = Configuration.GetSection("JwtAuth");
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(options =>
+            services.AddMvc(options =>
             {
+                if (!Env.IsDevelopment())
+                {
+                    options.Filters.Add(new ServiceExceptionFilterAttribute());
+                }
+
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+              .AddJsonOptions(options =>
+            {
+                //asp.net core default use CamelCaseNamingStrategy, we disable it.
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                // options.SerializerSettings.Formatting= Formatting.None;
             });
+
             //services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
-            //services.Configure<JwtConfig>(jwtConfig);
-            //services.Configure<RedisConn>(Configuration.GetSection("RedisCaching"));
 
             services.AddMiniProfiler(options =>
             {
@@ -133,9 +143,9 @@ namespace Blog.Api
             {
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = jwtConfig["Issuer"],
-                    ValidAudience = jwtConfig["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig["SecurityKey"])),
+                    ValidIssuer = Configuration["JwtAuth:Issuer"],
+                    ValidAudience = Configuration["JwtAuth:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JwtAuth:SecurityKey"])),
                     RequireSignedTokens = true,
                     ValidateAudience = true,
                     ValidateIssuer = true,
@@ -185,18 +195,13 @@ namespace Blog.Api
         ///  This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
-        /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
 
-            if (env.IsDevelopment())
+            if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
             }
             #region Swagger
             app.UseSwagger();
@@ -210,9 +215,10 @@ namespace Blog.Api
             #endregion
 
             loggerFactory.AddNLog();
-            env.ConfigureNLog("nlog.config");
+            Env.ConfigureNLog("nlog.config");
+
             //自定义异常处理
-            app.UseMiddleware<ExceptionFilter>();
+           //  app.UseMiddleware<ExceptionFilter>();
             //跨域
             app.UseCors("LimitRequests");
 
@@ -221,11 +227,12 @@ namespace Blog.Api
             //认证
             app.UseAuthentication();
             // 跳转https
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             // 返回错误码
             app.UseStatusCodePages();
             //miniProfiler
             app.UseMiniProfiler();
+
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseMvc();
