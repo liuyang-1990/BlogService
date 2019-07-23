@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Blog.Api.Filters;
+using Blog.Api.Log;
 using Blog.Infrastructure;
 using Blog.Infrastructure.Implement;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,11 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
-using NLog.Extensions.Logging;
-using NLog.Web;
 using SqlSugar;
 using StackExchange.Profiling.Storage;
 using Swashbuckle.AspNetCore.Swagger;
@@ -170,7 +168,6 @@ namespace Blog.Api
             #endregion
 
             services.AddHttpClient();
-
             services.TryAddSingleton<IRedisHelper, RedisHelper>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             #region Ioc
@@ -195,8 +192,7 @@ namespace Blog.Api
         ///  This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
-        /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
 
             if (Env.IsDevelopment())
@@ -214,11 +210,6 @@ namespace Blog.Api
             });
             #endregion
 
-            loggerFactory.AddNLog();
-            Env.ConfigureNLog("nlog.config");
-
-            //自定义异常处理
-           //  app.UseMiddleware<ExceptionFilter>();
             //跨域
             app.UseCors("LimitRequests");
 
@@ -226,8 +217,7 @@ namespace Blog.Api
             app.UseMiddleware<AuthenticationMiddleware>();
             //认证
             app.UseAuthentication();
-            // 跳转https
-            //app.UseHttpsRedirection();
+
             // 返回错误码
             app.UseStatusCodePages();
             //miniProfiler
