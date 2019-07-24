@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Blog.Infrastructure
 {
-    public interface IUrlHelper
+    public interface IBlogUrlHelper
     {
         string GetQueryString(string url, string para);
     }
