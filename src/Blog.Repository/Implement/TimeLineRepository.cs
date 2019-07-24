@@ -1,4 +1,6 @@
 ﻿using Blog.Model.Db;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 
@@ -6,5 +8,9 @@ namespace Blog.Repository.Implement
 {
     public class TimeLineRepository : BaseRepository<Tbl_Time_Line>, ITimeLineRepository
     {
+        public Task<List<Tbl_Time_Line>> GetList()
+        {
+            return Db.Queryable<Tbl_Time_Line>().ToListAsync();
+        }
     }
 }

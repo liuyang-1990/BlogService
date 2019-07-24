@@ -13,7 +13,7 @@ namespace Blog.Api.AutoMapper
         {
             CreateMap<UserRequest, UserInfo>();
             CreateMap<UserInfo, UserInfoBase>();
-            //CreateMap<, UserInfoBase>();
+            CreateMap<TimeLineRequest, Tbl_Time_Line>();
         }
     }
 }
