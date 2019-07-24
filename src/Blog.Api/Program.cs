@@ -21,7 +21,6 @@ namespace Blog.Api
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Information);
                 })
             .UseNLog();
 
