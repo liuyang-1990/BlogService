@@ -1,5 +1,5 @@
-﻿using Blog.Model;
-using Blog.Model.Attribute;
+﻿using AspectCore.Injector;
+using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
+    [Injector(typeof(ITagBusiness), LifeTime = Lifetime.Scoped)]
     public class TagBusiness : BaseBusiness<TagInfo>, ITagBusiness
     {
         private readonly ITagRepository _tagRepository;

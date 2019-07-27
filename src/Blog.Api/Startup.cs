@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿using AspectCore.Configuration;
+using AspectCore.Extensions.DependencyInjection;
+using AutoMapper;
 using Blog.Api.Filters;
-using Blog.Api.Log;
+using Blog.Api.Interceptors;
 using Blog.Infrastructure;
-using Blog.Infrastructure.Implement;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -168,8 +169,12 @@ namespace Blog.Api
             #endregion
 
             services.AddHttpClient();
-            services.TryAddSingleton<IRedisHelper, RedisHelper>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.ConfigureDynamicProxy(config =>
+            {
+                config.Interceptors.AddTyped<MiniProfilerInterceptor>();
+            });
+
             #region Ioc
             //var builder = new ContainerBuilder();
             //builder.Populate(services);
@@ -182,7 +187,8 @@ namespace Blog.Api
             //var container = builder.Build();
             ////第三方IOC接管 core内置DI容器 
             //return new AutofacServiceProvider(container);
-            return CoreContainer.Init(services);
+            // return CoreContainer.Init(services);
+            return AspectCoreContainer.BuildServiceProvider(services);
             #endregion
 
 
@@ -214,7 +220,7 @@ namespace Blog.Api
             app.UseCors("LimitRequests");
 
             //自定义认证
-            app.UseMiddleware<AuthenticationMiddleware>();
+            //app.UseMiddleware<AuthenticationMiddleware>();
             //认证
             app.UseAuthentication();
 

@@ -1,4 +1,5 @@
-﻿using Blog.Infrastructure;
+﻿using AspectCore.Injector;
+using Blog.Infrastructure;
 using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
+    [Injector(typeof(IUserBusiness), LifeTime = Lifetime.Scoped)]
     public class UserBusiness : BaseBusiness<UserInfo>, IUserBusiness
     {
         private readonly IMd5Helper _md5Helper;

@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Blog.Model.Attribute
+namespace Blog.Model
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class CachingAttribute : System.Attribute
+    public class CachingAttribute : Attribute
     {
         /// <summary>
         /// 缓存过期时间

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AspectCore.Injector;
+using Blog.Model;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NLog;
 using StackExchange.Redis;
@@ -6,6 +8,7 @@ using System;
 
 namespace Blog.Infrastructure.Implement
 {
+    [Injector(typeof(IRedisHelper), LifeTime = Lifetime.Singleton)]
     public class RedisHelper : IRedisHelper
     {
         private readonly string _redisConnenctionString;

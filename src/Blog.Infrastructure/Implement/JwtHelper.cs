@@ -1,4 +1,5 @@
-﻿using Blog.Model;
+﻿using AspectCore.Injector;
+using Blog.Model;
 using Blog.Model.Response;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +16,7 @@ namespace Blog.Infrastructure.Implement
     /// <summary>
     /// 生成Token，和解析Token
     /// </summary>
+    [Injector(typeof(IJwtHelper), LifeTime = Lifetime.Singleton)]
     public class JwtHelper : IJwtHelper
     {
 

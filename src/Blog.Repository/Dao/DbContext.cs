@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using AspectCore.Injector;
+using Autofac;
 using Blog.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using SqlSugar;
@@ -12,7 +13,7 @@ namespace Blog.Repository.Dao
 
         public static SqlSugarClient GetDbContext()
         {
-            var configuration = CoreContainer.Instance.Resolve<IConfiguration>();
+            var configuration = AspectCoreContainer.Resolve<IConfiguration>();
             //用来处理事务多表查询和复杂的操作
             var db = new SqlSugarClient(new ConnectionConfig()
             {

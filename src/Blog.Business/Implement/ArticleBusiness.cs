@@ -1,4 +1,6 @@
-﻿using Blog.Model.Db;
+﻿using AspectCore.Injector;
+using Blog.Model;
+using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
+    [Injector(typeof(IArticleBusiness), LifeTime = Lifetime.Scoped)]
     public class ArticleBusiness : BaseBusiness<ArticleInfo>, IArticleBusiness
     {
 

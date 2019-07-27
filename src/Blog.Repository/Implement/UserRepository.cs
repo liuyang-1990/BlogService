@@ -1,10 +1,12 @@
-﻿using Blog.Model;
+﻿using AspectCore.Injector;
+using Blog.Model;
 using Blog.Model.Db;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
 {
+    [Injector(typeof(IUserRepository), LifeTime = Lifetime.Scoped)]
     public class UserRepository : BaseRepository<UserInfo>, IUserRepository
     {
         public async Task<bool> IsExist(UserInfo entity, UserAction userAction)

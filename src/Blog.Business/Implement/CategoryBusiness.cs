@@ -1,16 +1,17 @@
-﻿using Blog.Model;
+﻿using AspectCore.Injector;
+using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
 using SqlSugar;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
+    [Injector(typeof(ICategoryBusiness), LifeTime = Lifetime.Scoped)]
     public class CategoryBusiness : BaseBusiness<CategoryInfo>, ICategoryBusiness
     {
         private readonly ICategoryRepository _categoryRepository;

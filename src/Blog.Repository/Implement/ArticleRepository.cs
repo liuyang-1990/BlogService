@@ -1,4 +1,6 @@
-﻿using Blog.Model.Db;
+﻿using AspectCore.Injector;
+using Blog.Model;
+using Blog.Model.Db;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using NLog;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Repository.Implement
 {
+    [Injector(typeof(IArticleRepository), LifeTime = Lifetime.Scoped)]
     public class ArticleRepository : BaseRepository<ArticleInfo>, IArticleRepository
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();

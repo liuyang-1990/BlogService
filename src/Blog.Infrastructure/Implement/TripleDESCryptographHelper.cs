@@ -1,10 +1,13 @@
-﻿using System;
+﻿using AspectCore.Injector;
+using Blog.Model;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Blog.Infrastructure.Implement
 {
+    [Injector(typeof(ITripleDESCryptographHelper), LifeTime = Lifetime.Singleton)]
     public class TripleDESCryptographHelper : ITripleDESCryptographHelper
     {
         private const string Key = "P2IXwigbk+vVYUFM4yDAiu0k";
