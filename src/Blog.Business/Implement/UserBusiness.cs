@@ -6,7 +6,7 @@ using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
-using NLog;
+using Microsoft.Extensions.Logging;
 using SqlSugar;
 using System;
 using System.Threading.Tasks;
@@ -18,12 +18,13 @@ namespace Blog.Business.Implement
     {
         private readonly IMd5Helper _md5Helper;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        public UserBusiness(IUserRepository repository, IMd5Helper md5Helper)
+        private readonly ILogger<UserBusiness> _logger;
+        public UserBusiness(IUserRepository repository, IMd5Helper md5Helper, ILogger<UserBusiness> logger)
         {
             BaseRepository = repository;
             _md5Helper = md5Helper;
             _userRepository = repository;
+            _logger = logger;
         }
 
 
@@ -80,7 +81,7 @@ namespace Blog.Business.Implement
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                _logger.LogError(ex.Message);
                 return null;
             }
         }

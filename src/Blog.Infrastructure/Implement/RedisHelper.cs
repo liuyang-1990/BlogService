@@ -1,8 +1,8 @@
 ﻿using AspectCore.Injector;
 using Blog.Model;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NLog;
 using StackExchange.Redis;
 using System;
 
@@ -14,46 +14,44 @@ namespace Blog.Infrastructure.Implement
         private readonly string _redisConnenctionString;
         private volatile ConnectionMultiplexer _redisConnection;
         private readonly object _redisConnectionLock = new object();
-        private readonly IDatabase _db;
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        public RedisHelper(IConfiguration configuration)
+        private readonly ILogger<RedisHelper> _logger;
+        public RedisHelper(IConfiguration configuration, ILogger<RedisHelper> logger)
         {
-
             var redisConnenctionString = configuration["RedisCaching:ConnectionString"];
             if (string.IsNullOrWhiteSpace(redisConnenctionString))
             {
                 throw new ArgumentException("redis config is empty", nameof(redisConnenctionString));
             }
-            this._redisConnenctionString = redisConnenctionString;
-            this._redisConnection = GetRedisConnection();
-            _db = this._redisConnection.GetDatabase();
+            _redisConnenctionString = redisConnenctionString;
+            _redisConnection = GetRedisConnection();
+            _logger = logger;
         }
 
         private ConnectionMultiplexer GetRedisConnection()
         {
             //如果已经连接实例，直接返回
-            if (this._redisConnection != null && this._redisConnection.IsConnected)
+            if (_redisConnection != null && _redisConnection.IsConnected)
             {
-                return this._redisConnection;
+                return _redisConnection;
             }
             //加锁，防止异步编程中，出现单例无效的问题
             lock (_redisConnectionLock)
             {
-                if (this._redisConnection != null)
+                if (_redisConnection != null)
                 {
                     //释放redis连接
-                    this._redisConnection.Dispose();
+                    _redisConnection.Dispose();
                 }
                 try
                 {
-                    this._redisConnection = ConnectionMultiplexer.Connect(_redisConnenctionString);
+                    _redisConnection = ConnectionMultiplexer.Connect(_redisConnenctionString);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn(ex.ToString);
+                    _logger.LogError(ex.Message);
                 }
             }
-            return this._redisConnection;
+            return _redisConnection;
         }
         /// <summary>
         ///  获取
@@ -63,7 +61,7 @@ namespace Blog.Infrastructure.Implement
         /// <returns></returns>
         public T Get<T>(string key)
         {
-            var value = _db.StringGet(key);
+            var value = _redisConnection.GetDatabase().StringGet(key);
             if (value.HasValue)
             {
                 return JsonConvert.DeserializeObject<T>(value);
@@ -77,7 +75,7 @@ namespace Blog.Infrastructure.Implement
         /// <returns></returns>
         public string Get(string key)
         {
-            return _db.StringGet(key);
+            return _redisConnection.GetDatabase().StringGet(key);
         }
         /// <summary>
         /// 设置
@@ -88,7 +86,7 @@ namespace Blog.Infrastructure.Implement
         public void Set<T>(string key, T value)
         {
 
-            _db.StringSet(key, JsonConvert.SerializeObject(value), TimeSpan.FromHours(1));
+            _redisConnection.GetDatabase().StringSet(key, JsonConvert.SerializeObject(value), TimeSpan.FromHours(1));
 
         }
         /// <summary>
@@ -100,7 +98,7 @@ namespace Blog.Infrastructure.Implement
         /// <param name="timeSpan"></param>
         public void Set<T>(string key, T value, TimeSpan timeSpan)
         {
-            _db.StringSet(key, JsonConvert.SerializeObject(value), timeSpan);
+            _redisConnection.GetDatabase().StringSet(key, JsonConvert.SerializeObject(value), timeSpan);
         }
         /// <summary>
         /// 判断是否存在
@@ -109,7 +107,7 @@ namespace Blog.Infrastructure.Implement
         /// <returns></returns>
         public bool ContainsKey(string key)
         {
-            return _db.KeyExists(key);
+            return _redisConnection.GetDatabase().KeyExists(key);
         }
         /// <summary>
         /// 移除
@@ -117,7 +115,7 @@ namespace Blog.Infrastructure.Implement
         /// <param name="key"></param>
         public void Remove(string key)
         {
-            _db.KeyDelete(key);
+            _redisConnection.GetDatabase().KeyDelete(key);
         }
 
 

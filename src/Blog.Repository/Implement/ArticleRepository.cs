@@ -3,7 +3,7 @@ using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
-using NLog;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,11 @@ namespace Blog.Repository.Implement
     [Injector(typeof(IArticleRepository), LifeTime = Lifetime.Scoped)]
     public class ArticleRepository : BaseRepository<ArticleInfo>, IArticleRepository
     {
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger<ArticleRepository> _logger;
+        public ArticleRepository(ILogger<ArticleRepository> logger)
+        {
+            _logger = logger;
+        }
         /// <summary>
         /// 获取文章详情
         /// </summary>
@@ -42,7 +46,7 @@ namespace Blog.Repository.Implement
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                _logger.LogError(ex.Message);
             }
             return response;
         }
@@ -96,7 +100,7 @@ namespace Blog.Repository.Implement
             catch (Exception ex)
             {
                 Db.Ado.RollbackTran();
-                _logger.Error(ex.Message);
+                _logger.LogError(ex.Message);
                 throw;
             }
         }
@@ -117,7 +121,7 @@ namespace Blog.Repository.Implement
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                _logger.LogError(ex.Message);
                 Db.Ado.RollbackTran();
                 return false;
             }
@@ -177,7 +181,7 @@ namespace Blog.Repository.Implement
             catch (Exception ex)
             {
                 Db.Ado.RollbackTran();
-                _logger.Error(ex.Message);
+                _logger.LogError(ex.Message);
                 return false;
             }
         }
