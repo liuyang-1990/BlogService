@@ -169,9 +169,11 @@ namespace Blog.Api
             #endregion
 
             services.AddHttpClient();
+            services.AddMemoryCache();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.ConfigureDynamicProxy(config =>
             {
+                config.Interceptors.AddTyped<BlogRedisCacheInterceptor>();
                 config.Interceptors.AddTyped<MiniProfilerInterceptor>();
             });
 
@@ -220,7 +222,7 @@ namespace Blog.Api
             app.UseCors("LimitRequests");
 
             //自定义认证
-            //app.UseMiddleware<AuthenticationMiddleware>();
+            app.UseMiddleware<AuthenticationMiddleware>();
             //认证
             app.UseAuthentication();
 

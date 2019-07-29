@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Autofac.Extras.DynamicProxy;
-using Blog.Infrastructure.AOP;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -23,8 +21,8 @@ namespace Blog.Infrastructure
             var builder = new ContainerBuilder();
             builder.Populate(services);
             //注册拦截器
-            builder.RegisterType<BlogRedisCacheAOP>();
-            builder.RegisterType<MiniProfilerAOP>();
+            //builder.RegisterType<BlogRedisCacheAOP>();
+            //builder.RegisterType<MiniProfilerAOP>();
             builder.AutofacBuild();
             func?.Invoke(builder);
             //利用构建器创建容器
@@ -37,25 +35,10 @@ namespace Blog.Infrastructure
         {
 
             builder.RegisterAssemblyTypes(GetAssemblies())
-                   .Where(x => x.Name.EndsWith("Business"))
                    .PublicOnly()
                    .Where(x => x.IsClass)
                    .AsImplementedInterfaces()
-                   .InstancePerLifetimeScope()
-                   .EnableInterfaceInterceptors()
-                   .InterceptedBy(typeof(BlogRedisCacheAOP), typeof(MiniProfilerAOP));
-
-            builder.RegisterAssemblyTypes(GetAssemblies())
-                    .Where(x => x.Name.EndsWith("Repository") || x.Name.EndsWith("Helper"))
-                    .PublicOnly()
-                    .Where(x => x.IsClass)
-                    .AsImplementedInterfaces()
-                    .InstancePerLifetimeScope();
-
-            //registration.Where(x => x.Name.EndsWith("Business"))
-            //    .EnableInterfaceInterceptors()
-            //   .InterceptedBy(typeof(BlogRedisCacheAOP), typeof(MiniProfilerAOP));
-
+                   .InstancePerLifetimeScope();
         }
 
 

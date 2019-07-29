@@ -18,7 +18,7 @@ namespace Blog.Business.Implement
             _timeLineRepository = timeLineRepository;
         }
 
-        [Caching]
+        [Caching("Tbl_Time_Line:GetList")]
         public Task<List<Tbl_Time_Line>> GetList()
         {
             return _timeLineRepository.GetList();

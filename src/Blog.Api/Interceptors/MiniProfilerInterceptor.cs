@@ -1,5 +1,4 @@
 ﻿using AspectCore.DynamicProxy;
-using AspectCore.Injector;
 using Blog.Infrastructure;
 using Microsoft.Extensions.Logging;
 using StackExchange.Profiling;
@@ -10,6 +9,7 @@ namespace Blog.Api.Interceptors
 {
     public class MiniProfilerInterceptor : AbstractInterceptorAttribute
     {
+
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
             try
@@ -20,9 +20,9 @@ namespace Blog.Api.Interceptors
             }
             catch (Exception ex)
             {
-               // var logger = CoreContainer.Resolver.Resolve<ILogger<MiniProfilerInterceptor>>();
+                var logger = AspectCoreContainer.Resolve<ILogger<MiniProfilerInterceptor>>();
+                logger.LogError(ex.StackTrace);
                 MiniProfiler.Current.CustomTiming("Errors：", ex.Message);
-               // logger.LogError(ex.StackTrace);
             }
 
         }
