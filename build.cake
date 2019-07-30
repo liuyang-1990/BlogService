@@ -75,7 +75,7 @@ Task("Build")
              Framework = "netcoreapp2.2",
              Configuration = configuration,
              NoBuild = true,
-             ArgumentCustomization= args => args.Append("/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=[xunit.*]*")});
+             ArgumentCustomization= args => args.Append("/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude=[xunit.*]*")
          },
          new CoverletSettings(){
                CollectCoverage = true,
