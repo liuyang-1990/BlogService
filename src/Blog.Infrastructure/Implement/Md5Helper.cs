@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Blog.Infrastructure.Implement
 {
-    [Injector(typeof(IMd5Helper), LifeTime = Lifetime.Singleton)]
+    [Injector(typeof(IMd5Helper), LifeTime = Lifetime.Scoped)]
     public class Md5Helper : IMd5Helper
     {
         public string Encrypt32(string originStr)

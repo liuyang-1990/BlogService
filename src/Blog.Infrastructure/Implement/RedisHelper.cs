@@ -17,14 +17,14 @@ namespace Blog.Infrastructure.Implement
         private readonly ILogger<RedisHelper> _logger;
         public RedisHelper(IConfiguration configuration, ILogger<RedisHelper> logger)
         {
+            _logger = logger;
             var redisConnenctionString = configuration["RedisCaching:ConnectionString"];
             if (string.IsNullOrWhiteSpace(redisConnenctionString))
             {
                 throw new ArgumentException("redis config is empty", nameof(redisConnenctionString));
             }
             _redisConnenctionString = redisConnenctionString;
-            _redisConnection = GetRedisConnection();
-            _logger = logger;
+            _redisConnection = GetRedisConnection();    
         }
 
         private ConnectionMultiplexer GetRedisConnection()

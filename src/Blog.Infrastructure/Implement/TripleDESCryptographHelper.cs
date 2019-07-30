@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Blog.Infrastructure.Implement
 {
-    [Injector(typeof(ITripleDESCryptographHelper), LifeTime = Lifetime.Singleton)]
+    [Injector(typeof(ITripleDESCryptographHelper), LifeTime = Lifetime.Scoped)]
     public class TripleDESCryptographHelper : ITripleDESCryptographHelper
     {
         private const string Key = "P2IXwigbk+vVYUFM4yDAiu0k";
