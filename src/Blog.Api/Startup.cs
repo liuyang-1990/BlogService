@@ -75,16 +75,27 @@ namespace Blog.Api
                 // options.SerializerSettings.Formatting= Formatting.None;
             });
 
+            #region  URL 地址转换成小写的形式
+            services.AddRouting(options =>
+              {
+                  options.LowercaseUrls = true;
+              }); 
+            #endregion
             //services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
 
+            #region MiniProfiler
             services.AddMiniProfiler(options =>
-            {
-                options.RouteBasePath = "/profiler";
-                if (options.Storage is MemoryCacheStorage memoryCacheStorage)
-                {
-                    memoryCacheStorage.CacheDuration = TimeSpan.FromMinutes(10);
-                }
-            });
+             {
+                 options.RouteBasePath = "/profiler";
+                 if (options.Storage is MemoryCacheStorage memoryCacheStorage)
+                 {
+                     memoryCacheStorage.CacheDuration = TimeSpan.FromMinutes(10);
+                 }
+             });
+
+
+            #endregion
+
             #region 跨域
             services.AddCors(options =>
             {
@@ -171,11 +182,15 @@ namespace Blog.Api
             services.AddHttpClient();
             services.AddMemoryCache();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            #region AOP
+
             services.ConfigureDynamicProxy(config =>
-            {
-                config.Interceptors.AddTyped<BlogRedisCacheInterceptor>();
-                config.Interceptors.AddTyped<MiniProfilerInterceptor>();
-            });
+              {
+                  config.Interceptors.AddTyped<BlogRedisCacheInterceptor>();
+                  config.Interceptors.AddTyped<MiniProfilerInterceptor>();
+              });
+            #endregion
 
             #region Ioc
             //var builder = new ContainerBuilder();
