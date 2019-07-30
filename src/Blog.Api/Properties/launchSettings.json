@@ -14,8 +14,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "Version": "V1"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Blog.Api": {

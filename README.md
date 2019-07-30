@@ -15,6 +15,8 @@
 
 - [Swagger](https://swagger.io/)
 
+- [API Version](https://github.com/microsoft/aspnet-api-versioning/tree/master/samples/aspnetcore)
+
 - [JWT](https://jwt.io/)
 
 - [AutoMapper](http://automapper.org/)

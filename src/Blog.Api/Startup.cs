@@ -3,20 +3,24 @@ using AspectCore.Extensions.DependencyInjection;
 using AutoMapper;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
+using Blog.Api.SwaggerExtensions;
 using Blog.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using SqlSugar;
 using StackExchange.Profiling.Storage;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,9 +38,6 @@ namespace Blog.Api
         {
             Configuration = configuration;
             Env = env;
-            this.Name = configuration["Name"] ?? "Blog Service";
-            this.Version = configuration["Version"] ?? "v0";
-            this.Description = Configuration["Description"] ?? string.Empty;
         }
 
         /// <summary>
@@ -48,11 +49,6 @@ namespace Blog.Api
         /// Hosting Environment属性
         /// </summary>
         public IHostingEnvironment Env { get; }
-        public string Name { get; set; }
-
-        public string Version { get; set; }
-
-        public string Description { get; set; }
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
@@ -79,7 +75,7 @@ namespace Blog.Api
             services.AddRouting(options =>
               {
                   options.LowercaseUrls = true;
-              }); 
+              });
             #endregion
             //services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
 
@@ -114,24 +110,20 @@ namespace Blog.Api
 
             #region Swagger
 
-            services.AddSwaggerGen(option =>
-             {
-                 option.CustomSchemaIds(x => x.FullName);
-                 option.DescribeAllEnumsAsStrings();
-                 option.SwaggerDoc(Version, new Info()
-                 {
-                     Title = Name,
-                     Version = Version,
-                     Description = Description
-                 });
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
+            services.AddSwaggerGen(options =>
+             {
+                 options.CustomSchemaIds(x => x.FullName);
+                 options.DescribeAllEnumsAsStrings();
+                 options.OperationFilter<SwaggerDefaultValues>();
                  var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
                  var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
-                 option.IncludeXmlComments(xmlPath, true);
+                 options.IncludeXmlComments(xmlPath, true);
                  //添加header验证信息
                  var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
-                 option.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
-                 option.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                 options.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
+                 options.AddSecurityDefinition("Bearer", new ApiKeyScheme
                  {
                      Description = "JWT授权(数据将在请求头中进行传输) 参数结构: \"Authorization: Bearer {token}\"",
                      Name = "Authorization",//jwt默认的参数名称
@@ -192,6 +184,27 @@ namespace Blog.Api
               });
             #endregion
 
+
+            #region API版本控制
+            services.AddApiVersioning(options =>
+               {
+                   // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
+                   options.ReportApiVersions = true;
+               });
+
+            services.AddVersionedApiExplorer(
+                options =>
+                {
+                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                    options.GroupNameFormat = "'v'VVV";
+
+                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                    // can also be used to control the format of the API version in route templates
+                    options.SubstituteApiVersionInUrl = true;
+                });
+            #endregion
+
             #region Ioc
             //var builder = new ContainerBuilder();
             //builder.Populate(services);
@@ -215,7 +228,8 @@ namespace Blog.Api
         ///  This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
-        public void Configure(IApplicationBuilder app)
+        /// <param name="provider"></param>
+        public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
         {
 
             if (Env.IsDevelopment())
@@ -226,9 +240,10 @@ namespace Blog.Api
             app.UseSwagger();
             app.UseSwaggerUI(option =>
             {
-                option.DocumentTitle = Name;
-                option.SwaggerEndpoint($"/swagger/{Version}/swagger.json", $"{Name} {Version}");
-                option.RoutePrefix = "swagger";
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                }
                 option.IndexStream = () => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("Blog.Api.index.html");
             });
             #endregion

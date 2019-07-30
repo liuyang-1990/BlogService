@@ -14,8 +14,10 @@ namespace Blog.Api.Controllers
     /// <summary>
     /// 文章
     /// </summary>
-    [EnableCors("LimitRequests")]//支持跨域
+    [ApiController]
+    [ApiVersion("1.0")]
     [BlogApiController]
+    [EnableCors("LimitRequests")]//支持跨域
     [Authorize(Policy = "Admin")]
     public class ArticleController : ControllerBase
     {
@@ -34,7 +36,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("page")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas)
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList([FromQuery]GridParams param, [FromQuery]ArticleRequest searchParmas)
         {
             return await _articleBusiness.GetPageList(param, searchParmas);
         }

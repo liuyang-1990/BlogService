@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
-    [EnableCors("LimitRequests")]//支持跨域
+    [ApiController]
+    [ApiVersion("1.0")]
     [BlogApiController]
+    [EnableCors("LimitRequests")]//支持跨域
     [Authorize(Policy = "Admin")]
     public class UserController : ControllerBase
     {
@@ -31,7 +33,7 @@ namespace Blog.Api.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<UserInfoBase>> GetPageList(UserRequest searchParams, GridParams param)
+        public async Task<JsonResultModel<UserInfoBase>> GetPageList([FromQuery]UserRequest searchParams, [FromQuery]GridParams param)
         {
             var userInfos = await _userBusiness.GetPageList(searchParams, param);
             return _mapper.Map<JsonResultModel<UserInfoBase>>(userInfos);

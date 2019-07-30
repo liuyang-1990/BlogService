@@ -5,7 +5,7 @@ namespace Blog.Api
 {
     public class BlogApiControllerAttribute : Attribute, IRouteTemplateProvider
     {
-        public string Template => "api/v1/[controller]";
+        public string Template => "api/v{version:apiVersion}/[controller]";
 
         public int? Order { get; set; }
 

@@ -3,6 +3,7 @@ using System;
 
 namespace Blog.Api.Controllers
 {
+
     public class DefaultController : ControllerBase
     {
         [HttpGet("/")]

@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
-    [EnableCors("LimitRequests")]//支持跨域
+    [ApiController]
+    [ApiVersion("1.0")]
     [BlogApiController]
+    [EnableCors("LimitRequests")]//支持跨域
     [Authorize(Policy = "Admin")]
     public class TagController : ControllerBase
     {
