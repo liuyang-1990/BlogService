@@ -22,6 +22,10 @@
   <ItemGroup>
     <PackageReference Include="AspectCore.Core" Version="1.2.0" />
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="1.2.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.MySql" Version="2.2.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Network" Version="2.2.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="2.2.3" />
+    <PackageReference Include="AspNetCore.HealthChecks.System" Version="2.2.1" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.5.0" />
     <PackageReference Include="AutoMapper" Version="8.1.1" />

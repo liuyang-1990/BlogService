@@ -23,8 +23,14 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net.Mime;
 using System.Text;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 
 namespace Blog.Api
 {
@@ -184,6 +190,19 @@ namespace Blog.Api
               });
             #endregion
 
+            #region HealthCheck
+
+            var drivers = DriveInfo.GetDrives();
+            var targetDriver = drivers.FirstOrDefault(x => x.DriveType == DriveType.Fixed);
+            services.AddHealthChecks()
+                   .AddPrivateMemoryHealthCheck(1000_000_000L)
+                   .AddVirtualMemorySizeHealthCheck(1000_000_000L)
+                   .AddWorkingSetHealthCheck(1000_000_000L)
+                   .AddRedis(Configuration["RedisCaching:ConnectionString"])
+                   .AddDiskStorageHealthCheck(x => x.AddDrive(targetDriver?.Name, 1000))
+                   .AddMySql(Configuration["ConnectionStrings:ConnectionString"]);
+
+            #endregion
 
             #region API版本控制
             services.AddApiVersioning(options =>
@@ -261,6 +280,22 @@ namespace Blog.Api
             //miniProfiler
             app.UseMiniProfiler();
 
+            #region HealthCheck
+            app.UseHealthChecks("/healthz", new HealthCheckOptions()
+            {
+                ResponseWriter = async (context, report) =>
+                {
+                    var result = JsonConvert.SerializeObject(
+                        new
+                        {
+                            status = report.Status.ToString(),
+                            errors = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
+                        });
+                    context.Response.ContentType = MediaTypeNames.Application.Json;
+                    await context.Response.WriteAsync(result);
+                }
+            });
+            #endregion
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseMvc();
