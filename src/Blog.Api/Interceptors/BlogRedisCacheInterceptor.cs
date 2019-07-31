@@ -1,11 +1,12 @@
 ﻿using AspectCore.DynamicProxy;
-using Blog.Model;
-using System;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Linq;
 using Blog.Infrastructure;
+using Blog.Model;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Blog.Api.Interceptors
 {
@@ -16,10 +17,10 @@ namespace Blog.Api.Interceptors
             var method = context.ImplementationMethod;
             if (method.GetCustomAttributes<CachingAttribute>().FirstOrDefault() is CachingAttribute attribute)
             {
-                var redisHelper = AspectCoreContainer.Resolve<IRedisHelper>();
+                var cache = AspectCoreContainer.Resolve<IDistributedCache>();
                 var key = string.IsNullOrEmpty(attribute.CacheKey) ?
                     GetCustomKey(context) : attribute.CacheKey;
-                var value = redisHelper.Get(key);
+                var value = await cache.GetStringAsync(key);
                 if (value != null)
                 {
                     if (method.IsReturnTask())
@@ -38,7 +39,11 @@ namespace Blog.Api.Interceptors
                     dynamic returnValue = context.ReturnValue;
                     if (method.IsReturnTask())
                         returnValue = returnValue.Result;
-                    redisHelper.Set(key, returnValue, TimeSpan.FromMinutes(attribute.AbsoluteExpiration));
+                    string val = JsonConvert.SerializeObject(returnValue);
+                    await cache.SetStringAsync(key, val, new DistributedCacheEntryOptions()
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(attribute.AbsoluteExpiration)
+                    });
                 }
             }
             else
