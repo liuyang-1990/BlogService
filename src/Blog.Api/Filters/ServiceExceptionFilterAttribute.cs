@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Blog.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
 using System.Net;
 
 namespace Blog.Api.Filters
@@ -9,26 +9,27 @@ namespace Blog.Api.Filters
     {
         public override void OnException(ExceptionContext context)
         {
-            var exception = context.Exception as UnauthorizedAccessException;
-            var responseCode = HttpStatusCode.InternalServerError.ToString();
-            if (exception != null)
+            if (context.Exception is ServiceException exception)
             {
-                responseCode = HttpStatusCode.Unauthorized.ToString();
-                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                var code = exception.HttpStatusCode != default
+                     ? exception.HttpStatusCode
+                     : HttpStatusCode.InternalServerError;
+                context.Result = new JsonResult(new
+                {
+                    ResponseCode = code.ToString(),
+                    Msg = context.Exception.Message,
+                    StatusCode = exception.ResponseCode
+                });
             }
             else
             {
-                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Result = new JsonResult(new
+                {
+                    ResponseCode = HttpStatusCode.InternalServerError.ToString(),
+                    Msg = context.Exception.Message,
+                    StatusCode = context.HttpContext.Response.StatusCode,
+                });
             }
-
-            var data = new
-            {
-                ResponseCode = responseCode,
-                Msg = context.Exception.Message,
-                StatusCode = context.HttpContext.Response.StatusCode,
-            };
-            context.Result = new JsonResult(data);
-
         }
     }
 }
