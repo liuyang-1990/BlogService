@@ -7,6 +7,7 @@ using Blog.Api.SwaggerExtensions;
 using Blog.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +15,10 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SqlSugar;
 using StackExchange.Profiling.Storage;
@@ -23,14 +26,10 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json;
 
 namespace Blog.Api
 {
@@ -179,6 +178,12 @@ namespace Blog.Api
 
             services.AddHttpClient();
             services.AddMemoryCache();
+            //使用微软的分布式缓存
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = Configuration["RedisCaching:ConnectionString"];
+                options.InstanceName = "blog";
+            });
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #region AOP

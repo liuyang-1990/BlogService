@@ -18,12 +18,11 @@ namespace Blog.Api.Controllers
     {
         private readonly IJwtHelper _jwtHelper;
         private readonly IUserBusiness _userBusiness;
-        private readonly ITripleDESCryptographHelper _cryptographHelper;
-        public AccountController(IJwtHelper jwtHelper, IUserBusiness userBusiness, ITripleDESCryptographHelper cryptographHelper)
+        public AccountController(IJwtHelper jwtHelper,
+            IUserBusiness userBusiness)
         {
             _jwtHelper = jwtHelper;
             _userBusiness = userBusiness;
-            _cryptographHelper = cryptographHelper;
         }
 
         [HttpPost("login")]
@@ -52,7 +51,6 @@ namespace Blog.Api.Controllers
             response.IsSuccess = true;
             response.Status = "0";
             loginResponse.UserName = userInfo.UserName;
-            loginResponse.UserId = _cryptographHelper.Encrypt(userInfo.Id.ToString());
             response.ResultInfo = loginResponse;
             return response;
         }

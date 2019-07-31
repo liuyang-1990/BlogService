@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Caching.Distributed;
 
 
 namespace Blog.Infrastructure.Implement
@@ -19,13 +20,17 @@ namespace Blog.Infrastructure.Implement
     [Injector(typeof(IJwtHelper), LifeTime = Lifetime.Singleton)]
     public class JwtHelper : IJwtHelper
     {
-
-        private readonly IRedisHelper _redisHelper;
+        private readonly IDistributedCache _cache;
+        //  private readonly IRedisHelper _redisHelper;
         private readonly IConfiguration _configuration;
-        public JwtHelper(IConfiguration configuration, IRedisHelper redisHelper)
+        public JwtHelper(IConfiguration configuration,
+            IDistributedCache cache
+            //IRedisHelper redisHelper
+            )
         {
             _configuration = configuration;
-            _redisHelper = redisHelper;
+            _cache = cache;
+            // _redisHelper = redisHelper;
         }
 
 
@@ -65,7 +70,12 @@ namespace Blog.Infrastructure.Implement
                 };
             }
             var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
-            _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromDays(15));
+            _cache.SetStringAsync($"refresh_token_{tokenModel.Uid}", refreshToken,
+                new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(15)
+                });
+            // _redisHelper.Set($"refresh_token_{tokenModel.Uid}", refreshToken, TimeSpan.FromDays(15));
             return new LoginResponse()
             {
                 AccessToken = "Bearer " + encodedJwt,
@@ -79,17 +89,8 @@ namespace Blog.Infrastructure.Implement
         /// <returns></returns>
         public string RefreshJwt(string refreshToken, JwtToken tokenModel)
         {
-            if (!_redisHelper.ContainsKey($"refresh_token_{tokenModel.Uid}"))
-            {
-                return null;
-            }
-            var val = _redisHelper.Get<string>($"refresh_token_{tokenModel.Uid}");
-            if (string.IsNullOrEmpty(val))
-            {
-                _redisHelper.Remove($"refresh_token_{tokenModel.Uid}");
-                return null;
-            }
-            if (!string.Equals(refreshToken, val, StringComparison.OrdinalIgnoreCase))
+            var value = _cache.GetString($"refresh_token_{tokenModel.Uid}");
+            if (!string.Equals(refreshToken, value, StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
