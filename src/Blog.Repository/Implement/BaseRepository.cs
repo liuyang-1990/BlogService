@@ -6,16 +6,19 @@ using SqlSugar;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Blog.Infrastructure;
+using Blog.Infrastructure.Extensions;
 
 namespace Blog.Repository.Implement
 {
     public class BaseRepository<T> where T : BaseEntity, new()
     {
-        protected SqlSugarClient Db;
-        
+        protected ISqlSugarClient Db;
+
         protected BaseRepository()
         {
-            Db = DbContext.GetDbContext();
+            Db = AspectCoreContainer.Resolve<IDbContext>().GetDbContext();
+            //Db = DbContext.GetDbContext();
         }
         /// <summary>
         /// 分页获取

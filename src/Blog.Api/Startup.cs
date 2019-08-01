@@ -30,6 +30,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using Blog.Infrastructure.Extensions;
+using StackExchange.Profiling;
 
 namespace Blog.Api
 {
@@ -176,16 +178,32 @@ namespace Blog.Api
             services.AddAutoMapper(typeof(Startup));
             #endregion
 
-            services.AddHttpClient();
-            services.AddMemoryCache();
             //使用微软的分布式缓存
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = Configuration["RedisCaching:ConnectionString"];
                 options.InstanceName = "blog";
             });
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddSqlSugarDbContext(options =>
+            {
+                options.DbType = DbType.MySql;
+                options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
+                options.IsAutoCloseConnection = true;
+                options.InitKeyType = InitKeyType.SystemTable;
+                options.AopEvents = new AopEvents()
+                {
+                    OnLogExecuting = (sql, pars) =>
+                    {
+                        var sqlP = sql + "\r\n" + JsonConvert.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
+                        MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
+                    }
+                };
+            });
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpClient();
+            services.AddMemoryCache();
             #region AOP
 
             services.ConfigureDynamicProxy(config =>
