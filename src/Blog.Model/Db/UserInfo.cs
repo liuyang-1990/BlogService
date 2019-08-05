@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using SqlSugar;
+﻿using SqlSugar;
 using System;
 
 namespace Blog.Model.Db
@@ -7,8 +6,6 @@ namespace Blog.Model.Db
     [SugarTable("sys_user_info")]
     public class UserInfo : UserInfoBase
     {
-      
-
         /// <summary>
         /// 密码
         /// </summary>
@@ -32,6 +29,8 @@ namespace Blog.Model.Db
         /// 状态 1 启用  0 禁用
         /// </summary>
         public int Status { get; set; }
+
+        public string Avatar { get; set; }
 
         /// <summary>
         /// 上次登录时间

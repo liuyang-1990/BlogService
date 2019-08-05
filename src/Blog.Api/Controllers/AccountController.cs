@@ -50,7 +50,12 @@ namespace Blog.Api.Controllers
             });
             response.IsSuccess = true;
             response.Status = "0";
-            loginResponse.UserName = userInfo.UserName;
+            loginResponse.Profile = new Profile()
+            {
+                Id = userInfo.Id,
+                UserName = userInfo.UserName,
+                Avatar = userInfo.Avatar
+            };
             response.ResultInfo = loginResponse;
             return response;
         }
