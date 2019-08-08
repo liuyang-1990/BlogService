@@ -9,6 +9,7 @@ using Blog.Repository;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -33,7 +34,7 @@ namespace Blog.Business.Implement
             var exp = Expressionable.Create<UserInfo>()
                 .OrIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
                 .AndIF(true, it => it.Status == searchParams.Status).ToExpression();
-            return await base.GetPageList(param, exp);
+            return await base.GetPageList(param, exp,new List<string>(){ "Password" });
         }
 
 

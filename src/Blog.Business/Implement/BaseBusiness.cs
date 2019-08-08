@@ -4,6 +4,7 @@ using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -14,14 +15,14 @@ namespace Blog.Business.Implement
     {
         protected IBaseRepository<T> BaseRepository;
 
-        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression)
+        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression, List<string> ignoreColumns = null)
         {
-            return await BaseRepository.GetPageList(param, expression);
+            return await BaseRepository.GetPageList(param, expression, ignoreColumns);
         }
 
-        public virtual async Task<T> GetDetail(int id)
+        public virtual async Task<T> GetDetail(int id, List<string> ignoreColumns = null)
         {
-            return await BaseRepository.GetDetail(id);
+            return await BaseRepository.GetDetail(id, ignoreColumns);
         }
 
         /// <summary>

@@ -7,6 +7,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -33,10 +34,9 @@ namespace Blog.Api.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<UserInfoBase>> GetPageList([FromQuery]UserRequest searchParams, [FromQuery]GridParams param)
+        public async Task<JsonResultModel<UserInfo>> GetPageList([FromQuery]UserRequest searchParams, [FromQuery]GridParams param)
         {
-            var userInfos = await _userBusiness.GetPageList(searchParams, param);
-            return _mapper.Map<JsonResultModel<UserInfoBase>>(userInfos);
+            return await _userBusiness.GetPageList(searchParams, param);
         }
 
         /// <summary>
@@ -45,10 +45,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<UserInfoBase> GetDetailInfo(int id)
+        public async Task<UserInfo> GetDetailInfo(int id)
         {
-            var user = await _userBusiness.GetDetail(id);
-            return _mapper.Map<UserInfoBase>(user);
+            return await _userBusiness.GetDetail(id,new List<string>(){ "Password" });
         }
 
         /// <summary>

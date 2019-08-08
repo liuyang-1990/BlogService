@@ -4,6 +4,8 @@ using Blog.Model.ViewModel;
 using Blog.Repository.Dao;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Blog.Infrastructure;
@@ -25,17 +27,19 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="param"></param>
         /// <param name="expression"></param>
+        /// <param name="ignoreColumns"></param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression)
+        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression, List<string> ignoreColumns = null)
         {
-            const int totalNumber = 0;
-            var pageInfo = await Db.Queryable<T>().WhereIF(expression != null, expression)
-            .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder), param.SortField + " " + param.SortOrder)
-            .ToPageListAsync(param.PageNum, param.PageSize, totalNumber);
+            var queryable = Db.Queryable<T>().WhereIF(expression != null, expression)
+                .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder),
+                    param.SortField + " " + param.SortOrder);
+            var ignore = GetIgnoreColumns(ignoreColumns);
+            queryable.IgnoreColumns(ignore);
             return new JsonResultModel<T>()
             {
-                Rows = pageInfo,
-                TotalRows = totalNumber
+                Rows = await queryable.ToPageListAsync(param.PageNum, param.PageSize),
+                TotalRows = await queryable.CountAsync()
             };
         }
 
@@ -43,10 +47,12 @@ namespace Blog.Repository.Implement
         /// 获取详细信息
         /// </summary>
         /// <param name="id">主键</param>
+        /// <param name="ignoreColumns"></param>
         /// <returns></returns>
-        public virtual async Task<T> GetDetail(int id)
+        public virtual async Task<T> GetDetail(int id, List<string> ignoreColumns = null)
         {
-            return await Db.Queryable<T>().SingleAsync(x => x.Id == id);
+            var ignore = GetIgnoreColumns(ignoreColumns);
+            return await Db.Queryable<T>().IgnoreColumns(ignore).SingleAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -79,6 +85,16 @@ namespace Blog.Repository.Implement
         public virtual async Task<bool> Delete(int id)
         {
             return await Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
+        }
+
+        private string[] GetIgnoreColumns(List<string> ignoreColumns)
+        {
+            var ignore = new List<string>() { "IsDeleted", "ModifyTime" };
+            if (ignoreColumns != null && ignoreColumns.Any())
+            {
+                ignore.AddRange(ignoreColumns);
+            }
+            return ignore.ToArray();
         }
     }
 }

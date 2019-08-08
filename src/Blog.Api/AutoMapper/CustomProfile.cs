@@ -12,7 +12,7 @@ namespace Blog.Api.AutoMapper
         public CustomProfile()
         {
             CreateMap<UserRequest, UserInfo>();
-            CreateMap<UserInfo, UserInfoBase>();
+          //  CreateMap<UserInfo, UserInfoBase>();
             CreateMap<TimeLineRequest, Tbl_Time_Line>();
         }
     }
