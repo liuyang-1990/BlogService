@@ -90,28 +90,26 @@ namespace Blog.Api.Controllers
         /// 根据种类获取文章信息
         /// </summary>
         /// <param name="categoryId"></param>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
-        public async Task<IEnumerable<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<ArticleInfo>> GetArticleByCategory(int categoryId, GridParams param)
         {
-            return await _articleBusiness.GetArticleByCategory(categoryId, pageIndex, pageSize);
+            return await _articleBusiness.GetArticleByCategory(categoryId, param.PageNum, param.PageSize);
         }
 
         /// <summary>
         /// 根据标签获取文章信息
         /// </summary>
         /// <param name="tagId"></param>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
-        public async Task<IEnumerable<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<ArticleInfo>> GetArticleByTag(int tagId, GridParams param)
         {
-            return await _articleBusiness.GetArticleByTag(tagId, pageIndex, pageSize);
+            return await _articleBusiness.GetArticleByTag(tagId, param.PageNum, param.PageSize);
         }
     }
 }

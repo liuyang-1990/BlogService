@@ -32,8 +32,9 @@ namespace Blog.Business.Implement
         public async Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param)
         {
             var exp = Expressionable.Create<UserInfo>()
+                .AndIF(true, it => it.Status == searchParams.Status)
                 .OrIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
-                .AndIF(true, it => it.Status == searchParams.Status).ToExpression();
+                .ToExpression();
             return await base.GetPageList(param, exp,new List<string>(){ "Password" });
         }
 

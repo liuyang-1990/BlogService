@@ -56,10 +56,9 @@ namespace Blog.Api.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddUser([FromBody]UserRequest user)
+        public async Task<ResultModel<string>> AddUser([FromBody]UserInfo user)
         {
-            var userInfo = _mapper.Map<UserInfo>(user);
-            return await _userBusiness.Insert(userInfo);
+            return await _userBusiness.Insert(user);
         }
 
         /// <summary>
@@ -78,10 +77,9 @@ namespace Blog.Api.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateUser([FromBody]UserRequest user)
+        public async Task<ResultModel<string>> UpdateUser([FromBody]UserInfo user)
         {
-            var userInfo = _mapper.Map<UserInfo>(user);
-            return await _userBusiness.Update(userInfo);
+            return await _userBusiness.Update(user);
         }
 
         /// <summary>
