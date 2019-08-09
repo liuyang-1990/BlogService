@@ -40,7 +40,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _userRepository
-                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>()))
+                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>(), It.IsAny<List<string>>()))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _userBusiness.GetPageList(new UserRequest() { Status = 1 }, new GridParams());
             var actualStr = JsonConvert.SerializeObject(actualModel);

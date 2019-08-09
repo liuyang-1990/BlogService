@@ -34,7 +34,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _categoryRepository
-                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<CategoryInfo, bool>>>()))
+                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<CategoryInfo, bool>>>(), null))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _categoryBusiness.GetPageList(new GridParams(), "");
             var actualStr = JsonConvert.SerializeObject(actualModel);

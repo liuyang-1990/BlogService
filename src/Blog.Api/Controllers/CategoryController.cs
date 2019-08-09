@@ -31,7 +31,7 @@ namespace Blog.Api.Controllers
         /// <param name="categoryName"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName)
+        public async Task<JsonResultModel<CategoryInfo>> GetPageList([FromQuery]GridParams param, string categoryName)
         {
             return await _categoryBusiness.GetPageList(param, categoryName);
         }

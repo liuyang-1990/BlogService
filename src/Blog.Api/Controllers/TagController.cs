@@ -31,7 +31,7 @@ namespace Blog.Api.Controllers
         /// <param name="tagName"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName)
+        public async Task<JsonResultModel<TagInfo>> GetPageList([FromQuery]GridParams param, string tagName)
         {
             return await _tagBusiness.GetPageList(param, tagName);
         }

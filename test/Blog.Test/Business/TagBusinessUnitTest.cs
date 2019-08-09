@@ -71,7 +71,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _tagRespoitory
-                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<TagInfo, bool>>>()))
+                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<TagInfo, bool>>>(), null))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _tagBusiness.GetPageList(new GridParams(), "");
             var actualStr = JsonConvert.SerializeObject(actualModel);
