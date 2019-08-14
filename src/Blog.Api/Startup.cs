@@ -31,6 +31,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using Blog.Infrastructure.Extensions;
+using Prometheus;
 using StackExchange.Profiling;
 
 namespace Blog.Api
@@ -302,6 +303,11 @@ namespace Blog.Api
             app.UseStatusCodePages();
             //miniProfiler
             app.UseMiniProfiler();
+
+            #region Metrics
+            app.UseMetricServer();
+            app.UseHttpMetrics(); 
+            #endregion
 
             #region HealthCheck
             app.UseHealthChecks("/healthz", new HealthCheckOptions()
