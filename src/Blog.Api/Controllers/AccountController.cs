@@ -46,16 +46,12 @@ namespace Blog.Api.Controllers
             var loginResponse = _jwtHelper.IssueJwt(new JwtToken()
             {
                 Uid = userInfo.Id,
+                UserName = userInfo.UserName,
+                Avtar = userInfo.Avatar,
                 Role = Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString()
             });
             response.IsSuccess = true;
             response.Status = "0";
-            loginResponse.Profile = new Profile()
-            {
-                Id = userInfo.Id,
-                UserName = userInfo.UserName,
-                Avatar = userInfo.Avatar
-            };
             response.ResultInfo = loginResponse;
             return response;
         }

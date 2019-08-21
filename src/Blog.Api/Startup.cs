@@ -106,7 +106,7 @@ namespace Blog.Api
                 options.AddPolicy("LimitRequests", policy =>
                 {
                     policy
-                        .WithOrigins("https://www.nayoung515.top", "https://admin.nayoung515.top", Configuration["Origins"])
+                        .WithOrigins(Configuration["Origins"].Split(",", StringSplitOptions.RemoveEmptyEntries))
                         .AllowAnyMethod() //允许任何方式
                         .AllowAnyHeader() //允许任何头
                         .WithExposedHeaders("Authorization") //返回自定义Header

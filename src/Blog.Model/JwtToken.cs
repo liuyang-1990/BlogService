@@ -10,5 +10,9 @@
         /// 角色
         /// </summary>
         public string Role { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Avtar { get; set; }
     }
 }

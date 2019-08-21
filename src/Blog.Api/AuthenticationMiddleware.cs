@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,46 +35,48 @@ namespace Blog.Api
             {
                 return _next(httpContext);
             }
-            var tokenHeader = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var jwtArr = tokenHeader.Split('.');
-            if (jwtArr.Length != 3)
+            var token = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var jwtHandler = new JwtSecurityTokenHandler();
+            try
             {
-                return _next(httpContext);
+                //验证Token
+                jwtHandler.ValidateToken(token, new TokenValidationParameters()
+                {
+                    ValidIssuer = _configuration["JwtAuth:Issuer"],
+                    ValidAudience = _configuration["JwtAuth:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JwtAuth:SecurityKey"])),
+                    RequireSignedTokens = true,
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                }, out var _);
+
             }
-            //首先验证签名是否正确
-            var hs256 = new HMACSHA256(Encoding.ASCII.GetBytes(_configuration["JwtAuth:SecurityKey"]));
-            var success = string.Equals(jwtArr[2],
-                Base64UrlEncoder.Encode(hs256.ComputeHash(Encoding.UTF8.GetBytes(string.Concat(jwtArr[0], ".", jwtArr[1])))));
-            if (!success)
+            catch (SecurityTokenExpiredException)
             {
-                //签名不正确
-                return _next(httpContext);
+                //说明token过期
+                var securityToken = jwtHandler.ReadJwtToken(token);
+                var claims = securityToken.Payload.Claims;
+                var userData = claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value;
+                //此时刷新token
+                var refreshToken = httpContext.Request.Headers["x-refresh-token"].ToString();
+                var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonConvert.DeserializeObject<JwtToken>(userData));
+                if (newToken == null)
+                {
+                    return _next(httpContext);
+                }
+                httpContext.Request.Headers["Authorization"] = newToken;
+                httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
+                httpContext.Response.Headers.Add("Authorization", newToken);
             }
-            var payLoad = JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(jwtArr[1]));
-            //其次验证是否在有效期内
-            var now = ToUnixEpochDate(DateTime.UtcNow);
-            success = (now >= long.Parse(payLoad["nbf"].ToString()) && now < long.Parse(payLoad["exp"].ToString()));
-            if (success) return _next(httpContext);
-            var refreshToken = httpContext.Request.Headers["refresh_token"].ToString();
-            var token = _jwtHelper.RefreshJwt(refreshToken, new JwtToken()
+            catch (Exception)
             {
-                Uid = int.Parse(payLoad["jti"].ToString()),
-                Role = payLoad[ClaimTypes.Role].ToString()
-            });
-            if (token == null)
-            {
-                return _next(httpContext);
+
             }
-            httpContext.Request.Headers["Authorization"] = token;
-            //在使用CORS方式跨域时，浏览器只会返回以下默认头部header:  
-            // 1.Content-Language 2. Content - Type 3. Expires     4.Last - Modified  5. Pragma
-            //在客户端获取自定义的header信息，需要在服务器端header中添加Access-Control-Expose-Headers
-            // httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
-            httpContext.Response.Headers.Add("Authorization", token);
             return _next(httpContext);
         }
-
-        private long ToUnixEpochDate(DateTime date) =>
-            (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
     }
 }
