@@ -33,7 +33,7 @@ namespace Blog.Business.Implement
         {
             var exp = Expressionable.Create<UserInfo>()
                 .AndIF(true, it => it.Status == searchParams.Status)
-                .OrIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
+                .AndIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
                 .ToExpression();
             return await base.GetPageList(param, exp,new List<string>(){ "Password" });
         }
