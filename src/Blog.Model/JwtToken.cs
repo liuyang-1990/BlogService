@@ -13,6 +13,6 @@
 
         public string UserName { get; set; }
 
-        public string Avtar { get; set; }
+        public string Avatar { get; set; }
     }
 }

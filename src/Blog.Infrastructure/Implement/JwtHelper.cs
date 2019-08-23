@@ -54,7 +54,7 @@ namespace Blog.Infrastructure.Implement
             var jwt = new JwtSecurityToken(
                 notBefore: dateTime,
                 claims: claims,
-                expires: dateTime.AddMinutes(2),
+                expires: dateTime.AddHours(2),
                 signingCredentials: creds);
             var jwtHandler = new JwtSecurityTokenHandler();
             var encodedJwt = jwtHandler.WriteToken(jwt);
@@ -69,7 +69,7 @@ namespace Blog.Infrastructure.Implement
             _cache.SetStringAsync($"refresh_token_{tokenModel.Uid}", refreshToken,
                 new DistributedCacheEntryOptions()
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(15)
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(10)
                 });
             return new LoginResponse()
             {

@@ -11,7 +11,7 @@ namespace Blog.Api.Filters
         {
             if (context.Exception is ServiceException exception)
             {
-                var code = exception.HttpStatusCode != default
+                var code = exception.HttpStatusCode != default(HttpStatusCode)
                      ? exception.HttpStatusCode
                      : HttpStatusCode.InternalServerError;
                 context.Result = new JsonResult(new

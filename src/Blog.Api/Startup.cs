@@ -33,6 +33,7 @@ using System.Text;
 using Blog.Infrastructure.Extensions;
 using Prometheus;
 using StackExchange.Profiling;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Blog.Api
 {
@@ -283,6 +284,11 @@ namespace Blog.Api
             app.UseSwagger();
             app.UseSwaggerUI(option =>
             {
+                option.DefaultModelRendering(ModelRendering.Model);
+                //hide the expansion models
+                option.DefaultModelsExpandDepth(-1);
+                option.DefaultModelExpandDepth(2);
+                option.DocExpansion(DocExpansion.None);
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
                     option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());

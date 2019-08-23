@@ -47,7 +47,7 @@ namespace Blog.Api.Controllers
             {
                 Uid = userInfo.Id,
                 UserName = userInfo.UserName,
-                Avtar = userInfo.Avatar,
+                Avatar = userInfo.Avatar,
                 Role = Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString()
             });
             response.IsSuccess = true;
