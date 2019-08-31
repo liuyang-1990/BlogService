@@ -5,6 +5,7 @@ using Blog.Api.Filters;
 using Blog.Api.Interceptors;
 using Blog.Api.SwaggerExtensions;
 using Blog.Infrastructure;
+using Blog.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -20,20 +21,19 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Prometheus;
 using SqlSugar;
+using StackExchange.Profiling;
 using StackExchange.Profiling.Storage;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-using Blog.Infrastructure.Extensions;
-using Prometheus;
-using StackExchange.Profiling;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Blog.Api
 {
@@ -210,8 +210,11 @@ namespace Blog.Api
 
             services.ConfigureDynamicProxy(config =>
               {
-                  config.Interceptors.AddTyped<BlogRedisCacheInterceptor>();
-                  config.Interceptors.AddTyped<MiniProfilerInterceptor>();
+                  //只对以Business结尾的Service有效
+                  config.Interceptors.AddTyped<BlogRedisCacheInterceptor>(Predicates.ForService("*Business"));
+                  config.Interceptors.AddTyped<MiniProfilerInterceptor>(Predicates.ForService("*Business"));
+                  //全局拦截
+                  //config.Interceptors.AddTyped<MiniProfilerInterceptor>();
               });
             #endregion
 
@@ -312,7 +315,7 @@ namespace Blog.Api
 
             #region Metrics
             app.UseMetricServer();
-            app.UseHttpMetrics(); 
+            app.UseHttpMetrics();
             #endregion
 
             #region HealthCheck
