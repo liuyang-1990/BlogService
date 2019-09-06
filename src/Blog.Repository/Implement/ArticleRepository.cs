@@ -70,7 +70,7 @@ namespace Blog.Repository.Implement
                 var tagIds = new List<int>();
                 foreach (var tag in tags)
                 {
-                    if (!Db.Queryable<TagInfo>().Any(i => i.TagName == tag))
+                    if (!int.TryParse(tag, out _))
                     {
                         //需要新增的tag
                         var tagId = await Db.Insertable(new TagInfo() { TagName = tag }).ExecuteReturnIdentityAsync();
@@ -78,8 +78,7 @@ namespace Blog.Repository.Implement
                     }
                     else
                     {
-                        var tagInfo = await Db.Queryable<TagInfo>().FirstAsync(i => i.TagName == tag);
-                        tagIds.Add(tagInfo.Id);
+                        tagIds.Add(int.Parse(tag));
                     }
                 }
                 var articleTags = tagIds.Select(tagId => new ArticleTag()
@@ -150,7 +149,7 @@ namespace Blog.Repository.Implement
                 var tagIds = new List<int>();
                 foreach (var tag in tags)
                 {
-                    if (!Db.Queryable<TagInfo>().Any(i => i.TagName == tag))
+                    if (!int.TryParse(tag, out _))
                     {
                         //需要新增的tag
                         var tagId = await Db.Insertable(new TagInfo() { TagName = tag }).ExecuteReturnIdentityAsync();
@@ -158,8 +157,7 @@ namespace Blog.Repository.Implement
                     }
                     else
                     {
-                        var tagInfo = await Db.Queryable<TagInfo>().FirstAsync(i => i.TagName == tag);
-                        tagIds.Add(tagInfo.Id);
+                        tagIds.Add(int.Parse(tag));
                     }
                 }
                 var articleTags = tagIds.Select(tagId => new ArticleTag()
