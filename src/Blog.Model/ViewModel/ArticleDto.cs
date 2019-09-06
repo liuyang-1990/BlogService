@@ -10,12 +10,12 @@ namespace Blog.Model.ViewModel
         /// <summary>
         /// 标签
         /// </summary>
-        public string Tags { get; set; }
+        public List<string> Tags { get; set; }
 
         /// <summary>
         /// 分类
         /// </summary>
-        public List<int> Category { get; set; }
+        public List<int> Categories { get; set; }
 
     }
 }

@@ -1,9 +1,13 @@
-﻿namespace Blog.Model.Request
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Blog.Model.Request
 {
     public class LoginRequest
     {
+        [Required]
         public string UserName { get; set; }
 
+        [Required]
         public string Password { get; set; }
     }
 }

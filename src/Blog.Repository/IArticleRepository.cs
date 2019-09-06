@@ -7,9 +7,9 @@ namespace Blog.Repository
 {
     public interface IArticleRepository : IBaseRepository<ArticleInfo>
     {
-        Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds);
+        Task<bool> Insert(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds);
 
-        Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds);
+        Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds);
 
         Task<ArticleDetailResponse> GetArticleDetail(int id);
 

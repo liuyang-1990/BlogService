@@ -69,9 +69,7 @@ namespace Blog.Business.Implement
             {
                 Content = articleDto.Content
             };
-            var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            // var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            response.IsSuccess = await _articleRepository.Insert(article, content, tagIds, articleDto.Category);
+            response.IsSuccess = await _articleRepository.Insert(article, content, articleDto.Tags, articleDto.Categories);
             response.Status = response.IsSuccess ? "0" : "1";
 
             return response;
@@ -96,9 +94,7 @@ namespace Blog.Business.Implement
                 ArticleId = article.Id,
                 ModifyTime = DateTime.Now
             };
-            var tagIds = articleDto.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            //var categoryIds = articleDto.Categories.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            response.IsSuccess = await _articleRepository.Update(article, content, tagIds, articleDto.Category);
+            response.IsSuccess = await _articleRepository.Update(article, content, articleDto.Tags, articleDto.Categories);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

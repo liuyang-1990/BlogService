@@ -59,7 +59,7 @@ namespace Blog.Repository.Implement
         /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds)
+        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace Blog.Repository.Implement
         /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Update(ArticleInfo article, ArticleContent content, string[] tags, List<int> categoryIds)
+        public async Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds)
         {
             try
             {

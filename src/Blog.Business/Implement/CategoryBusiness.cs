@@ -42,6 +42,7 @@ namespace Blog.Business.Implement
             return response;
         }
 
+        [Caching]
         public async Task<List<CategoryInfo>> GetAllCategoryInfos()
         {
             return await _categoryRepository.GetAllCategory();
