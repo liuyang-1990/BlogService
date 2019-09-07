@@ -31,25 +31,13 @@ namespace Blog.Business.Implement
             {
                 exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate());
             }
-            else if (!string.IsNullOrEmpty(searchParmas.EndTime) && DateTime.TryParse(searchParmas.EndTime, out _) && string.IsNullOrEmpty(searchParmas.StartTime))
+            else if (!string.IsNullOrEmpty(searchParmas.EndTime) && string.IsNullOrEmpty(searchParmas.StartTime))
             {
                 exp.AndIF(true, it => it.CreateTime <= searchParmas.EndTime.ObjToDate());
             }
             else if (!string.IsNullOrEmpty(searchParmas.StartTime) && !string.IsNullOrEmpty(searchParmas.EndTime))
             {
-                var res = DateTime.Compare(searchParmas.StartTime.ObjToDate(), searchParmas.EndTime.ObjToDate());
-                if (res < 0)
-                {
-                    exp.AndIF(true, it => it.CreateTime > searchParmas.StartTime.ObjToDate() && it.CreateTime < searchParmas.EndTime.ObjToDate());
-                }
-                else if (res == 0)
-                {
-                    exp.AndIF(true, it => it.CreateTime > searchParmas.StartTime.ObjToDate() && it.CreateTime < searchParmas.StartTime.ObjToDate().AddDays(1));
-                }
-                else if (res > 0)
-                {
-                    exp.AndIF(true, it => it.CreateTime > searchParmas.EndTime.ObjToDate() && it.CreateTime < searchParmas.StartTime.ObjToDate());
-                }
+                exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate() && it.CreateTime <= searchParmas.EndTime.ObjToDate());
             }
             return await base.GetPageList(param, exp.ToExpression());
         }
