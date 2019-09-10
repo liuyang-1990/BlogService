@@ -26,7 +26,30 @@ namespace Blog.Model.Db
         /// </summary>
         public int Status { get; set; }
 
+        /// <summary>
+        /// 头像
+        /// </summary>
         public string Avatar { get; set; }
+
+        /// <summary>
+        /// 手机号码
+        /// </summary>
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// 邮箱地址
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// 国家
+        /// </summary>
+        public string Country { get; set; }
+
+        /// <summary>
+        /// 简介
+        /// </summary>
+        public string Profile { get; set; }
 
         /// <summary>
         /// 上次登录时间
