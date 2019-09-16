@@ -46,11 +46,15 @@ namespace Blog.Model.Db
         /// </summary>
         public string Country { get; set; }
 
+        public string Province { get; set; }
+
+        public string City { get; set; }
         /// <summary>
         /// 简介
         /// </summary>
         public string Profile { get; set; }
 
+        public string Address { get; set; }
         /// <summary>
         /// 上次登录时间
         /// </summary>
