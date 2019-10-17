@@ -43,7 +43,18 @@ namespace Blog.Model.Db
         /// <summary>
         /// 访问量
         /// </summary>
-        public int Traffic { get; set; }
+        public int Views { get; set; }
+
+        /// <summary>
+        /// 评论量
+        /// </summary>
+        public int Comments { get; set; }
+
+        /// <summary>
+        /// 点赞量
+        /// </summary>
+        public int Likes { get; set; }
+
 
     }
 }
