@@ -1,9 +1,9 @@
-FROM microsoft/dotnet:2.2-aspnetcore-runtime-alpine
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-alpine
 RUN apk add --no-cache tzdata
 ENV TZ Asia/Shanghai
 WORKDIR /app
-#ARG GIT_COMMIT=unspecifid
-#LABEL gitcommithash=$GIT_COMMIT
+ARG GIT_COMMIT=unspecifid
+LABEL gitcommithash=$GIT_COMMIT
 COPY publish/ .
 EXPOSE 80
 #RUN export ASPNETCORE_HOSTINGSTARTUPASSEMBLIES=SkyAPM.Agent.AspNetCore
