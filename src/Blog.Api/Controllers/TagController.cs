@@ -37,6 +37,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<IEnumerable<TagInfo>> GetAll()
         {
             return await _tagBusiness.GetAllTags();
