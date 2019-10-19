@@ -44,7 +44,8 @@ namespace Blog.Api
                 {
                     ValidIssuer = _configuration["JwtAuth:Issuer"],
                     ValidAudience = _configuration["JwtAuth:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JwtAuth:SecurityKey"])),
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JwtAuth:SecurityKey"])),
                     RequireSignedTokens = true,
                     ValidateAudience = true,
                     ValidateIssuer = true,
@@ -60,10 +61,14 @@ namespace Blog.Api
                 //说明token过期
                 var securityToken = jwtHandler.ReadJwtToken(token);
                 var claims = securityToken.Payload.Claims;
-                var userData = claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value;
+                var userData = claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData);
+                if (userData == null)
+                {
+                    return _next(httpContext);
+                }
                 //此时刷新token
                 var refreshToken = httpContext.Request.Headers["x-refresh-token"].ToString();
-                var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonConvert.DeserializeObject<JwtToken>(userData));
+                var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonConvert.DeserializeObject<JwtToken>(userData.Value));
                 if (newToken == null)
                 {
                     return _next(httpContext);
@@ -72,9 +77,9 @@ namespace Blog.Api
                 httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
                 httpContext.Response.Headers.Add("Authorization", newToken);
             }
-            catch (Exception)
+            catch
             {
-
+                //其他异常，啥也不做
             }
             return _next(httpContext);
         }

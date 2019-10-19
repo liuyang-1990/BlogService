@@ -30,7 +30,7 @@ namespace Blog.Repository.Implement
             try
             {
                 response.ArticleInfo = await Db.Queryable<ArticleInfo, ArticleContent>((ai, ac) => ai.Id == ac.Id)
-                    .Where((ai, ac) => ai.Id == id && ai.IsDeleted == 0)
+                    .Where((ai, ac) => ai.Id == id && ai.IsDeleted == 0 && ai.Status == 1)
                     .Select((ai, ac) => new V_Article_Info()
                     {
                         Id = ai.Id,

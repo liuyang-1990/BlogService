@@ -26,7 +26,7 @@ namespace Blog.Business.Implement
 
         public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas)
         {
-            var exp = Expressionable.Create<ArticleInfo>().AndIF(searchParmas.Status.HasValue, it => it.Status == searchParmas.Status.GetValueOrDefault(1));
+            var exp = Expressionable.Create<ArticleInfo>().AndIF(searchParmas.Status.HasValue, it => it.Status == searchParmas.Status);
             if (!string.IsNullOrEmpty(searchParmas.StartTime) && string.IsNullOrEmpty(searchParmas.EndTime))
             {
                 exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate());
