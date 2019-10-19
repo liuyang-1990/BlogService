@@ -17,7 +17,6 @@ namespace Blog.Infrastructure.Extensions
             {
                 throw new ArgumentNullException(nameof(configAction));
             }
-            // service.AddOptions();
             service.Configure(configAction);
             service.Add(ServiceDescriptor.Scoped<IDbContext, DbContext>());
             return service;
@@ -45,14 +44,15 @@ namespace Blog.Infrastructure.Extensions
             db.QueryFilter.Add(new SqlFilterItem()
             {
                 //单表全局过滤器
-                FilterValue = filterdb => new SqlFilterResult() { Sql = "   is_deleted=0" },
+                FilterValue = filterdb => new SqlFilterResult() {Sql = "   is_deleted=0"},
                 IsJoinQuery = false
-            }).Add(new SqlFilterItem()
-            {
-                //多表全局过滤器
-                FilterValue = filterdb => new SqlFilterResult() { Sql = "   f.is_deleted=0" },
-                IsJoinQuery = true
             });
+            //.Add(new SqlFilterItem()
+            //{
+            //    //多表全局过滤器
+            //    FilterValue = filterdb => new SqlFilterResult() { Sql = "   f.is_deleted=0" },
+            //    IsJoinQuery = true
+            //});
             return db;
         }
     }

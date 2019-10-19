@@ -29,7 +29,20 @@ namespace Blog.Repository.Implement
             var response = new ArticleDetailResponse();
             try
             {
-                response.ArticleInfo = await Db.Queryable<V_Article_Info>().FirstAsync(x => x.Id == id);
+                response.ArticleInfo = await Db.Queryable<ArticleInfo, ArticleContent>((ai, ac) => ai.Id == ac.Id)
+                    .Where((ai, ac) => ai.Id == id && ai.IsDeleted == 0)
+                    .Select((ai, ac) => new V_Article_Info()
+                    {
+                        Id = ai.Id,
+                        Title = ai.Title,
+                        Abstract = ai.Abstract,
+                        ImageUrl = ai.ImageUrl,
+                        Content = ac.Content,
+                        Comments = ai.Comments,
+                        Likes = ai.Likes,
+                        Views = ai.Views,
+                        CreateTime = ai.CreateTime
+                    }).FirstAsync();
                 var cid = await Db.Queryable<ArticleCategory>().Where(x => x.ArticleId == id).Select(x => x.CategoryId).ToListAsync();
                 response.Categories = await Db.Queryable<CategoryInfo>().In(cid).Select(x => new Property()
                 {

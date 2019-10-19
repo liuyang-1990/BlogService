@@ -19,6 +19,21 @@ namespace Blog.Model.ViewModel
         public int IsOriginal { get; set; }
 
         /// <summary>
+        /// 访问量
+        /// </summary>
+        public int Views { get; set; }
+
+        /// <summary>
+        /// 评论量
+        /// </summary>
+        public int Comments { get; set; }
+
+        /// <summary>
+        /// 点赞量
+        /// </summary>
+        public int Likes { get; set; }
+
+        /// <summary>
         /// 内容
         /// </summary>
         public string Content { get; set; }
