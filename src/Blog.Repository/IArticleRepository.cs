@@ -11,7 +11,7 @@ namespace Blog.Repository
 
         Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds);
 
-        Task<ArticleDetailResponse> GetArticleDetail(int id);
+        Task<ArticleDetailResponse> GetArticleDetail(string id);
 
         Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize);
 

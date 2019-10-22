@@ -10,19 +10,29 @@ namespace Blog.Repository
 {
     public interface IBaseRepository<T> where T : BaseEntity, new()
     {
+
+
+        Task<bool> QueryIsExist(Expression<Func<T, bool>> whereExpression);
+
+        /// <summary>
+        /// 查询所有
+        /// </summary>
+        /// <returns></returns>
+        Task<List<T>> QueryAll();
+
         /// <summary>
         /// 查询所有
         /// </summary>
         /// <param name="strWhere">查询条件</param>
         /// <returns></returns>
-        Task<List<T>> QueryAll(string strWhere = null);
+        Task<List<T>> QueryAll(string strWhere);
 
         /// <summary>
         /// 查询所有
         /// </summary>
         /// <param name="whereExpression">查询条件</param>
         /// <returns></returns>
-        Task<List<T>> QueryAll(Expression<Func<T, bool>> whereExpression = null);
+        Task<List<T>> QueryAll(Expression<Func<T, bool>> whereExpression);
 
         /// <summary>
         /// 分页查询
@@ -30,7 +40,7 @@ namespace Blog.Repository
         /// <param name="param">分页以及排序参数</param>
         /// <param name="whereExpression">条件</param>
         /// <returns></returns>
-        Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> whereExpression);
+        Task<JsonResultModel<T>> QueryByPage(GridParams param, Expression<Func<T, bool>> whereExpression);
 
         /// <summary>
         ///  分页查询
@@ -38,7 +48,7 @@ namespace Blog.Repository
         /// <param name="param">分页以及排序参数</param>
         /// <param name="strWhere">条件</param>
         /// <returns></returns>
-        Task<JsonResultModel<T>> GetPageList(GridParams param, string strWhere);
+        Task<JsonResultModel<T>> QueryByPage(GridParams param, string strWhere);
 
         /// <summary>
         /// 根据where条件查询一条数据
@@ -112,9 +122,10 @@ namespace Blog.Repository
         ///  更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="columns">不更新的列</param>
+        /// <param name="ignoreExpression">不更新的列</param>
+        /// <param name="updateExpression">更新的列</param>
         /// <returns></returns>
-        Task<bool> Update(T entity, Expression<Func<T, object>> columns);
+        Task<bool> Update(T entity, Expression<Func<T, object>> ignoreExpression = null, Expression<Func<T, object>> updateExpression = null);
 
         /// <summary>
         /// 批量更新(主键要有值，主键是更新条件)
@@ -123,6 +134,13 @@ namespace Blog.Repository
         /// <returns></returns>
         Task<bool> Update(List<T> listEntity);
 
+        /// <summary>
+        /// 根据主键批量更新部分列
+        /// </summary>
+        /// <param name="ids">主键</param>
+        /// <param name="updateExpression">部分列</param>
+        /// <returns></returns>
+        Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression);
         /// <summary>
         /// 根据主键删除(假删除)
         /// </summary>

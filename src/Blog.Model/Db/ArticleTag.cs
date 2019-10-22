@@ -6,13 +6,13 @@ namespace Blog.Model.Db
     /// 文章标签表
     /// </summary>
     [SugarTable("tbl_article_tag")]
-    public class ArticleTag:BaseEntity
+    public class ArticleTag : BaseEntity
     {
         /// <summary>
         /// 对应文章ID
         /// </summary>
         [SugarColumn(ColumnName = "article_id")]
-        public int ArticleId { get; set; }
+        public string ArticleId { get; set; }
 
         /// <summary>
         /// 对应标签id

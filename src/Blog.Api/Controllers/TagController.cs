@@ -48,7 +48,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<TagInfo> GetDetailInfo(int id)
+        public async Task<TagInfo> GetDetailInfo(string id)
         {
             return await _tagBusiness.GetDetail(id);
         }

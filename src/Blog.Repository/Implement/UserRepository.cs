@@ -9,29 +9,45 @@ namespace Blog.Repository.Implement
     [Injector(typeof(IUserRepository), LifeTime = Lifetime.Scoped)]
     public class UserRepository : BaseRepository<UserInfo>, IUserRepository
     {
-        public async Task<bool> IsExist(UserInfo entity, UserAction userAction)
-        {
-            if (userAction == UserAction.Add)
-            {
-                return await Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName);
-            }
-            return await Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName && x.Id != entity.Id);
-        }
+        //public async Task<bool> IsExist(UserInfo entity, bool isAdd)
+        //{
+        //    if (userAction == UserAction.Add)
+        //    {
+        //        return await Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName);
+        //    }
+        //    return await Db.Queryable<UserInfo>().AnyAsync(x => x.UserName == entity.UserName && x.Id != entity.Id);
+        //}
 
-
+        /// <summary>
+        /// 根据用户名和密码获取用户信息
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
         public async Task<UserInfo> GetUserByUserName(string userName, string password)
         {
-            return await Db.Queryable<UserInfo>().SingleAsync(x => x.UserName == userName && x.Password == password);
+            return await base.QueryByWhere(x => x.UserName == userName && x.Password == password);
         }
 
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
         public async Task<bool> ChangePassword(UserInfo userInfo)
         {
-            return await Db.Updateable(userInfo).SetColumns(it => new UserInfo { Password = userInfo.Password }).ExecuteCommandHasChangeAsync();
+            return await base.Update(userInfo, updateExpression: it => it.Password);
         }
 
-        public Task<bool> UpdateStatus(List<int> ids, int status)
+        /// <summary>
+        /// 批量启用或者禁用用户
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public Task<bool> UpdateStatus(List<string> ids, int status)
         {
-            return Db.Updateable<UserInfo>().SetColumns(it => new UserInfo() { Status = status }).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return base.UpdateByIds(ids, it => it.Status == status);
         }
     }
 }

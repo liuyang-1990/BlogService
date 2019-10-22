@@ -87,7 +87,7 @@ namespace Blog.Business.Implement
             return response;
         }
 
-        public async Task<ArticleDetailResponse> GetArticleDetail(int id)
+        public async Task<ArticleDetailResponse> GetArticleDetail(string id)
         {
             return await _articleRepository.GetArticleDetail(id);
         }

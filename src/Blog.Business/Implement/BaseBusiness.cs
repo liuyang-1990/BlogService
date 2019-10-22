@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using SqlSugar;
 
 namespace Blog.Business.Implement
 {
@@ -17,12 +18,12 @@ namespace Blog.Business.Implement
 
         public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression, List<string> ignoreColumns = null)
         {
-            return await BaseRepository.GetPageList(param, expression, ignoreColumns);
+            return await BaseRepository.QueryByPage(param, expression);
         }
 
-        public virtual async Task<T> GetDetail(int id, List<string> ignoreColumns = null)
+        public virtual async Task<T> GetDetail(string id, List<string> ignoreColumns = null)
         {
-            return await BaseRepository.GetDetail(id, ignoreColumns);
+            return await BaseRepository.QueryById(id);
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Insert(T entity)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.Insert(entity);
+            response.IsSuccess = (await BaseRepository.Insert(entity)).ObjToInt() > 0;
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
@@ -46,7 +47,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Update(T entity)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.Update(entity);
+            response.IsSuccess = (await BaseRepository.Insert(entity)).ObjToInt() > 0;
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
@@ -60,7 +61,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Delete(int id)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.Delete(id);
+            response.IsSuccess = await BaseRepository.DeleteById(id.ToString());
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

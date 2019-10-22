@@ -36,7 +36,7 @@ namespace Blog.Api.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<Tbl_Time_Line> GetDetailInfo(int id)
+        public async Task<Tbl_Time_Line> GetDetailInfo(string id)
         {
             return await _timeLineBusiness.GetDetail(id);
         }

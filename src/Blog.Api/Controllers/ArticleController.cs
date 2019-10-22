@@ -48,7 +48,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ArticleDetailResponse> GetDetailInfo(int id)
+        public async Task<ArticleDetailResponse> GetDetailInfo(string id)
         {
             return await _articleBusiness.GetArticleDetail(id);
         }

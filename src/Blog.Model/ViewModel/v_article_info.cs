@@ -5,7 +5,7 @@ namespace Blog.Model.ViewModel
 {
     public class V_Article_Info
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 标题
         /// </summary>

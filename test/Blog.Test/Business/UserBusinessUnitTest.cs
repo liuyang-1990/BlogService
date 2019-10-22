@@ -40,7 +40,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _userRepository
-                .Setup(x => x.GetPageList(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>(), It.IsAny<List<string>>()))
+                .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _userBusiness.GetPageList(new UserRequest() { Status = 1 }, new GridParams());
             var actualStr = JsonConvert.SerializeObject(actualModel);
@@ -53,8 +53,8 @@ namespace Blog.Test.Business
         public async Task Insert_Test(UserInfo userInfo, bool isExist, ResultModel<string> expectedModel)
         {
 
-            _userRepository.Setup(x => x.IsExist(userInfo, UserAction.Add)).ReturnsAsync(() => isExist);
-            _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => true);
+            // _userRepository.Setup(x => x.IsExist(userInfo, UserAction.Add)).ReturnsAsync(() => isExist);
+            _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => "1");
             var actualModel = await _userBusiness.Insert(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
@@ -102,7 +102,7 @@ namespace Blog.Test.Business
         {
             _userRepository.Setup(x => x.GetUserByUserName("123", "123")).ReturnsAsync(() => new UserInfo()
             {
-                Id = 1,
+                Id = "1",
                 UserName = "123"
             });
             var actualModel = await _userBusiness.GetUserByUserName("123", "123");

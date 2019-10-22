@@ -42,13 +42,14 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Insert(UserInfo user)
         {
             var response = new ResultModel<string>();
-            var isExist = await _userRepository.IsExist(user, UserAction.Add);
-            if (isExist)
-            {
-                response.IsSuccess = false;
-                response.Status = "2";//已经存在
-                return response;
-            }
+
+            //var isExist = await _userRepository.IsExist(user, UserAction.Add);
+            //if (isExist)
+            //{
+            //    response.IsSuccess = false;
+            //    response.Status = "2";//已经存在
+            //    return response;
+            //}
             if (string.IsNullOrEmpty(user.Password))
             {
                 user.Password = "123456"; //默认密码
@@ -59,13 +60,13 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Update(UserInfo user)
         {
             var response = new ResultModel<string>();
-            var isExist = await _userRepository.IsExist(user, UserAction.Update);
-            if (isExist)
-            {
-                response.IsSuccess = false;
-                response.Status = "2";//已经存在
-                return response;
-            }
+            //var isExist = await _userRepository.IsExist(user, UserAction.Update);
+            //if (isExist)
+            //{
+            //    response.IsSuccess = false;
+            //    response.Status = "2";//已经存在
+            //    return response;
+            //}
             if (!string.IsNullOrEmpty(user.Password))
             {
                 user.Password = _md5Helper.Encrypt32(user.Password);

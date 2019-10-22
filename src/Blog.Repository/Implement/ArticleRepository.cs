@@ -24,7 +24,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ArticleDetailResponse> GetArticleDetail(int id)
+        public async Task<ArticleDetailResponse> GetArticleDetail(string id)
         {
             var response = new ArticleDetailResponse();
             try
@@ -55,7 +55,7 @@ namespace Blog.Repository.Implement
                     Key = x.Id,
                     Value = x.TagName
                 }).ToListAsync();
-                response.Tags = tids.Select(tid => tags.FirstOrDefault(x => x.Key == tid)).Where(tagInfo => tagInfo != null).ToList();
+                response.Tags = tids.Select(tid => tags.FirstOrDefault(x => x.Key == tid.ToString())).Where(tagInfo => tagInfo != null).ToList();
             }
             catch (Exception ex)
             {
@@ -77,7 +77,7 @@ namespace Blog.Repository.Implement
             try
             {
                 Db.Ado.BeginTran();
-                var id = await Db.Insertable(article).ExecuteReturnIdentityAsync();
+                var id = await base.Insert(article);
                 content.ArticleId = id;
                 await Db.Insertable(content).ExecuteCommandAsync();
                 var tagIds = new List<int>();
@@ -117,28 +117,6 @@ namespace Blog.Repository.Implement
             }
         }
 
-        /// <summary>
-        /// 假删除文章
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public override async Task<bool> Delete(int id)
-        {
-            try
-            {
-                Db.Ado.BeginTran();
-                await Db.Updateable<ArticleInfo>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandAsync();
-                Db.Ado.CommitTran();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                Db.Ado.RollbackTran();
-                return false;
-            }
-
-        }
 
         /// <summary>
         ///  更新文章

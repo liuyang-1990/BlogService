@@ -14,7 +14,7 @@ namespace Blog.Business
 
         Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression, List<string> ignoreColumns = null);
 
-        Task<T> GetDetail(int id, List<string> ignoreColumns = null);
+        Task<T> GetDetail(string id, List<string> ignoreColumns = null);
 
         Task<ResultModel<string>> Insert(T entity);
 

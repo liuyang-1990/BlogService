@@ -11,7 +11,7 @@ namespace Blog.Repository.Implement
     {
         public Task<List<Tbl_Time_Line>> GetList()
         {
-            return Db.Queryable<Tbl_Time_Line>().ToListAsync();
+            return base.QueryAll();
         }
     }
 }

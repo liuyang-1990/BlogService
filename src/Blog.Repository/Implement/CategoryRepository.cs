@@ -22,7 +22,7 @@ namespace Blog.Repository.Implement
 
         public async Task<List<CategoryInfo>> GetAllCategory()
         {
-            return await Db.Queryable<CategoryInfo>().ToListAsync();
+            return await base.QueryAll();
         }
     }
 }

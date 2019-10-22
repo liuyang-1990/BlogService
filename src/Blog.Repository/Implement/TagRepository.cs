@@ -22,7 +22,7 @@ namespace Blog.Repository.Implement
 
         public async Task<List<TagInfo>> GetAllTags()
         {
-            return await Db.Queryable<TagInfo>().ToListAsync();
+            return await base.QueryAll();
         }
     }
 }

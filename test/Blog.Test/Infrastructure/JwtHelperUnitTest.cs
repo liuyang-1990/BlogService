@@ -29,7 +29,7 @@ namespace Blog.Test.Infrastructure
             var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
             var res = helper.IssueJwt(new JwtToken()
             {
-                Uid = 1,
+                Uid = "1",
                 Role = "Admin"
             }, isRefresh);
             Assert.NotNull(res);

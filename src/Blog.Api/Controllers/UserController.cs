@@ -45,7 +45,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<UserInfo> GetDetailInfo(int id)
+        public async Task<UserInfo> GetDetailInfo(string id)
         {
             return await _userBusiness.GetDetail(id,new List<string>(){ "Password" });
         }

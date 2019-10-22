@@ -26,12 +26,32 @@ namespace Blog.Repository.Implement
         }
 
         #region Query
+
+        /// <summary>
+        /// 查询是否存在
+        /// </summary>
+        /// <param name="whereExpression">查询条件</param>
+        /// <returns></returns>
+        public virtual async Task<bool> QueryIsExist(Expression<Func<T, bool>> whereExpression)
+        {
+            return await Db.Queryable<T>().AnyAsync(whereExpression);
+        }
+
+        /// <summary>
+        /// 查询所有
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task<List<T>> QueryAll()
+        {
+            return await Db.Queryable<T>().ToListAsync();
+        }
+
         /// <summary>
         /// 查询所有
         /// </summary>
         /// <param name="strWhere">查询条件</param>
         /// <returns></returns>
-        public virtual async Task<List<T>> QueryAll(string strWhere = null)
+        public virtual async Task<List<T>> QueryAll(string strWhere)
         {
             return await Db.Queryable<T>().WhereIF(!string.IsNullOrEmpty(strWhere), strWhere).ToListAsync();
         }
@@ -41,7 +61,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="whereExpression">查询条件</param>
         /// <returns></returns>
-        public virtual async Task<List<T>> QueryAll(Expression<Func<T, bool>> whereExpression = null)
+        public virtual async Task<List<T>> QueryAll(Expression<Func<T, bool>> whereExpression)
         {
             return await Db.Queryable<T>().WhereIF(whereExpression != null, whereExpression).ToListAsync();
         }
@@ -52,16 +72,17 @@ namespace Blog.Repository.Implement
         /// <param name="param">分页以及排序参数</param>
         /// <param name="whereExpression">条件</param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> whereExpression)
+        public virtual async Task<JsonResultModel<T>> QueryByPage(GridParams param, Expression<Func<T, bool>> whereExpression)
         {
+            RefAsync<int> totalCount = 0;
             var queryable = Db.Queryable<T>().WhereIF(whereExpression != null, whereExpression)
                 .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder),
                     param.SortField + " " + param.SortOrder)
-                .Mapper(it => { it.Id = DataProtector.Protect(it.Id.ToString()); });
+            .Mapper(it => { it.Id = DataProtector.Protect(it.Id.ToString()); });
             return new JsonResultModel<T>()
             {
-                Rows = await queryable.ToPageListAsync(param.PageNum, param.PageSize),
-                TotalRows = await queryable.CountAsync()
+                Rows = await queryable.ToPageListAsync(param.PageNum, param.PageSize, totalCount),
+                TotalRows = totalCount
             };
         }
 
@@ -71,7 +92,7 @@ namespace Blog.Repository.Implement
         /// <param name="param">分页以及排序参数</param>
         /// <param name="strWhere">条件</param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, string strWhere)
+        public virtual async Task<JsonResultModel<T>> QueryByPage(GridParams param, string strWhere)
         {
             var queryable = Db.Queryable<T>().WhereIF(string.IsNullOrEmpty(strWhere), strWhere)
                 .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder),
@@ -103,7 +124,7 @@ namespace Blog.Repository.Implement
         public virtual async Task<T> QueryById(string id)
         {
             var unProtectId = DataProtector.Unprotect(id);
-            return await Db.Queryable<T>().FirstAsync(x => x.Id == unProtectId);
+            return await Db.Queryable<T>().Mapper(x => x.Id = DataProtector.Protect(x.Id)).FirstAsync(x => x.Id == unProtectId);
         }
 
         /// <summary>
@@ -185,23 +206,33 @@ namespace Blog.Repository.Implement
         ///  更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="columns">不更新的列</param>
+        /// <param name="ignoreExpression">不更新的列</param>
+        /// <param name="updateExpression">更新的列</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, Expression<Func<T, object>> columns)
+        public virtual async Task<bool> Update(T entity, Expression<Func<T, object>> ignoreExpression = null, Expression<Func<T, object>> updateExpression = null)
         {
             entity.ModifyTime = DateTime.Now;
-            return await Db.Updateable(entity).IgnoreColumns(columns).ExecuteCommandHasChangeAsync();
+            if (ignoreExpression != null)
+            {
+                return await Db.Updateable(entity).IgnoreColumns(ignoreExpression).ExecuteCommandHasChangeAsync();
+            }
+            else if (updateExpression != null)
+            {
+                return await Db.Updateable(entity).UpdateColumns(updateExpression).ExecuteCommandHasChangeAsync();
+            }
+            return await this.Update(entity, true);
+
         }
         /// <summary>
         ///  更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="columns">不更新的列</param>
+        /// <param name="ignoreColumns">不更新的列</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, params string[] columns)
+        public virtual async Task<bool> Update(T entity, params string[] ignoreColumns)
         {
             entity.ModifyTime = DateTime.Now;
-            return await Db.Updateable(entity).IgnoreColumns(columns).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(entity).IgnoreColumns(ignoreColumns).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
@@ -212,6 +243,18 @@ namespace Blog.Repository.Implement
         public virtual async Task<bool> Update(List<T> listEntity)
         {
             return await Db.Updateable(listEntity).ExecuteCommandHasChangeAsync();
+        }
+
+        /// <summary>
+        /// 根据主键批量更新部分列
+        /// </summary>
+        /// <param name="ids">主键</param>
+        /// <param name="updateExpression">部分列</param>
+        /// <returns></returns>
+        public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression)
+        {
+            var idsUnProtect = ids.Select(x => DataProtector.Unprotect(x));
+            return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => idsUnProtect.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
         #endregion
 
