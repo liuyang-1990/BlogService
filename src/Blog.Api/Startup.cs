@@ -77,7 +77,6 @@ namespace Blog.Api
             {
                 //asp.net core default use CamelCaseNamingStrategy, we disable it.
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                // options.SerializerSettings.Formatting= Formatting.None;
             });
 
             #region  URL 地址转换成小写的形式
@@ -86,7 +85,6 @@ namespace Blog.Api
                   options.LowercaseUrls = true;
               });
             #endregion
-            //services.Configure<DbSetting>(Configuration.GetSection("ConnectionStrings"));
 
             #region MiniProfiler
             services.AddMiniProfiler(options =>
@@ -206,6 +204,7 @@ namespace Blog.Api
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpClient();
             services.AddMemoryCache();
+            services.AddDataProtection();
             #region AOP
 
             services.ConfigureDynamicProxy(config =>

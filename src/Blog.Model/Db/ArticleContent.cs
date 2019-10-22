@@ -17,6 +17,8 @@ namespace Blog.Model.Db
         /// <summary>
         /// 内容
         /// </summary>
+        //自动转码和解码->方便插入表情，不需要对表做任何配置
+        [SugarColumn(IsTranscoding = true)]
         public string Content { get; set; }
 
     }
