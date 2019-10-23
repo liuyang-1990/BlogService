@@ -71,6 +71,7 @@ namespace Blog.Api
                 {
                     options.Filters.Add(new ServiceExceptionFilterAttribute());
                 }
+                options.Filters.Add(new DecryptReferenceFilter());
 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
               .AddJsonOptions(options =>
@@ -187,7 +188,7 @@ namespace Blog.Api
 
             services.AddSqlSugarDbContext(options =>
             {
-                options.DbType = DbType.MySql;
+                options.DbType = (DbType)Enum.Parse(typeof(DbType), Configuration["ConnectionStrings:DbType"]);
                 options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
                 options.IsAutoCloseConnection = true;
                 options.InitKeyType = InitKeyType.SystemTable;

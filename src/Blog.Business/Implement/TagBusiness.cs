@@ -25,7 +25,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Insert(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRepository.IsExist(entity, UserAction.Add);
+            var isExist = await _tagRepository.QueryIsExist(it => it.TagName == entity.TagName);
             if (!isExist)
             {
                 return await base.Insert(entity);
@@ -40,20 +40,20 @@ namespace Blog.Business.Implement
             var exp = Expressionable.Create<TagInfo>()
                 .OrIF(!string.IsNullOrEmpty(tagName),
                     it => it.TagName.Contains(tagName)).ToExpression();
-            return await base.GetPageList(param, exp);
+            return await _tagRepository.QueryByPage(param, exp);
         }
 
         [Caching]
         public async Task<List<TagInfo>> GetAllTags()
         {
-            return await _tagRepository.GetAllTags();
+            return await _tagRepository.QueryAll();
         }
 
 
         public override async Task<ResultModel<string>> Update(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRepository.IsExist(entity, UserAction.Update);
+            var isExist = await _tagRepository.QueryIsExist(it => it.TagName == entity.TagName && it.Id != entity.Id);
             if (!isExist)
             {
                 return await base.Update(entity);

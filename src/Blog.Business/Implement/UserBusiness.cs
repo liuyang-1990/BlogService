@@ -8,8 +8,6 @@ using Blog.Model.ViewModel;
 using Blog.Repository;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -35,21 +33,20 @@ namespace Blog.Business.Implement
                 .AndIF(true, it => it.Status == searchParams.Status)
                 .AndIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
                 .ToExpression();
-            return await base.GetPageList(param, exp,new List<string>(){ "Password" });
+            return await _userRepository.QueryByPage(param, exp);
         }
 
 
         public override async Task<ResultModel<string>> Insert(UserInfo user)
         {
             var response = new ResultModel<string>();
-
-            //var isExist = await _userRepository.IsExist(user, UserAction.Add);
-            //if (isExist)
-            //{
-            //    response.IsSuccess = false;
-            //    response.Status = "2";//已经存在
-            //    return response;
-            //}
+            var isExist = await _userRepository.QueryIsExist(x => x.UserName == user.UserName);
+            if (isExist)
+            {
+                response.IsSuccess = false;
+                response.Status = "2";//已经存在
+                return response;
+            }
             if (string.IsNullOrEmpty(user.Password))
             {
                 user.Password = "123456"; //默认密码
@@ -60,13 +57,13 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Update(UserInfo user)
         {
             var response = new ResultModel<string>();
-            //var isExist = await _userRepository.IsExist(user, UserAction.Update);
-            //if (isExist)
-            //{
-            //    response.IsSuccess = false;
-            //    response.Status = "2";//已经存在
-            //    return response;
-            //}
+            var isExist = await _userRepository.QueryIsExist(x => x.UserName == user.UserName && x.Id != user.Id);
+            if (isExist)
+            {
+                response.IsSuccess = false;
+                response.Status = "2";//已经存在
+                return response;
+            }
             if (!string.IsNullOrEmpty(user.Password))
             {
                 user.Password = _md5Helper.Encrypt32(user.Password);
@@ -77,16 +74,8 @@ namespace Blog.Business.Implement
 
         public async Task<UserInfo> GetUserByUserName(string userName, string password)
         {
-            try
-            {
-                password = _md5Helper.Encrypt32(password);
-                return await _userRepository.GetUserByUserName(userName, password);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return null;
-            }
+            password = _md5Helper.Encrypt32(password);
+            return await _userRepository.QueryByWhere(x => x.UserName == userName && x.Password == password);
         }
 
         public async Task<ResultModel<string>> UpdatePassword(ChangePasswordRequest request)
@@ -100,7 +89,7 @@ namespace Blog.Business.Implement
                 return response;
             }
             userInfo.Password = _md5Helper.Encrypt32(request.Password);
-            response.IsSuccess = await _userRepository.ChangePassword(userInfo);
+            response.IsSuccess = await _userRepository.Update(userInfo, it => it.Password);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
 
@@ -109,7 +98,7 @@ namespace Blog.Business.Implement
         public async Task<ResultModel<string>> UpdateStatus(UpdateStatusRequest request)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await _userRepository.UpdateStatus(request.Ids, request.Status);
+            response.IsSuccess = await _userRepository.UpdateByIds(request.Ids, it => it.Status == request.Status);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

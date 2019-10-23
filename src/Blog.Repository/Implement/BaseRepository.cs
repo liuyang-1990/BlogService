@@ -22,7 +22,7 @@ namespace Blog.Repository.Implement
         protected BaseRepository()
         {
             Db = AspectCoreContainer.Resolve<IDbContext>().GetDbContext();
-            DataProtector = AspectCoreContainer.Resolve<IDataProtectionProvider>().CreateProtector("protect id");
+            DataProtector = AspectCoreContainer.Resolve<IDataProtectionProvider>().CreateProtector("protect_params");
         }
 
         #region Query
@@ -104,8 +104,6 @@ namespace Blog.Repository.Implement
                 TotalRows = await queryable.CountAsync()
             };
         }
-
-
         /// <summary>
         /// 根据where条件查询一条数据
         /// </summary>
@@ -146,34 +144,31 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="entity"></param>
         /// <returns>返回自增量</returns>
-        public virtual async Task<string> Insert(T entity)
+        public virtual async Task<int> Insert(T entity)
         {
-            var id = await Db.Insertable(entity).ExecuteReturnIdentityAsync();
-            return DataProtector.Protect(id.ToString());
+            return await Db.Insertable(entity).ExecuteReturnIdentityAsync();
         }
 
         /// <summary>
         /// 新增实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="columns">指定只插入列</param>
+        /// <param name="insertColumns">指定只插入列</param>
         /// <returns>返回自增量</returns>
-        public virtual async Task<string> Insert(T entity, Expression<Func<T, object>> columns)
+        public virtual async Task<int> Insert(T entity, Expression<Func<T, object>> insertColumns)
         {
-            var id = await Db.Insertable(entity).InsertColumns(columns).ExecuteReturnIdentityAsync();
-            return DataProtector.Protect(id.ToString());
+            return await Db.Insertable(entity).InsertColumns(insertColumns).ExecuteReturnIdentityAsync();
         }
 
         /// <summary>
         /// 新增实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="columns">指定只插入列</param>
+        /// <param name="insertColumns">指定只插入列</param>
         /// <returns>返回自增量</returns>
-        public virtual async Task<string> Insert(T entity, params string[] columns)
+        public virtual async Task<int> Insert(T entity, params string[] insertColumns)
         {
-            var id = await Db.Insertable(entity).InsertColumns(columns).ExecuteReturnIdentityAsync();
-            return DataProtector.Protect(id.ToString());
+            return await Db.Insertable(entity).InsertColumns(insertColumns).ExecuteReturnIdentityAsync();
         }
 
 
@@ -190,41 +185,44 @@ namespace Blog.Repository.Implement
         #endregion
 
         #region Update
+
+        /// <summary>
+        ///  更新实体数据(以主键为条件)
+        /// </summary>
+        /// <param name="entity">实体类</param>
+        /// <returns></returns>
+        public virtual async Task<bool> Update(T entity)
+        {
+            entity.ModifyTime = DateTime.Now;
+            return await Db.Updateable(entity).ExecuteCommandHasChangeAsync();
+        }
+
         /// <summary>
         /// 更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="ignoreAllNullColumns">是NULL的列不更新</param>
-        /// <param name="ignoreAllDefaultValue">默认值的列不更新</param>
+        /// <param name="ignoreAllDefaultAndNullValue">是NULL的列和默认值的列不更新</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, bool ignoreAllNullColumns = true, bool ignoreAllDefaultValue = true)
+        public virtual async Task<bool> Update(T entity, bool ignoreAllDefaultAndNullValue)
         {
             entity.ModifyTime = DateTime.Now;
-            return await Db.Updateable(entity).IgnoreColumns(x => x.CreateTime).IgnoreColumns(true, ignoreAllDefaultValue: true).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(entity).IgnoreColumns(ignoreAllDefaultAndNullValue, ignoreAllDefaultValue: ignoreAllDefaultAndNullValue).ExecuteCommandHasChangeAsync();
         }
+
         /// <summary>
-        ///  更新实体数据
+        /// 更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="ignoreExpression">不更新的列</param>
-        /// <param name="updateExpression">更新的列</param>
+        /// <param name="updateColumns">更新的列</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, Expression<Func<T, object>> ignoreExpression = null, Expression<Func<T, object>> updateExpression = null)
+        public virtual async Task<bool> Update(T entity, Expression<Func<T, object>> updateColumns)
         {
             entity.ModifyTime = DateTime.Now;
-            if (ignoreExpression != null)
-            {
-                return await Db.Updateable(entity).IgnoreColumns(ignoreExpression).ExecuteCommandHasChangeAsync();
-            }
-            else if (updateExpression != null)
-            {
-                return await Db.Updateable(entity).UpdateColumns(updateExpression).ExecuteCommandHasChangeAsync();
-            }
-            return await this.Update(entity, true);
-
+            return await Db.Updateable(entity).UpdateColumns(updateColumns).ExecuteCommandHasChangeAsync();
         }
+
         /// <summary>
-        ///  更新实体数据
+        /// 更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
         /// <param name="ignoreColumns">不更新的列</param>
@@ -244,6 +242,17 @@ namespace Blog.Repository.Implement
         {
             return await Db.Updateable(listEntity).ExecuteCommandHasChangeAsync();
         }
+        /// <summary>
+        /// 根据主键批量更新某一列
+        /// </summary>
+        /// <param name="ids">主键</param>
+        /// <param name="updateExpression">某一列</param>
+        /// <returns></returns>
+        public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression)
+        {
+            var idsUnProtect = ids.Select(x => DataProtector.Unprotect(x));
+            return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => idsUnProtect.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+        }
 
         /// <summary>
         /// 根据主键批量更新部分列
@@ -251,7 +260,7 @@ namespace Blog.Repository.Implement
         /// <param name="ids">主键</param>
         /// <param name="updateExpression">部分列</param>
         /// <returns></returns>
-        public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression)
+        public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, T>> updateExpression)
         {
             var idsUnProtect = ids.Select(x => DataProtector.Unprotect(x));
             return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => idsUnProtect.Contains(it.Id)).ExecuteCommandHasChangeAsync();

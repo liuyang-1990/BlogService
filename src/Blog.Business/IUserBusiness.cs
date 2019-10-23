@@ -10,6 +10,7 @@ namespace Blog.Business
     {
 
         Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param);
+
         Task<UserInfo> GetUserByUserName(string userName, string password);
 
         Task<ResultModel<string>> UpdatePassword(ChangePasswordRequest request);

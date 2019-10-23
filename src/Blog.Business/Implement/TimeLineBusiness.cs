@@ -21,7 +21,7 @@ namespace Blog.Business.Implement
         [Caching("Tbl_Time_Line:GetList")]
         public Task<List<Tbl_Time_Line>> GetList()
         {
-            return _timeLineRepository.GetList();
+            return _timeLineRepository.QueryAll();
         }
 
     }

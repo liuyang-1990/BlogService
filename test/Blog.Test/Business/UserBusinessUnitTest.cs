@@ -1,6 +1,5 @@
 ﻿using Blog.Business.Implement;
 using Blog.Infrastructure;
-using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
@@ -54,7 +53,7 @@ namespace Blog.Test.Business
         {
 
             // _userRepository.Setup(x => x.IsExist(userInfo, UserAction.Add)).ReturnsAsync(() => isExist);
-            _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => "1");
+           // _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => "1");
             var actualModel = await _userBusiness.Insert(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
@@ -97,64 +96,5 @@ namespace Blog.Test.Business
             }
         };
 
-        [Fact]
-        public async Task GetUserByUserName_Test_Ok()
-        {
-            _userRepository.Setup(x => x.GetUserByUserName("123", "123")).ReturnsAsync(() => new UserInfo()
-            {
-                Id = "1",
-                UserName = "123"
-            });
-            var actualModel = await _userBusiness.GetUserByUserName("123", "123");
-            Assert.NotNull(actualModel);
-        }
-
-        [Fact]
-        public async Task GetUserByUserName_Test_Exception()
-        {
-            _userRepository.Setup(x => x.GetUserByUserName("123", "123")).ThrowsAsync(new Exception("test"));
-            var actualModel = await _userBusiness.GetUserByUserName("123", "123");
-            Assert.Null(actualModel);
-        }
-
-        [Theory]
-        [MemberData(nameof(Data4Password))]
-        public async Task UpdatePassword_Test(UserInfo userInfo, ResultModel<string> expectedModel)
-        {
-            _userRepository.Setup(x => x.ChangePassword(userInfo)).ReturnsAsync(() => true);
-            _userRepository.Setup(x => x.GetUserByUserName("123", "123")).ReturnsAsync(() => userInfo);
-            var actualModel = await _userBusiness.UpdatePassword(new ChangePasswordRequest()
-            {
-                UserName = "123",
-                OldPassword = "123",
-                Password = "456"
-            });
-            var actualStr = JsonConvert.SerializeObject(actualModel);
-            var expectedStr = JsonConvert.SerializeObject(expectedModel);
-            Assert.Equal(expectedStr, actualStr);
-
-        }
-
-        public static List<object[]> Data4Password = new List<object[]>()
-        {
-            new object[]
-            {
-                null,
-                new ResultModel<string>()
-                {
-                    Status="2"
-                }
-            },
-            new object[]
-            {
-                new UserInfo(),
-                new ResultModel<string>()
-                {
-                    Status="0",
-                    IsSuccess = true
-                }
-            },
-
-        };
     }
 }

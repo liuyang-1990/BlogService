@@ -46,8 +46,7 @@ namespace Blog.Model.ViewModel
         public string ImageUrl { get; set; }
 
         public DateTime CreateTime { get; set; }
-        [SugarColumn(ColumnName = "is_deleted")]
-        public int IsDeleted { get; set; }
+
 
     }
 }

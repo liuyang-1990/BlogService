@@ -11,7 +11,11 @@ namespace Blog.Repository
     public interface IBaseRepository<T> where T : BaseEntity, new()
     {
 
-
+        /// <summary>
+        /// 查询是否存在
+        /// </summary>
+        /// <param name="whereExpression">查询条件</param>
+        /// <returns></returns>
         Task<bool> QueryIsExist(Expression<Func<T, bool>> whereExpression);
 
         /// <summary>
@@ -76,7 +80,7 @@ namespace Blog.Repository
         /// </summary>
         /// <param name="entity"></param>
         /// <returns>返回自增量</returns>
-        Task<string> Insert(T entity);
+        Task<int> Insert(T entity);
 
         /// <summary>
         /// 新增实体数据
@@ -84,7 +88,7 @@ namespace Blog.Repository
         /// <param name="entity">实体类</param>
         /// <param name="columns">指定只插入列</param>
         /// <returns>返回自增量</returns>
-        Task<string> Insert(T entity, Expression<Func<T, object>> columns);
+        Task<int> Insert(T entity, Expression<Func<T, object>> columns);
 
         /// <summary>
         /// 新增实体数据
@@ -92,7 +96,7 @@ namespace Blog.Repository
         /// <param name="entity">实体类</param>
         /// <param name="columns">指定只插入列</param>
         /// <returns>返回自增量</returns>
-        Task<string> Insert(T entity, params string[] columns);
+        Task<int> Insert(T entity, params string[] columns);
 
         /// <summary>
         /// 批量插入实体(性能很快不用操心）
@@ -101,31 +105,37 @@ namespace Blog.Repository
         /// <returns>受影响行数</returns>
         Task<int> Insert(List<T> listEntity);
 
+
+        /// <summary>
+        ///  更新实体数据(以主键为条件)
+        /// </summary>
+        /// <param name="entity">实体类</param>
+        /// <returns></returns>
+        Task<bool> Update(T entity);
+
         /// <summary>
         /// 更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="ignoreAllNullColumns">是NULL的列不更新</param>
-        /// <param name="ignoreAllDefaultValue">默认值的列不更新</param>
+        /// <param name="ignoreAllDefaultAndNullValue">是NULL的列和默认值的列不更新</param>
         /// <returns></returns>
-        Task<bool> Update(T entity, bool ignoreAllNullColumns = true, bool ignoreAllDefaultValue = true);
+        Task<bool> Update(T entity, bool ignoreAllDefaultAndNullValue);
 
         /// <summary>
-        ///  更新实体数据
+        /// 更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="columns">不更新的列</param>
+        /// <param name="updateColumns">更新的列</param>
         /// <returns></returns>
-        Task<bool> Update(T entity, params string[] columns);
+        Task<bool> Update(T entity, Expression<Func<T, object>> updateColumns);
 
         /// <summary>
-        ///  更新实体数据
+        /// 更新实体数据
         /// </summary>
         /// <param name="entity">实体类</param>
-        /// <param name="ignoreExpression">不更新的列</param>
-        /// <param name="updateExpression">更新的列</param>
+        /// <param name="ignoreColumns">不更新的列</param>
         /// <returns></returns>
-        Task<bool> Update(T entity, Expression<Func<T, object>> ignoreExpression = null, Expression<Func<T, object>> updateExpression = null);
+        Task<bool> Update(T entity, params string[] ignoreColumns);
 
         /// <summary>
         /// 批量更新(主键要有值，主键是更新条件)
@@ -139,6 +149,14 @@ namespace Blog.Repository
         /// </summary>
         /// <param name="ids">主键</param>
         /// <param name="updateExpression">部分列</param>
+        /// <returns></returns>
+        Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, T>> updateExpression);
+
+        /// <summary>
+        /// 根据主键批量更新某一列
+        /// </summary>
+        /// <param name="ids">主键</param>
+        /// <param name="updateExpression">某一列</param>
         /// <returns></returns>
         Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression);
         /// <summary>

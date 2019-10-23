@@ -77,7 +77,7 @@ namespace Blog.Repository.Implement
             try
             {
                 Db.Ado.BeginTran();
-                var id = await base.Insert(article);
+                var id = (await base.Insert(article)).ToString();
                 content.ArticleId = id;
                 await Db.Insertable(content).ExecuteCommandAsync();
                 var tagIds = new List<int>();
@@ -180,7 +180,7 @@ namespace Blog.Repository.Implement
         {
             var articleIds = await Db.Queryable<ArticleCategory>().Where(i => i.CategoryId == categoryId)
                 .GroupBy(x => x.ArticleId).Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
-            return await Db.Queryable<ArticleInfo>().In(articleIds).ToListAsync();
+            return await base.QueryByIds(articleIds);
         }
 
         public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
@@ -188,7 +188,7 @@ namespace Blog.Repository.Implement
             var articleIds = await Db.Queryable<ArticleTag>().Where(i => i.TagId == tagId)
                 .GroupBy(x => x.ArticleId)
                 .Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
-            return await Db.Queryable<ArticleInfo>().In(articleIds).ToListAsync();
+            return await base.QueryByIds(articleIds);
         }
     }
 }
