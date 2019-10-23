@@ -8,13 +8,16 @@ using Newtonsoft.Json.Linq;
 using SqlSugar;
 using System;
 using System.IO;
+using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Blog.Api.Filters
 {
     public class DecryptReferenceFilter : IActionFilter
     {
         private readonly IDataProtector _dataProtector;
-        protected readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         public DecryptReferenceFilter()
         {
             _dataProtector = AspectCoreContainer.Resolve<IDataProtectionProvider>().CreateProtector("protect_params");
@@ -29,63 +32,68 @@ namespace Blog.Api.Filters
             {
                 return;
             }
-            if (context.RouteData.Values.ContainsKey("id"))
-            {
-                var param = context.RouteData.Values["id"].ToString();
-                try
-                {
-                    var id = _dataProtector.Unprotect(param);
-                    context.ActionArguments["id"] = id;
-                }
-                catch (Exception)
-                {
-                    context.Result = new BadRequestResult();
-                }
-            }
             var request = context.HttpContext.Request;
-            if (request.Query != null && request.Query.ContainsKey("id"))
+            var protectionParams = _configuration["ParamsProtection:Params"].Split(",", StringSplitOptions.RemoveEmptyEntries);
+
+            //QueryString
+            if (request.Query != null && request.Query.Keys.Any())
             {
-                var param = request.Query["id"].ToString();
-                try
+                foreach (var p in protectionParams)
                 {
-                    var id = _dataProtector.Unprotect(param);
-                    context.ActionArguments["id"] = id;
-                }
-                catch (Exception)
-                {
-                    context.Result = new BadRequestResult();
+                    if (!request.Query.ContainsKey(p)) continue;
+                    try
+                    {
+                        var protectParam = request.Query[p].ToString();
+                        var unprotectParam = _dataProtector.Unprotect(protectParam);
+                        context.ActionArguments[p] = unprotectParam;
+                    }
+                    catch (Exception)
+                    {
+                        context.Result = new BadRequestResult();
+                    }
                 }
             }
-
-            if (request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase)
-              || request.Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
+            //RouteData
+            if (context.RouteData.Values.Keys.Any())
             {
-                if (!request.ContentType.Contains("json"))
+                foreach (var p in protectionParams)
                 {
-                    return;
+                    if (!context.RouteData.Values.ContainsKey(p)) continue;
+                    try
+                    {
+                        var protectParam = context.RouteData.Values[p].ToString();
+                        var unprotectParam = _dataProtector.Unprotect(protectParam);
+                        context.ActionArguments[p] = unprotectParam;
+                    }
+                    catch (Exception)
+                    {
+                        context.Result = new BadRequestResult();
+                    }
                 }
-                request.EnableBuffering();
-                var requestReader = new StreamReader(request.Body);
-                request.Body.Position = 0;
-                var requestContent = requestReader.ReadToEnd();
-                var json = JToken.Parse(requestContent);
+            }
+            //RequestBody
+            if (!request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
+                !request.Method.Equals("PUT", StringComparison.OrdinalIgnoreCase)) return;
 
+            if (!request.ContentType.Contains("json"))
+            {
+                return;
+            }
 
-                var param = json.Value<string>("Id");
-                if (string.IsNullOrEmpty(param))
-                {
-                    return;
-                }
-                try
-                {
-                    var id = _dataProtector.Unprotect(param);
-                    context.ActionArguments["Id"] = id;
-                }
-                catch (Exception)
-                {
-                    context.Result = new BadRequestResult();
-                }
-
+            request.EnableBuffering();
+            var requestReader = new StreamReader(request.Body);
+            request.Body.Position = 0;
+            var requestContent = requestReader.ReadToEnd();
+            var jToken = JToken.Parse(requestContent);
+            try
+            {
+                UnprotectParams(jToken, _dataProtector, protectionParams);
+                var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(jToken));
+                context.HttpContext.Request.Body = new MemoryStream(bytes);
+            }
+            catch (Exception)
+            {
+                context.Result = new BadRequestResult();
             }
         }
 
@@ -95,7 +103,7 @@ namespace Blog.Api.Filters
         }
 
 
-        private static void UnprotectParams(JToken token, IDataProtector protector)
+        private static void UnprotectParams(JToken token, IDataProtector protector, string[] protectionParams)
         {
             if (token is JArray array)
             {
@@ -104,14 +112,14 @@ namespace Blog.Api.Filters
                     if (j is JValue val)
                     {
                         var strJ = val.Value.ToString();
-                        if (array.Parent is JProperty property)
+                        if (array.Parent is JProperty property && protectionParams.Any(x => x.Equals(property.Name, StringComparison.OrdinalIgnoreCase)))
                         {
                             val.Value = protector.Unprotect(strJ);
                         }
                     }
                     else
                     {
-                        UnprotectParams(j, protector);
+                        UnprotectParams(j, protector, protectionParams);
                     }
                 }
             }
@@ -121,12 +129,15 @@ namespace Blog.Api.Filters
                 {
                     if (property.Value is JArray)
                     {
-                        UnprotectParams(property.Value, protector);
+                        UnprotectParams(property.Value, protector, protectionParams);
                     }
                     else
                     {
-                        var val = property.Value.ToString();
-                        property.Value = protector.Unprotect(val);
+                        if (protectionParams.Any(x => x.Equals(property.Name, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            var val = property.Value.ToString();
+                            property.Value = protector.Unprotect(val);
+                        }
                     }
                 }
             }
