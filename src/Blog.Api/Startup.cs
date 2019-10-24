@@ -69,9 +69,10 @@ namespace Blog.Api
             {
                 if (!Env.IsDevelopment())
                 {
-                    options.Filters.Add(new ServiceExceptionFilterAttribute());
+                    options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-                options.Filters.Add(new DecryptReferenceFilter());
+                options.Filters.Add<DecryptReferenceFilter>();
+                options.Filters.Add<ParamsProtectionResultFilter>();
 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
               .AddJsonOptions(options =>

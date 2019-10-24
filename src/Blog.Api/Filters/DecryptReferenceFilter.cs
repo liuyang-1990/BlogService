@@ -1,5 +1,4 @@
-﻿using Blog.Infrastructure;
-using Microsoft.AspNetCore.DataProtection;
+﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
@@ -16,10 +15,10 @@ namespace Blog.Api.Filters
     {
         private readonly IDataProtector _dataProtector;
         private readonly IConfiguration _configuration;
-        public DecryptReferenceFilter()
+        public DecryptReferenceFilter(IDataProtectionProvider provider, IConfiguration configuration)
         {
-            _dataProtector = AspectCoreContainer.Resolve<IDataProtectionProvider>().CreateProtector("protect_params");
-            _configuration = AspectCoreContainer.Resolve<IConfiguration>();
+            _dataProtector = provider.CreateProtector("protect_params");
+            _configuration = configuration;
         }
 
 
