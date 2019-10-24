@@ -18,6 +18,6 @@ namespace Blog.Model.Db
         /// 对应标签id
         /// </summary>
         [SugarColumn(ColumnName = "category_id")]
-        public int CategoryId { get; set; }
+        public string CategoryId { get; set; }
     }
 }

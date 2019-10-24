@@ -94,7 +94,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
-        public async Task<IEnumerable<ArticleInfo>> GetArticleByCategory(int categoryId, GridParams param)
+        public async Task<IEnumerable<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param)
         {
             return await _articleBusiness.GetArticleByCategory(categoryId, param.PageNum, param.PageSize);
         }
@@ -107,7 +107,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
-        public async Task<IEnumerable<ArticleInfo>> GetArticleByTag(int tagId, GridParams param)
+        public async Task<IEnumerable<ArticleInfo>> GetArticleByTag(string tagId, GridParams param)
         {
             return await _articleBusiness.GetArticleByTag(tagId, param.PageNum, param.PageSize);
         }

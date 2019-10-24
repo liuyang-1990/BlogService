@@ -92,12 +92,12 @@ namespace Blog.Business.Implement
             return await _articleRepository.GetArticleDetail(id);
         }
 
-        public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        public async Task<List<ArticleInfo>> GetArticleByCategory(string categoryId, int pageIndex, int pageSize)
         {
             return await _articleRepository.GetArticleByCategory(categoryId, pageIndex, pageSize);
         }
 
-        public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        public async Task<List<ArticleInfo>> GetArticleByTag(string tagId, int pageIndex, int pageSize)
         {
             return await _articleRepository.GetArticleByTag(tagId, pageIndex, pageSize);
         }

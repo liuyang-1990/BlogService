@@ -72,7 +72,7 @@ namespace Blog.Repository.Implement
         /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds)
+        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, List<string> tags, List<string> categoryIds)
         {
             try
             {
@@ -80,18 +80,18 @@ namespace Blog.Repository.Implement
                 var id = (await base.Insert(article)).ToString();
                 content.ArticleId = id;
                 await Db.Insertable(content).ExecuteCommandAsync();
-                var tagIds = new List<int>();
+                var tagIds = new List<string>();
                 foreach (var tag in tags)
                 {
                     if (!int.TryParse(tag, out _))
                     {
                         //需要新增的tag
                         var tagId = await Db.Insertable(new TagInfo() { TagName = tag }).ExecuteReturnIdentityAsync();
-                        tagIds.Add(tagId);
+                        tagIds.Add(tagId.ToString());
                     }
                     else
                     {
-                        tagIds.Add(int.Parse(tag));
+                        tagIds.Add(tag);
                     }
                 }
                 var articleTags = tagIds.Select(tagId => new ArticleTag()
@@ -126,7 +126,7 @@ namespace Blog.Repository.Implement
         /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<int> categoryIds)
+        public async Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<string> categoryIds)
         {
             try
             {
@@ -137,18 +137,18 @@ namespace Blog.Repository.Implement
                 //先删除再添加
                 await Db.Deleteable<ArticleTag>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
                 await Db.Deleteable<ArticleCategory>().Where(x => x.ArticleId == article.Id).ExecuteCommandAsync();
-                var tagIds = new List<int>();
+                var tagIds = new List<string>();
                 foreach (var tag in tags)
                 {
                     if (!int.TryParse(tag, out _))
                     {
                         //需要新增的tag
                         var tagId = await Db.Insertable(new TagInfo() { TagName = tag }).ExecuteReturnIdentityAsync();
-                        tagIds.Add(tagId);
+                        tagIds.Add(tagId.ToString());
                     }
                     else
                     {
-                        tagIds.Add(int.Parse(tag));
+                        tagIds.Add(tag);
                     }
                 }
                 var articleTags = tagIds.Select(tagId => new ArticleTag()
@@ -176,14 +176,14 @@ namespace Blog.Repository.Implement
         }
 
 
-        public async Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize)
+        public async Task<List<ArticleInfo>> GetArticleByCategory(string categoryId, int pageIndex, int pageSize)
         {
             var articleIds = await Db.Queryable<ArticleCategory>().Where(i => i.CategoryId == categoryId)
                 .GroupBy(x => x.ArticleId).Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
             return await base.QueryByIds(articleIds);
         }
 
-        public async Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize)
+        public async Task<List<ArticleInfo>> GetArticleByTag(string tagId, int pageIndex, int pageSize)
         {
             var articleIds = await Db.Queryable<ArticleTag>().Where(i => i.TagId == tagId)
                 .GroupBy(x => x.ArticleId)

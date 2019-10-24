@@ -18,7 +18,7 @@ namespace Blog.Model.Db
         /// 对应标签id
         /// </summary>
         [SugarColumn(ColumnName = "tag_id")]
-        public int TagId { get; set; }
+        public string TagId { get; set; }
 
 
     }

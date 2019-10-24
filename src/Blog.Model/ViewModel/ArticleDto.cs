@@ -15,7 +15,7 @@ namespace Blog.Model.ViewModel
         /// <summary>
         /// 分类
         /// </summary>
-        public List<int> Categories { get; set; }
+        public List<string> Categories { get; set; }
 
     }
 }

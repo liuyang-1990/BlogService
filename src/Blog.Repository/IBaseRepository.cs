@@ -47,14 +47,6 @@ namespace Blog.Repository
         Task<JsonResultModel<T>> QueryByPage(GridParams param, Expression<Func<T, bool>> whereExpression);
 
         /// <summary>
-        ///  分页查询
-        /// </summary>
-        /// <param name="param">分页以及排序参数</param>
-        /// <param name="strWhere">条件</param>
-        /// <returns></returns>
-        Task<JsonResultModel<T>> QueryByPage(GridParams param, string strWhere);
-
-        /// <summary>
         /// 根据where条件查询一条数据
         /// </summary>
         /// <param name="whereExpression">where条件</param>

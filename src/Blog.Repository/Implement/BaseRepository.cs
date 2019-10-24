@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.DataProtection;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -77,8 +76,7 @@ namespace Blog.Repository.Implement
             RefAsync<int> totalCount = 0;
             var queryable = Db.Queryable<T>().WhereIF(whereExpression != null, whereExpression)
                 .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder),
-                    param.SortField + " " + param.SortOrder)
-            .Mapper(it => { it.Id = DataProtector.Protect(it.Id.ToString()); });
+                    param.SortField + " " + param.SortOrder);
             return new JsonResultModel<T>()
             {
                 Rows = await queryable.ToPageListAsync(param.PageNum, param.PageSize, totalCount),
@@ -86,24 +84,6 @@ namespace Blog.Repository.Implement
             };
         }
 
-        /// <summary>
-        ///  分页查询
-        /// </summary>
-        /// <param name="param">分页以及排序参数</param>
-        /// <param name="strWhere">条件</param>
-        /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> QueryByPage(GridParams param, string strWhere)
-        {
-            var queryable = Db.Queryable<T>().WhereIF(string.IsNullOrEmpty(strWhere), strWhere)
-                .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder),
-                    param.SortField + " " + param.SortOrder)
-                .Mapper(it => { it.Id = DataProtector.Protect(it.Id.ToString()); });
-            return new JsonResultModel<T>()
-            {
-                Rows = await queryable.ToPageListAsync(param.PageNum, param.PageSize),
-                TotalRows = await queryable.CountAsync()
-            };
-        }
         /// <summary>
         /// 根据where条件查询一条数据
         /// </summary>
@@ -121,8 +101,8 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<T> QueryById(string id)
         {
-            var unProtectId = DataProtector.Unprotect(id);
-            return await Db.Queryable<T>().Mapper(x => x.Id = DataProtector.Protect(x.Id)).FirstAsync(x => x.Id == unProtectId);
+            return default(T);
+            //return await Db.Queryable<T>().FirstAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -132,8 +112,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<List<T>> QueryByIds(List<string> ids)
         {
-            var idsUnProtect = ids.Select(x => DataProtector.Unprotect(x));
-            return await Db.Queryable<T>().In(idsUnProtect).ToListAsync();
+            return await Db.Queryable<T>().In(ids).ToListAsync();
         }
 
         #endregion
@@ -250,8 +229,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression)
         {
-            var idsUnProtect = ids.Select(x => DataProtector.Unprotect(x));
-            return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => idsUnProtect.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
@@ -262,8 +240,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, T>> updateExpression)
         {
-            var idsUnProtect = ids.Select(x => DataProtector.Unprotect(x));
-            return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => idsUnProtect.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
         #endregion
 

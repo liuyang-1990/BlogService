@@ -16,8 +16,8 @@ namespace Blog.Business
 
         Task<ArticleDetailResponse> GetArticleDetail(string id);
 
-        Task<List<ArticleInfo>> GetArticleByCategory(int categoryId, int pageIndex, int pageSize);
+        Task<List<ArticleInfo>> GetArticleByCategory(string categoryId, int pageIndex, int pageSize);
 
-        Task<List<ArticleInfo>> GetArticleByTag(int tagId, int pageIndex, int pageSize);
+        Task<List<ArticleInfo>> GetArticleByTag(string tagId, int pageIndex, int pageSize);
     }
 }

@@ -12,7 +12,7 @@ namespace Blog.Model.Request
 
     public class ChangePasswordRequest : LoginRequest
     {
-
+        [Required]
         public string OldPassword { get; set; }
 
     }

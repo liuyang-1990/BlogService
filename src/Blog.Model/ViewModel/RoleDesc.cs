@@ -7,12 +7,4 @@
 
         Admin
     }
-
-
-    public enum UserAction
-    {
-        Add,
-
-        Update
-    }
 }
