@@ -101,8 +101,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<T> QueryById(string id)
         {
-            return default(T);
-            //return await Db.Queryable<T>().FirstAsync(x => x.Id == id);
+            return await Db.Queryable<T>().FirstAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -252,8 +251,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<bool> DeleteById(string id)
         {
-            var unProtectId = DataProtector.Unprotect(id);
-            return await Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == unProtectId).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
