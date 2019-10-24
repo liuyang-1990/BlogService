@@ -1,16 +1,14 @@
 ﻿using Blog.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SqlSugar;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
 
 namespace Blog.Api.Filters
 {
@@ -32,6 +30,11 @@ namespace Blog.Api.Filters
             {
                 return;
             }
+            //no Arguments
+            if (!context.ActionArguments.Keys.Any())
+            {
+                return;
+            }
             var request = context.HttpContext.Request;
             var protectionParams = _configuration["ParamsProtection:Params"].Split(",", StringSplitOptions.RemoveEmptyEntries);
 
@@ -40,7 +43,11 @@ namespace Blog.Api.Filters
             {
                 foreach (var p in protectionParams)
                 {
-                    if (!request.Query.ContainsKey(p)) continue;
+                    if (!request.Query.ContainsKey(p))
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         var protectParam = request.Query[p].ToString();
@@ -58,7 +65,11 @@ namespace Blog.Api.Filters
             {
                 foreach (var p in protectionParams)
                 {
-                    if (!context.RouteData.Values.ContainsKey(p)) continue;
+                    if (!context.RouteData.Values.ContainsKey(p))
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         var protectParam = context.RouteData.Values[p].ToString();
@@ -73,27 +84,34 @@ namespace Blog.Api.Filters
             }
             //RequestBody
             if (!request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
-                !request.Method.Equals("PUT", StringComparison.OrdinalIgnoreCase)) return;
-
+                !request.Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
             if (!request.ContentType.Contains("json"))
             {
                 return;
             }
 
-            request.EnableBuffering();
-            var requestReader = new StreamReader(request.Body);
-            request.Body.Position = 0;
-            var requestContent = requestReader.ReadToEnd();
-            var jToken = JToken.Parse(requestContent);
-            try
+            var dic = new Dictionary<string, object>();
+            foreach (var key in context.ActionArguments.Keys)
             {
-                UnprotectParams(jToken, _dataProtector, protectionParams);
-                var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(jToken));
-                context.HttpContext.Request.Body = new MemoryStream(bytes);
+                var json = JsonConvert.SerializeObject(context.ActionArguments[key]);
+                var jToken = JToken.Parse(json);
+                try
+                {
+                    UnprotectParams(jToken, _dataProtector, protectionParams);
+                    var val = JsonConvert.DeserializeObject(jToken.ToString(), context.ActionArguments[key].GetType());
+                    dic.Add(key, val);
+                }
+                catch (Exception)
+                {
+                    context.Result = new BadRequestResult();
+                }
             }
-            catch (Exception)
+            foreach (var key in dic.Keys)
             {
-                context.Result = new BadRequestResult();
+                context.ActionArguments[key] = dic[key];
             }
         }
 
@@ -111,9 +129,9 @@ namespace Blog.Api.Filters
                 {
                     if (j is JValue val)
                     {
-                        var strJ = val.Value.ToString();
                         if (array.Parent is JProperty property && protectionParams.Any(x => x.Equals(property.Name, StringComparison.OrdinalIgnoreCase)))
                         {
+                            var strJ = val.Value.ToString();
                             val.Value = protector.Unprotect(strJ);
                         }
                     }
@@ -137,6 +155,14 @@ namespace Blog.Api.Filters
                         {
                             var val = property.Value.ToString();
                             property.Value = protector.Unprotect(val);
+                        }
+                        else
+                        {
+                            //if Value has child values
+                            if (property.Value.HasValues)
+                            {
+                                UnprotectParams(property.Value, protector, protectionParams);
+                            }
                         }
                     }
                 }
