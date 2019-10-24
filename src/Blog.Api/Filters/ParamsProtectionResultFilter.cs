@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using Blog.Infrastructure.Extensions;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
-using SqlSugar;
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Blog.Api.Filters
 {
@@ -17,8 +17,6 @@ namespace Blog.Api.Filters
     {
         private readonly IDataProtector _dataProtector;
         private readonly IConfiguration _configuration;
-
-        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Dic = new ConcurrentDictionary<Type, PropertyInfo[]>();
 
         public ParamsProtectionResultFilter(IDataProtectionProvider provider, IConfiguration configuration)
         {
@@ -28,25 +26,35 @@ namespace Blog.Api.Filters
 
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            if (!_configuration["ParamsProtection:Enabled"].ObjToBool() || string.IsNullOrWhiteSpace(_configuration["ParamsProtection:Params"]))
+            if (_configuration["ParamsProtection:Enabled"] == "false" || string.IsNullOrWhiteSpace(_configuration["ParamsProtection:Params"]))
             {
                 await next();
                 return;
             }
-
             var protectionParams = _configuration["ParamsProtection:Params"].Split(",", StringSplitOptions.RemoveEmptyEntries);
-            context.HttpContext.Response.Body = new MemoryWrappedHttpResponseStream(context.HttpContext.Response.Body);
-            await next();
-            context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-            var str = await ReadStreamAsync(context.HttpContext.Response.Body).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(str))
+            var prop = ReflectionExtensions.TypePropertyCache.GetOrAdd(typeof(ObjectResult), t => t.GetProperties()).FirstOrDefault(p => p.Name == "Value");
+            var val = prop?.GetValueGetter()?.Invoke(context.Result);
+            if (val != null)
             {
-                return;
+                var obj = JToken.FromObject(val);
+                ProtectParams(obj, protectionParams);
+                prop.GetValueSetter().Invoke(context.Result, obj);
             }
-            var jToken = JToken.Parse(str);
-            ProtectParams(jToken, protectionParams);
-            var buffer = Encoding.UTF8.GetBytes(jToken.ToString());
-            await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+            await next();
+            #region 另一种方案，暂未实现
+            //context.HttpContext.Response.Body = new MemoryWrappedHttpResponseStream(context.HttpContext.Response.Body);
+            //await next();
+            //context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            //var str = await ReadStreamAsync(context.HttpContext.Response.Body).ConfigureAwait(false);
+            //if (string.IsNullOrEmpty(str))
+            //{
+            //    return;
+            //}
+            //var jToken = JToken.Parse(str);
+            //ProtectParams(jToken, protectionParams);
+            //var buffer = Encoding.UTF8.GetBytes(jToken.ToString());
+            //await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length); 
+            #endregion
         }
 
         private void ProtectParams(JToken token, string[] protectionParams)
@@ -107,18 +115,18 @@ namespace Blog.Api.Filters
         private readonly Stream _innerStream;
         public MemoryWrappedHttpResponseStream(Stream innerStream)
         {
-            this._innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
+            _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
         }
         public override void Flush()
         {
-            this._innerStream.Flush();
+            _innerStream.Flush();
             base.Flush();
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
             base.Write(buffer, offset, count);
-            this._innerStream.Write(buffer, offset, count);
+            _innerStream.Write(buffer, offset, count);
         }
 
         protected override void Dispose(bool disposing)
@@ -126,15 +134,14 @@ namespace Blog.Api.Filters
             base.Dispose(disposing);
             if (disposing)
             {
-                this._innerStream.Dispose();
+                _innerStream.Dispose();
             }
         }
 
         public override void Close()
         {
             base.Close();
-            this._innerStream.Close();
+            _innerStream.Close();
         }
     }
-
 }
