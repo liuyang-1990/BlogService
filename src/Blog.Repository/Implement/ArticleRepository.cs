@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blog.Model.Request;
+using SqlSugar;
 
 namespace Blog.Repository.Implement
 {
@@ -67,12 +69,12 @@ namespace Blog.Repository.Implement
         /// <summary>
         /// 插入文章
         /// </summary>
-        /// <param name="article"></param>
-        /// <param name="content"></param>
-        /// <param name="tags"></param>
-        /// <param name="categoryIds"></param>
+        /// <param name="article">文章基本信息</param>
+        /// <param name="content">文章内容信息</param>
+        /// <param name="tags">标签</param>
+        /// <param name="categories">分类</param>
         /// <returns></returns>
-        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, List<string> tags, List<string> categoryIds)
+        public async Task<bool> Insert(ArticleInfo article, ArticleContent content, List<string> tags, List<string> categories)
         {
             try
             {
@@ -100,7 +102,7 @@ namespace Blog.Repository.Implement
                     ArticleId = id
                 }).ToList();
                 await Db.Insertable(articleTags).ExecuteCommandAsync();
-                var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()
+                var articleCategories = categories.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = id,
                     CategoryId = categoryId
@@ -126,7 +128,7 @@ namespace Blog.Repository.Implement
         /// <param name="tags"></param>
         /// <param name="categoryIds"></param>
         /// <returns></returns>
-        public async Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<string> categoryIds)
+        public async Task<bool> Update(ArticleInfo article, ArticleContent content, List<string> tags, List<string> categories)
         {
             try
             {
@@ -158,7 +160,7 @@ namespace Blog.Repository.Implement
                 }).ToList();
                 await Db.Insertable(articleTags).ExecuteCommandAsync();
 
-                var articleCategories = categoryIds.Select(categoryId => new ArticleCategory()
+                var articleCategories = categories.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = article.Id,
                     CategoryId = categoryId
@@ -175,20 +177,44 @@ namespace Blog.Repository.Implement
             }
         }
 
-
-        public async Task<List<ArticleInfo>> GetArticleByCategory(string categoryId, int pageIndex, int pageSize)
+        /// <summary>
+        ///  根据分类获取文章
+        /// </summary>
+        /// <param name="categoryId">分类id</param>
+        /// <param name="param">查询参数</param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param)
         {
+            RefAsync<int> total = 0;
             var articleIds = await Db.Queryable<ArticleCategory>().Where(i => i.CategoryId == categoryId)
-                .GroupBy(x => x.ArticleId).Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
-            return await base.QueryByIds(articleIds);
+                .GroupBy(x => x.ArticleId)
+                .Select(x => x.ArticleId)
+                .ToPageListAsync(param.PageNum, param.PageSize, total);
+            return new JsonResultModel<ArticleInfo>()
+            {
+                Rows = await base.QueryByIds(articleIds),
+                TotalRows = total
+            };
         }
 
-        public async Task<List<ArticleInfo>> GetArticleByTag(string tagId, int pageIndex, int pageSize)
+        /// <summary>
+        /// 根据标签获取文章
+        /// </summary>
+        /// <param name="tagId">标签id</param>
+        /// <param name="param">查询参数</param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, GridParams param)
         {
+            RefAsync<int> total = 0;
             var articleIds = await Db.Queryable<ArticleTag>().Where(i => i.TagId == tagId)
                 .GroupBy(x => x.ArticleId)
-                .Select(x => x.ArticleId).ToPageListAsync(pageIndex, pageSize);
-            return await base.QueryByIds(articleIds);
+                .Select(x => x.ArticleId)
+                .ToPageListAsync(param.PageNum, param.PageSize, total);
+            return new JsonResultModel<ArticleInfo>()
+            {
+                Rows = await base.QueryByIds(articleIds),
+                TotalRows = total
+            };
         }
     }
 }

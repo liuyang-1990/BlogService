@@ -6,7 +6,6 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -94,9 +93,9 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
-        public async Task<IEnumerable<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, [FromQuery]GridParams param)
         {
-            return await _articleBusiness.GetArticleByCategory(categoryId, param.PageNum, param.PageSize);
+            return await _articleBusiness.GetArticleByCategory(categoryId, param);
         }
 
         /// <summary>
@@ -107,9 +106,9 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
-        public async Task<IEnumerable<ArticleInfo>> GetArticleByTag(string tagId, GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, [FromQuery]GridParams param)
         {
-            return await _articleBusiness.GetArticleByTag(tagId, param.PageNum, param.PageSize);
+            return await _articleBusiness.GetArticleByTag(tagId, param);
         }
     }
 }

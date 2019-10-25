@@ -91,15 +91,25 @@ namespace Blog.Business.Implement
         {
             return await _articleRepository.GetArticleDetail(id);
         }
-
-        public async Task<List<ArticleInfo>> GetArticleByCategory(string categoryId, int pageIndex, int pageSize)
+        /// <summary>
+        ///  根据分类获取文章
+        /// </summary>
+        /// <param name="categoryId">分类id</param>
+        /// <param name="param">查询参数</param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param)
         {
-            return await _articleRepository.GetArticleByCategory(categoryId, pageIndex, pageSize);
+            return await _articleRepository.GetArticleByCategory(categoryId, param);
         }
-
-        public async Task<List<ArticleInfo>> GetArticleByTag(string tagId, int pageIndex, int pageSize)
+        /// <summary>
+        /// 根据标签获取文章
+        /// </summary>
+        /// <param name="tagId">标签id</param>
+        /// <param name="param">查询参数</param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, GridParams param)
         {
-            return await _articleRepository.GetArticleByTag(tagId, pageIndex, pageSize);
+            return await _articleRepository.GetArticleByTag(tagId, param);
         }
     }
 }

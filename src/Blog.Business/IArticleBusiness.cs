@@ -15,9 +15,19 @@ namespace Blog.Business
         Task<ResultModel<string>> Update(ArticleDto articleDto);
 
         Task<ArticleDetailResponse> GetArticleDetail(string id);
-
-        Task<List<ArticleInfo>> GetArticleByCategory(string categoryId, int pageIndex, int pageSize);
-
-        Task<List<ArticleInfo>> GetArticleByTag(string tagId, int pageIndex, int pageSize);
+        /// <summary>
+        ///  根据分类获取文章
+        /// </summary>
+        /// <param name="categoryId">分类id</param>
+        /// <param name="param">查询参数</param>
+        /// <returns></returns>
+        Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param);
+        /// <summary>
+        /// 根据标签获取文章
+        /// </summary>
+        /// <param name="tagId">标签id</param>
+        /// <param name="param">查询参数</param>
+        /// <returns></returns>
+        Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, GridParams param);
     }
 }
