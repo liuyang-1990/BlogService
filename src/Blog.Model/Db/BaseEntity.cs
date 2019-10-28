@@ -22,7 +22,7 @@ namespace Blog.Model
         /// <summary>
         /// 创建时间
         /// </summary>
-        [SugarColumn(IsOnlyIgnoreInsert = true)]
+        [SugarColumn(IsOnlyIgnoreUpdate = true)]
         public DateTime CreateTime { get; set; }
         ///<summary>
         /// 修改时间

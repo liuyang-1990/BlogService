@@ -3,7 +3,7 @@ using System;
 
 namespace Blog.Model.ViewModel
 {
-    public class V_Article_Info
+    public class ArticleViewModel
     {
         public string Id { get; set; }
         /// <summary>

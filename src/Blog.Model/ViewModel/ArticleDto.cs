@@ -4,18 +4,18 @@ using System.Collections.Generic;
 
 namespace Blog.Model.ViewModel
 {
-    public class ArticleDto : V_Article_Info
+    public class ArticleDto : ArticleViewModel
     {
 
         /// <summary>
         /// 标签
         /// </summary>
-        public List<string> Tags { get; set; }
+        public List<string> TagIds { get; set; }
 
         /// <summary>
         /// 分类
         /// </summary>
-        public List<string> Categories { get; set; }
+        public List<string> CategoryIds { get; set; }
 
     }
 }

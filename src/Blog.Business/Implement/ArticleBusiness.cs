@@ -7,7 +7,6 @@ using Blog.Model.ViewModel;
 using Blog.Repository;
 using SqlSugar;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -23,25 +22,31 @@ namespace Blog.Business.Implement
             BaseRepository = articleRepository;
             _articleRepository = articleRepository;
         }
-
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="searchParmas"></param>
+        /// <returns></returns>
         public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas)
         {
             var exp = Expressionable.Create<ArticleInfo>().AndIF(searchParmas.Status.HasValue, it => it.Status == searchParmas.Status);
-            if (!string.IsNullOrEmpty(searchParmas.StartTime) && string.IsNullOrEmpty(searchParmas.EndTime))
+            if (string.IsNullOrEmpty(searchParmas.StartTime))
             {
-                exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate());
+                searchParmas.StartTime = "1970-01-01";
             }
-            else if (!string.IsNullOrEmpty(searchParmas.EndTime) && string.IsNullOrEmpty(searchParmas.StartTime))
+            if (string.IsNullOrEmpty(searchParmas.EndTime))
             {
-                exp.AndIF(true, it => it.CreateTime <= searchParmas.EndTime.ObjToDate());
+                searchParmas.EndTime = DateTime.MaxValue.ToString();
             }
-            else if (!string.IsNullOrEmpty(searchParmas.StartTime) && !string.IsNullOrEmpty(searchParmas.EndTime))
-            {
-                exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate() && it.CreateTime <= searchParmas.EndTime.ObjToDate());
-            }
+            exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate() && it.CreateTime <= searchParmas.EndTime.ObjToDate());
             return await base.GetPageList(param, exp.ToExpression());
         }
-
+        /// <summary>
+        ///  新增文章
+        /// </summary>
+        /// <param name="articleDto">文章信息</param>
+        /// <returns></returns>
         public async Task<ResultModel<string>> Insert(ArticleDto articleDto)
         {
             var response = new ResultModel<string>();
@@ -57,12 +62,17 @@ namespace Blog.Business.Implement
             {
                 Content = articleDto.Content
             };
-            response.IsSuccess = await _articleRepository.Insert(article, content, articleDto.Tags, articleDto.Categories);
+            response.IsSuccess = await _articleRepository.Insert(article, content, articleDto.TagIds, articleDto.CategoryIds);
             response.Status = response.IsSuccess ? "0" : "1";
 
             return response;
         }
 
+        /// <summary>
+        ///  更新文章
+        /// </summary>
+        /// <param name="articleDto">文章信息</param>
+        /// <returns></returns>
         public async Task<ResultModel<string>> Update(ArticleDto articleDto)
         {
             var response = new ResultModel<string>();
@@ -71,6 +81,9 @@ namespace Blog.Business.Implement
                 Abstract = articleDto.Abstract,
                 Title = articleDto.Title,
                 Id = articleDto.Id,
+                Likes = articleDto.Likes,
+                Views = articleDto.Views,
+                Comments = articleDto.Comments,
                 IsOriginal = articleDto.IsOriginal,
                 Status = articleDto.Status,
                 ImageUrl = articleDto.ImageUrl,
@@ -82,11 +95,16 @@ namespace Blog.Business.Implement
                 ArticleId = article.Id,
                 ModifyTime = DateTime.Now
             };
-            response.IsSuccess = await _articleRepository.Update(article, content, articleDto.Tags, articleDto.Categories);
+            response.IsSuccess = await _articleRepository.Update(article, content, articleDto.TagIds, articleDto.CategoryIds);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
 
+        /// <summary>
+        /// 获取文章详情
+        /// </summary>
+        /// <param name="id">文章id</param>
+        /// <returns></returns>
         public async Task<ArticleDetailResponse> GetArticleDetail(string id)
         {
             return await _articleRepository.GetArticleDetail(id);
