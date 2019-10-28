@@ -71,8 +71,8 @@ namespace Blog.Api
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-                options.Filters.Add<DecryptReferenceFilter>();
-                options.Filters.Add<ParamsProtectionResultFilter>();
+                //options.Filters.Add<DecryptReferenceFilter>();
+                //options.Filters.Add<ParamsProtectionResultFilter>();
 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
               .AddJsonOptions(options =>
@@ -187,26 +187,37 @@ namespace Blog.Api
                 options.InstanceName = "blog";
             });
 
+            #region SqlSugarDbContext
             services.AddSqlSugarDbContext(options =>
-            {
-                options.DbType = (DbType)Enum.Parse(typeof(DbType), Configuration["ConnectionStrings:DbType"]);
-                options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
-                options.IsAutoCloseConnection = true;
-                options.InitKeyType = InitKeyType.SystemTable;
-                options.AopEvents = new AopEvents()
-                {
-                    OnLogExecuting = (sql, pars) =>
-                    {
-                        var sqlP = sql + "\r\n" + JsonConvert.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
-                        MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
-                    }
-                };
-            });
+               {
+                   options.DbType = (DbType)Enum.Parse(typeof(DbType), Configuration["ConnectionStrings:DbType"]);
+                   options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
+                   options.IsAutoCloseConnection = true;
+                   options.InitKeyType = InitKeyType.SystemTable;
+                   options.AopEvents = new AopEvents()
+                   {
+                       OnLogExecuting = (sql, pars) =>
+                       {
+                           var sqlP = sql + "\r\n" + JsonConvert.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
+                           MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
+                       }
+                   };
+               });
+            #endregion
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpClient();
             services.AddMemoryCache();
-            services.AddDataProtection();
+
+            #region DataProtection
+            services.AddDataProtection().AddParamProtection(option =>
+            {
+                option.Enable = true;
+                option.Purpose = "protect_params";
+                option.Params = new[] { "id", "ids", "Id" };
+            });
+            #endregion
+
             #region AOP
 
             services.ConfigureDynamicProxy(config =>
