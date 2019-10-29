@@ -1,6 +1,7 @@
-﻿using Blog.Business;
+﻿using AutoMapper;
+using Blog.Business;
 using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.Category;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -19,27 +20,33 @@ namespace Blog.Api.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryBusiness _categoryBusiness;
-
-        public CategoryController(ICategoryBusiness categoryBusiness)
+        private readonly IMapper _mapper;
+        public CategoryController(ICategoryBusiness categoryBusiness, IMapper mapper)
         {
             _categoryBusiness = categoryBusiness;
+            _mapper = mapper;
         }
         /// <summary>
         /// 分页获取分类信息
         /// </summary>
-        /// <param name="param"></param>
-        /// <param name="categoryName"></param>
+        /// <param name="searchRequest"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<CategoryInfo>> GetPageList([FromQuery]GridParams param, string categoryName)
+        public async Task<JsonResultModel<CategoryInfo>> GetPageList([FromQuery]CategorySearchRequest searchRequest)
         {
-            return await _categoryBusiness.GetPageList(param, categoryName);
+            return await _categoryBusiness.GetPageList(searchRequest);
         }
+
+        /// <summary>
+        /// 获取所有
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all")]
         public async Task<IEnumerable<CategoryInfo>> GetAll()
         {
             return await _categoryBusiness.GetAllCategoryInfos();
         }
+
         /// <summary>
         /// 获取某个分类的信息
         /// </summary>
@@ -53,13 +60,25 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 新增分类
         /// </summary>
-        /// <param name="category"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddCategory([FromBody]CategoryInfo category)
+        public async Task<ResultModel<string>> AddCategory([FromBody]CommonCategoryRequest request)
         {
-            return await _categoryBusiness.Insert(category);
+            return await _categoryBusiness.Insert(_mapper.Map<CategoryInfo>(request));
         }
+
+        /// <summary>
+        /// 更新分类
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<ResultModel<string>> UpdateCategory([FromBody]UpdateCategoryRequest request)
+        {
+            return await _categoryBusiness.Update(_mapper.Map<CategoryInfo>(request));
+        }
+
         /// <summary>
         /// 删除分类
         /// </summary>
@@ -70,15 +89,6 @@ namespace Blog.Api.Controllers
         {
             return await _categoryBusiness.Delete(id);
         }
-        /// <summary>
-        /// 更新分类
-        /// </summary>
-        /// <param name="category"></param>
-        /// <returns></returns>
-        [HttpPut]
-        public async Task<ResultModel<string>> UpdateCategory([FromBody]CategoryInfo category)
-        {
-            return await _categoryBusiness.Update(category);
-        }
+
     }
 }

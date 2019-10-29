@@ -1,5 +1,5 @@
 ﻿using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.Category;
 using Blog.Model.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,10 +12,9 @@ namespace Blog.Business
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="param">查询参数</param>
-        /// <param name="categoryName">分类名</param>
+        /// <param name="searchRequest">查询参数</param>
         /// <returns></returns>
-        Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName);
+        Task<JsonResultModel<CategoryInfo>> GetPageList(CategorySearchRequest searchRequest);
 
         /// <summary>
         /// 获取所有分类

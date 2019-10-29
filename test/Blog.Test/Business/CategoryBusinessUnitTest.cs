@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Blog.Model.Request.Category;
 using Xunit;
 
 namespace Blog.Test.Business
@@ -36,7 +37,7 @@ namespace Blog.Test.Business
             _categoryRepository
                 .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<CategoryInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
-            var actualModel = await _categoryBusiness.GetPageList(new GridParams(), "");
+            var actualModel = await _categoryBusiness.GetPageList(new CategorySearchRequest());
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);
@@ -48,8 +49,8 @@ namespace Blog.Test.Business
         [MemberData(nameof(Data))]
         public async Task Insert_Test(CategoryInfo categoryRequest, bool isExist, ResultModel<string> expectedModel)
         {
-           // _categoryRepository.Setup(x => x.IsExist(It.IsAny<CategoryInfo>(), UserAction.Add)).ReturnsAsync(() => isExist);
-           // _categoryRepository.Setup(x => x.Insert(It.IsAny<CategoryInfo>())).ReturnsAsync(() => "1");
+            // _categoryRepository.Setup(x => x.IsExist(It.IsAny<CategoryInfo>(), UserAction.Add)).ReturnsAsync(() => isExist);
+            // _categoryRepository.Setup(x => x.Insert(It.IsAny<CategoryInfo>())).ReturnsAsync(() => "1");
             var actualModel = await _categoryBusiness.Insert(categoryRequest);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
@@ -93,7 +94,7 @@ namespace Blog.Test.Business
         public async Task Update_Test(CategoryInfo categoryInfo, bool isExist, ResultModel<string> expectedModel)
         {
             //_categoryRepository.Setup(x => x.IsExist(categoryInfo, UserAction.Update)).ReturnsAsync(() => isExist);
-          //  _categoryRepository.Setup(x => x.Update(categoryInfo, true, true)).ReturnsAsync(() => true);
+            //  _categoryRepository.Setup(x => x.Update(categoryInfo, true, true)).ReturnsAsync(() => true);
             var actualModel = await _categoryBusiness.Update(categoryInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

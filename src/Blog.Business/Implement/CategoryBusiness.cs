@@ -8,6 +8,7 @@ using Blog.Repository;
 using SqlSugar;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blog.Model.Request.Category;
 
 namespace Blog.Business.Implement
 {
@@ -34,15 +35,14 @@ namespace Blog.Business.Implement
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="param">查询参数</param>
-        /// <param name="categoryName">分类名</param>
+        /// <param name="searchRequest">查询参数</param>
         /// <returns></returns>
-        public async Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName)
+        public async Task<JsonResultModel<CategoryInfo>> GetPageList(CategorySearchRequest searchRequest)
         {
             var exp = Expressionable.Create<CategoryInfo>()
-                .OrIF(!string.IsNullOrEmpty(categoryName),
-                    it => it.CategoryName.Contains(categoryName)).ToExpression();
-            return await base.GetPageList(param, exp);
+                .OrIF(!string.IsNullOrEmpty(searchRequest.CategoryName),
+                    it => it.CategoryName.Contains(searchRequest.CategoryName)).ToExpression();
+            return await base.GetPageList(searchRequest, exp);
         }
 
         /// <summary>
