@@ -24,10 +24,10 @@ namespace Blog.Api.Controllers
             return await _geographicBusiness.GetProvince();
         }
 
-        [HttpGet("city/{id}")]
-        public async Task<IEnumerable<City>> GetCity(string id)
+        [HttpGet("city/{key}")]
+        public async Task<IEnumerable<City>> GetCity(string key)
         {
-            return await _geographicBusiness.GetCity(id);
+            return await _geographicBusiness.GetCity(key);
         }
     }
 }

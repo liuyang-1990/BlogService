@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Blog.Business;
 using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.TimeLine;
 using Blog.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
 {
@@ -19,7 +19,7 @@ namespace Blog.Api.Controllers
     public class TimeLineController : ControllerBase
     {
         private readonly ITimeLineBusiness _timeLineBusiness;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         public TimeLineController(ITimeLineBusiness timeLineBusiness, IMapper mapper)
         {
             _timeLineBusiness = timeLineBusiness;
@@ -28,7 +28,7 @@ namespace Blog.Api.Controllers
 
         [HttpGet("all")]
         [AllowAnonymous]
-        public async Task<IEnumerable<Tbl_Time_Line>> GetAll()
+        public async Task<IEnumerable<TimeLine>> GetAll()
         {
             return await _timeLineBusiness.GetList();
         }
@@ -36,23 +36,23 @@ namespace Blog.Api.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<Tbl_Time_Line> GetDetailInfo(string id)
+        public async Task<TimeLine> GetDetailInfo(string id)
         {
             return await _timeLineBusiness.GetDetail(id);
         }
 
         [HttpPost]
-        public async Task<ResultModel<string>> AddTimeLine([FromBody]TimeLineRequest request)
+        public async Task<ResultModel<string>> AddTimeLine([FromBody]CommonTimeLineRequest request)
         {
-            var entity = _mapper.Map<Tbl_Time_Line>(request);
-            return await _timeLineBusiness.Insert(entity);
+            var timeLine = _mapper.Map<TimeLine>(request);
+            return await _timeLineBusiness.Insert(timeLine);
         }
 
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateTimeLine([FromBody]TimeLineRequest request)
+        public async Task<ResultModel<string>> UpdateTimeLine([FromBody]UpdateTimeLineRequest request)
         {
-            var entity = _mapper.Map<Tbl_Time_Line>(request);
-            return await _timeLineBusiness.Update(entity);
+            var timeLine = _mapper.Map<TimeLine>(request);
+            return await _timeLineBusiness.Update(timeLine);
         }
 
         [HttpDelete("{id}")]

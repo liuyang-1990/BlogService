@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Blog.Business.Implement
 {
     [Injector(typeof(ITimeLineBusiness), LifeTime = Lifetime.Scoped)]
-    public class TimeLineBusiness : BaseBusiness<Tbl_Time_Line>, ITimeLineBusiness
+    public class TimeLineBusiness : BaseBusiness<TimeLine>, ITimeLineBusiness
     {
         private readonly ITimeLineRepository _timeLineRepository;
 
@@ -23,7 +23,7 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <returns></returns>
         [Caching("Tbl_Time_Line:GetList")]
-        public Task<List<Tbl_Time_Line>> GetList()
+        public Task<List<TimeLine>> GetList()
         {
             return base.QueryAll();
         }

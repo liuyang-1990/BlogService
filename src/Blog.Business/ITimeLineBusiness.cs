@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 namespace Blog.Business
 {
-    public interface ITimeLineBusiness : IBaseBusiness<Tbl_Time_Line>
+    public interface ITimeLineBusiness : IBaseBusiness<TimeLine>
     {
         /// <summary>
         /// 获取所有
         /// </summary>
         /// <returns></returns>
-        Task<List<Tbl_Time_Line>> GetList();
+        Task<List<TimeLine>> GetList();
 
         
     }

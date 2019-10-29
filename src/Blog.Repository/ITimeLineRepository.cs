@@ -2,7 +2,7 @@
 
 namespace Blog.Repository
 {
-    public interface ITimeLineRepository : IBaseRepository<Tbl_Time_Line>
+    public interface ITimeLineRepository : IBaseRepository<TimeLine>
     {
     }
 }
