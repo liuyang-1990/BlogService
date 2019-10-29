@@ -1,7 +1,7 @@
 ﻿using AspectCore.Injector;
 using Blog.Model;
 using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.Tag;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
@@ -34,15 +34,14 @@ namespace Blog.Business.Implement
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="param">查询参数</param>
-        /// <param name="tagName">标签名</param>
+        /// <param name="searchRequest">查询参数</param>
         /// <returns></returns>
-        public async Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName)
+        public async Task<JsonResultModel<TagInfo>> GetPageList(TagSearchRequest searchRequest)
         {
             var exp = Expressionable.Create<TagInfo>()
-                .OrIF(!string.IsNullOrEmpty(tagName),
-                    it => it.TagName.Contains(tagName)).ToExpression();
-            return await base.GetPageList(param, exp);
+                .OrIF(!string.IsNullOrEmpty(searchRequest.TagName),
+                    it => it.TagName.Contains(searchRequest.TagName)).ToExpression();
+            return await base.GetPageList(searchRequest, exp);
         }
 
         /// <summary>

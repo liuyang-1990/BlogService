@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Blog.Model.Request.Tag;
 using Xunit;
 
 namespace Blog.Test.Business
@@ -73,7 +74,7 @@ namespace Blog.Test.Business
             _tagRespoitory
                 .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<TagInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
-            var actualModel = await _tagBusiness.GetPageList(new GridParams(), "");
+            var actualModel = await _tagBusiness.GetPageList(new TagSearchRequest());
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);

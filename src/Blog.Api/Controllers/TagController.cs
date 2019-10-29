@@ -1,6 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.Tag;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Blog.Api.Controllers
 {
@@ -19,21 +20,22 @@ namespace Blog.Api.Controllers
     public class TagController : ControllerBase
     {
         private readonly ITagBusiness _tagBusiness;
-        public TagController(ITagBusiness tagBusiness)
+        private readonly IMapper _mapper;
+        public TagController(ITagBusiness tagBusiness, IMapper mapper)
         {
             _tagBusiness = tagBusiness;
+            _mapper = mapper;
         }
 
         /// <summary>
         /// 分页获取标签信息
         /// </summary>
-        /// <param name="param"></param>
-        /// <param name="tagName"></param>
+        /// <param name="searchRequest"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<TagInfo>> GetPageList([FromQuery]GridParams param, string tagName)
+        public async Task<JsonResultModel<TagInfo>> GetPageList([FromQuery]TagSearchRequest searchRequest)
         {
-            return await _tagBusiness.GetPageList(param, tagName);
+            return await _tagBusiness.GetPageList(searchRequest);
         }
 
         [HttpGet("all")]
@@ -55,12 +57,23 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 新增标签
         /// </summary>
-        /// <param name="tag"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddTag([FromBody]TagInfo tag)
+        public async Task<ResultModel<string>> AddTag([FromBody]CommonTagRequest request)
         {
-            return await _tagBusiness.Insert(tag);
+            return await _tagBusiness.Insert(_mapper.Map<TagInfo>(request));
+        }
+
+        /// <summary>
+        /// 更新标签
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<ResultModel<string>> UpdateTag([FromBody]UpdateTagRequest request)
+        {
+            return await _tagBusiness.Update(_mapper.Map<TagInfo>(request));
         }
 
         /// <summary>
@@ -73,15 +86,6 @@ namespace Blog.Api.Controllers
         {
             return await _tagBusiness.Delete(id);
         }
-        /// <summary>
-        /// 更新标签
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <returns></returns>
-        [HttpPut]
-        public async Task<ResultModel<string>> UpdateTag([FromBody]TagInfo tag)
-        {
-            return await _tagBusiness.Update(tag);
-        }
+
     }
 }
