@@ -56,7 +56,7 @@ namespace Blog.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteTimeLine(int id)
+        public async Task<ResultModel<string>> DeleteTimeLine(string id)
         {
             return await _timeLineBusiness.Delete(id);
         }

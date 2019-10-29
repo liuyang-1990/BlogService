@@ -22,6 +22,34 @@ namespace Blog.Business.Implement
             _tagRepository = repository;
         }
 
+        /// <summary>
+        /// 获取所有标签
+        /// </summary>
+        /// <returns></returns>
+        [Caching]
+        public async Task<List<TagInfo>> GetAllTags()
+        {
+            return await base.QueryAll();
+        }
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="param">查询参数</param>
+        /// <param name="tagName">标签名</param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName)
+        {
+            var exp = Expressionable.Create<TagInfo>()
+                .OrIF(!string.IsNullOrEmpty(tagName),
+                    it => it.TagName.Contains(tagName)).ToExpression();
+            return await base.GetPageList(param, exp);
+        }
+
+        /// <summary>
+        /// 新增标签
+        /// </summary>
+        /// <param name="entity">实体信息</param>
+        /// <returns></returns>
         public override async Task<ResultModel<string>> Insert(TagInfo entity)
         {
             var response = new ResultModel<string>();
@@ -34,22 +62,11 @@ namespace Blog.Business.Implement
             response.Status = "2";//已经存在
             return response;
         }
-
-        public async Task<JsonResultModel<TagInfo>> GetPageList(GridParams param, string tagName)
-        {
-            var exp = Expressionable.Create<TagInfo>()
-                .OrIF(!string.IsNullOrEmpty(tagName),
-                    it => it.TagName.Contains(tagName)).ToExpression();
-            return await _tagRepository.QueryByPage(param, exp);
-        }
-
-        [Caching]
-        public async Task<List<TagInfo>> GetAllTags()
-        {
-            return await _tagRepository.QueryAll();
-        }
-
-
+        /// <summary>
+        /// 更新标签
+        /// </summary>
+        /// <param name="entity">实体信息</param>
+        /// <returns></returns>
         public override async Task<ResultModel<string>> Update(TagInfo entity)
         {
             var response = new ResultModel<string>();
@@ -58,7 +75,6 @@ namespace Blog.Business.Implement
             {
                 return await base.Update(entity);
             }
-
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;

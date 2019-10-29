@@ -7,7 +7,6 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -20,11 +19,9 @@ namespace Blog.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBusiness _userBusiness;
-        private readonly IMapper _mapper;
-        public UserController(IUserBusiness userBusiness, IMapper mapper)
+        public UserController(IUserBusiness userBusiness)
         {
             _userBusiness = userBusiness;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -47,7 +44,7 @@ namespace Blog.Api.Controllers
         [HttpGet("{id}")]
         public async Task<UserInfo> GetDetailInfo(string id)
         {
-            return await _userBusiness.GetDetail(id,new List<string>(){ "Password" });
+            return await _userBusiness.GetDetail(id);
         }
 
         /// <summary>
@@ -67,7 +64,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteUser(int id)
+        public async Task<ResultModel<string>> DeleteUser(string id)
         {
             return await _userBusiness.Delete(id);
         }
@@ -103,7 +100,6 @@ namespace Blog.Api.Controllers
         {
             return await _userBusiness.UpdateStatus(request);
         }
-
 
     }
 }

@@ -15,20 +15,41 @@ namespace Blog.Business.Implement
     public class CategoryBusiness : BaseBusiness<CategoryInfo>, ICategoryBusiness
     {
         private readonly ICategoryRepository _categoryRepository;
-        public CategoryBusiness(ICategoryRepository respoitory)
+        public CategoryBusiness(ICategoryRepository repository)
         {
-            _categoryRepository = respoitory;
-            base.BaseRepository = respoitory;
+            _categoryRepository = repository;
+            base.BaseRepository = repository;
         }
 
+        /// <summary>
+        /// 获取所有分类
+        /// </summary>
+        /// <returns></returns>
+        [Caching]
+        public async Task<List<CategoryInfo>> GetAllCategoryInfos()
+        {
+            return await base.QueryAll();
+        }
+
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="param">查询参数</param>
+        /// <param name="categoryName">分类名</param>
+        /// <returns></returns>
         public async Task<JsonResultModel<CategoryInfo>> GetPageList(GridParams param, string categoryName)
         {
             var exp = Expressionable.Create<CategoryInfo>()
                 .OrIF(!string.IsNullOrEmpty(categoryName),
                     it => it.CategoryName.Contains(categoryName)).ToExpression();
-            return await _categoryRepository.QueryByPage(param, exp);
+            return await base.GetPageList(param, exp);
         }
 
+        /// <summary>
+        /// 新增分类
+        /// </summary>
+        /// <param name="entity">实体信息</param>
+        /// <returns></returns>
         public override async Task<ResultModel<string>> Insert(CategoryInfo entity)
         {
             var response = new ResultModel<string>();
@@ -42,13 +63,11 @@ namespace Blog.Business.Implement
             return response;
         }
 
-        [Caching]
-        public async Task<List<CategoryInfo>> GetAllCategoryInfos()
-        {
-            return await _categoryRepository.QueryAll();
-        }
-
-
+        /// <summary>
+        /// 更新分类
+        /// </summary>
+        /// <param name="entity">实体信息</param>
+        /// <returns></returns>
         public override async Task<ResultModel<string>> Update(CategoryInfo entity)
         {
             var response = new ResultModel<string>();
@@ -57,7 +76,6 @@ namespace Blog.Business.Implement
             {
                 return await base.Update(entity);
             }
-
             response.IsSuccess = false;
             response.Status = "2";//已经存在
             return response;

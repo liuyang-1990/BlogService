@@ -56,6 +56,9 @@ namespace Blog.Business.Implement
                 Title = articleDto.Title,
                 IsOriginal = articleDto.IsOriginal,
                 Status = articleDto.Status,
+                Likes = articleDto.Likes,
+                Views = articleDto.Views,
+                Comments = articleDto.Comments,
                 ImageUrl = articleDto.ImageUrl
             };
             var content = new ArticleContent()

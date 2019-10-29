@@ -8,7 +8,12 @@ namespace Blog.Business
 {
     public interface IUserBusiness : IBaseBusiness<UserInfo>
     {
-
+        /// <summary>
+        /// 分页获取
+        /// </summary>
+        /// <param name="searchParams"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param);
 
         Task<UserInfo> GetUserByUserName(string userName, string password);

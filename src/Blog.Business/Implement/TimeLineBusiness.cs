@@ -18,10 +18,14 @@ namespace Blog.Business.Implement
             _timeLineRepository = timeLineRepository;
         }
 
+        /// <summary>
+        /// 获取所有
+        /// </summary>
+        /// <returns></returns>
         [Caching("Tbl_Time_Line:GetList")]
         public Task<List<Tbl_Time_Line>> GetList()
         {
-            return _timeLineRepository.QueryAll();
+            return base.QueryAll();
         }
 
     }

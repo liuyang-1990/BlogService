@@ -70,7 +70,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteArticle(int id)
+        public async Task<ResultModel<string>> DeleteArticle(string id)
         {
             return await _articleBusiness.Delete(id);
         }

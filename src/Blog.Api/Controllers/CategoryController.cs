@@ -66,7 +66,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteCategory(int id)
+        public async Task<ResultModel<string>> DeleteCategory(string id)
         {
             return await _categoryBusiness.Delete(id);
         }
