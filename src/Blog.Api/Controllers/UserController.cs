@@ -1,12 +1,15 @@
-﻿using AutoMapper;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Response;
-using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -31,9 +34,18 @@ namespace Blog.Api.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResultModel<UserInfo>> GetPageList([FromQuery]UserRequest searchParams, [FromQuery]GridParams param)
+        public async Task<JsonResult> GetPageList([FromQuery]UserRequest searchParams, [FromQuery]GridParams param)
         {
-            return await _userBusiness.GetPageList(searchParams, param);
+            var settings = new JsonSerializerSettings()
+            {
+                //ignore these properties because not used 
+                ContractResolver = new CriteriaContractResolver(new List<string>()
+                {
+                    "Password"
+                })
+            };
+            var model = await _userBusiness.GetPageList(searchParams, param);
+            return new JsonResult(model, settings);
         }
 
         /// <summary>
@@ -42,9 +54,18 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<UserInfo> GetDetailInfo(string id)
+        public async Task<JsonResult> GetDetailInfo(string id)
         {
-            return await _userBusiness.GetDetail(id);
+            var settings = new JsonSerializerSettings()
+            {
+                //ignore these properties because not used 
+                ContractResolver = new CriteriaContractResolver(new List<string>()
+                {
+                    "Password"
+                })
+            };
+            var userInfo = await _userBusiness.GetDetail(id);
+            return new JsonResult(userInfo, settings);
         }
 
         /// <summary>
@@ -101,5 +122,22 @@ namespace Blog.Api.Controllers
             return await _userBusiness.UpdateStatus(request);
         }
 
+    }
+
+    public class CriteriaContractResolver : DefaultContractResolver
+    {
+        readonly IEnumerable<string> _ignoreProperties;
+
+        public CriteriaContractResolver(IEnumerable<string> ignoreProperties)
+        {
+            _ignoreProperties = ignoreProperties;
+        }
+
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            JsonProperty property = base.CreateProperty(member, memberSerialization);
+            property.ShouldSerialize = instance => !_ignoreProperties.Contains(property.PropertyName);
+            return property;
+        }
     }
 }
