@@ -1,6 +1,6 @@
-﻿namespace Blog.Model.Request
+﻿namespace Blog.Model.Request.Article
 {
-    public class ArticleRequest
+    public class ArticleSearchRequest : GridParams
     {
         public string StartTime { get; set; }
 

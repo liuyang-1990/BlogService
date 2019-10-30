@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using AutoMapper;
+using Blog.Model.Request.Article;
 
 namespace Blog.Api.Controllers
 {
@@ -21,23 +23,24 @@ namespace Blog.Api.Controllers
     public class ArticleController : ControllerBase
     {
         private readonly IArticleBusiness _articleBusiness;
+        private readonly IMapper _mapper;
 
-        public ArticleController(IArticleBusiness articleBusiness)
+        public ArticleController(IArticleBusiness articleBusiness, IMapper mapper)
         {
             _articleBusiness = articleBusiness;
+            _mapper = mapper;
         }
 
         /// <summary>
         /// 分页获取文章
         /// </summary>
-        /// <param name="param"></param>
-        /// <param name="searchParmas"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("page")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetPageList([FromQuery]GridParams param, [FromQuery]ArticleRequest searchParmas)
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList([FromQuery]ArticleSearchRequest request)
         {
-            return await _articleBusiness.GetPageList(param, searchParmas);
+            return await _articleBusiness.GetPageList(request);
         }
 
         /// <summary>
@@ -53,15 +56,25 @@ namespace Blog.Api.Controllers
         }
 
         /// <summary>
-        /// 新增
+        ///  新增文章
         /// </summary>
-        /// <param name="articleDto"></param>
+        /// <param name="request">文章信息</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddArticle([FromBody]ArticleDto articleDto)
+        public async Task<ResultModel<string>> AddArticle([FromBody]AddArticleRequest request)
         {
+            return await _articleBusiness.Insert(request);
+        }
 
-            return await _articleBusiness.Insert(articleDto);
+        /// <summary>
+        ///  更新文章
+        /// </summary>
+        /// <param name="request">文章信息</param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<ResultModel<string>> UpdateArticle([FromBody]UpdateArticleRequest request)
+        {
+            return await _articleBusiness.Update(request);
         }
 
         /// <summary>
@@ -75,16 +88,7 @@ namespace Blog.Api.Controllers
             return await _articleBusiness.Delete(id);
         }
 
-        /// <summary>
-        /// 更新
-        /// </summary>
-        /// <param name="articleDto"></param>
-        /// <returns></returns>
-        [HttpPut]
-        public async Task<ResultModel<string>> UpdateArticle([FromBody]ArticleDto articleDto)
-        {
-            return await _articleBusiness.Update(articleDto);
-        }
+
         /// <summary>
         /// 根据种类获取文章信息
         /// </summary>

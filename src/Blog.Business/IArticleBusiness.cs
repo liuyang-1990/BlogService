@@ -1,5 +1,6 @@
 ﻿using Blog.Model.Db;
 using Blog.Model.Request;
+using Blog.Model.Request.Article;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using System.Threading.Tasks;
@@ -11,22 +12,21 @@ namespace Blog.Business
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="param"></param>
-        /// <param name="searchParmas"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas);
+        Task<JsonResultModel<ArticleInfo>> GetPageList(ArticleSearchRequest request);
         /// <summary>
         ///  新增文章
         /// </summary>
-        /// <param name="articleDto">文章信息</param>
+        /// <param name="request">文章信息</param>
         /// <returns></returns>
-        Task<ResultModel<string>> Insert(ArticleDto articleDto);
+        Task<ResultModel<string>> Insert(AddArticleRequest request);
         /// <summary>
         ///  更新文章
         /// </summary>
-        /// <param name="articleDto">文章信息</param>
+        /// <param name="request">文章信息</param>
         /// <returns></returns>
-        Task<ResultModel<string>> Update(ArticleDto articleDto);
+        Task<ResultModel<string>> Update(UpdateArticleRequest request);
         /// <summary>
         /// 获取文章详情
         /// </summary>

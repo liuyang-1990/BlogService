@@ -2,6 +2,7 @@
 using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request;
+using Blog.Model.Request.Article;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
@@ -25,47 +26,46 @@ namespace Blog.Business.Implement
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="param"></param>
-        /// <param name="searchParmas"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<JsonResultModel<ArticleInfo>> GetPageList(GridParams param, ArticleRequest searchParmas)
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList(ArticleSearchRequest request)
         {
-            var exp = Expressionable.Create<ArticleInfo>().AndIF(searchParmas.Status.HasValue, it => it.Status == searchParmas.Status);
-            if (string.IsNullOrEmpty(searchParmas.StartTime))
+            var exp = Expressionable.Create<ArticleInfo>().AndIF(request.Status.HasValue, it => it.Status == request.Status);
+            if (string.IsNullOrEmpty(request.StartTime))
             {
-                searchParmas.StartTime = "1970-01-01";
+                request.StartTime = "1970-01-01";
             }
-            if (string.IsNullOrEmpty(searchParmas.EndTime))
+            if (string.IsNullOrEmpty(request.EndTime))
             {
-                searchParmas.EndTime = DateTime.MaxValue.ToString();
+                request.EndTime = DateTime.MaxValue.ToString();
             }
-            exp.AndIF(true, it => it.CreateTime >= searchParmas.StartTime.ObjToDate() && it.CreateTime <= searchParmas.EndTime.ObjToDate());
-            return await base.GetPageList(param, exp.ToExpression());
+            exp.AndIF(true, it => it.CreateTime >= request.StartTime.ObjToDate() && it.CreateTime <= request.EndTime.ObjToDate());
+            return await base.GetPageList(request, exp.ToExpression());
         }
         /// <summary>
         ///  新增文章
         /// </summary>
-        /// <param name="articleDto">文章信息</param>
+        /// <param name="request">文章信息</param>
         /// <returns></returns>
-        public async Task<ResultModel<string>> Insert(ArticleDto articleDto)
+        public async Task<ResultModel<string>> Insert(AddArticleRequest request)
         {
             var response = new ResultModel<string>();
             var article = new ArticleInfo()
             {
-                Abstract = articleDto.Abstract,
-                Title = articleDto.Title,
-                IsOriginal = articleDto.IsOriginal,
-                Status = articleDto.Status,
-                Likes = articleDto.Likes,
-                Views = articleDto.Views,
-                Comments = articleDto.Comments,
-                ImageUrl = articleDto.ImageUrl
+                Abstract = request.Abstract,
+                Title = request.Title,
+                IsOriginal = request.IsOriginal,
+                Status = request.Status,
+                Likes = request.Likes,
+                Views = request.Views,
+                Comments = request.Comments,
+                ImageUrl = request.ImageUrl
             };
             var content = new ArticleContent()
             {
-                Content = articleDto.Content
+                Content = request.Content
             };
-            response.IsSuccess = await _articleRepository.Insert(article, content, articleDto.TagIds, articleDto.CategoryIds);
+            response.IsSuccess = await _articleRepository.Insert(article, content, request.TagIds, request.CategoryIds);
             response.Status = response.IsSuccess ? "0" : "1";
 
             return response;
@@ -74,31 +74,31 @@ namespace Blog.Business.Implement
         /// <summary>
         ///  更新文章
         /// </summary>
-        /// <param name="articleDto">文章信息</param>
+        /// <param name="request">文章信息</param>
         /// <returns></returns>
-        public async Task<ResultModel<string>> Update(ArticleDto articleDto)
+        public async Task<ResultModel<string>> Update(UpdateArticleRequest request)
         {
             var response = new ResultModel<string>();
             var article = new ArticleInfo()
             {
-                Abstract = articleDto.Abstract,
-                Title = articleDto.Title,
-                Id = articleDto.Id,
-                Likes = articleDto.Likes,
-                Views = articleDto.Views,
-                Comments = articleDto.Comments,
-                IsOriginal = articleDto.IsOriginal,
-                Status = articleDto.Status,
-                ImageUrl = articleDto.ImageUrl,
+                Abstract = request.Abstract,
+                Title = request.Title,
+                Id = request.Id,
+                Likes = request.Likes,
+                Views = request.Views,
+                Comments = request.Comments,
+                IsOriginal = request.IsOriginal,
+                Status = request.Status,
+                ImageUrl = request.ImageUrl,
                 ModifyTime = DateTime.Now
             };
             var content = new ArticleContent()
             {
-                Content = articleDto.Content,
+                Content = request.Content,
                 ArticleId = article.Id,
                 ModifyTime = DateTime.Now
             };
-            response.IsSuccess = await _articleRepository.Update(article, content, articleDto.TagIds, articleDto.CategoryIds);
+            response.IsSuccess = await _articleRepository.Update(article, content, request.TagIds, request.CategoryIds);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

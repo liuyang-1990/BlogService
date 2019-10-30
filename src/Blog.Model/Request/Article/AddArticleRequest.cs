@@ -1,12 +1,10 @@
-﻿
-
+﻿using Blog.Model.ViewModel;
 using System.Collections.Generic;
 
-namespace Blog.Model.ViewModel
+namespace Blog.Model.Request.Article
 {
-    public class ArticleDto : ArticleViewModel
+    public class AddArticleRequest : ArticleCell
     {
-
         /// <summary>
         /// 标签
         /// </summary>
@@ -16,6 +14,5 @@ namespace Blog.Model.ViewModel
         /// 分类
         /// </summary>
         public List<string> CategoryIds { get; set; }
-
     }
 }
