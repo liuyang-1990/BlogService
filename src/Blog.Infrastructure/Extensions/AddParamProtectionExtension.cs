@@ -1,9 +1,8 @@
-﻿using Blog.Model.ViewModel;
+﻿using Blog.Infrastructure.Extensions.ParamProtection;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using Blog.Infrastructure.Extensions.ParamProtection;
 
 namespace Blog.Infrastructure.Extensions
 {

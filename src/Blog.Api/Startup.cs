@@ -215,6 +215,7 @@ namespace Blog.Api
                 option.Enable = true;
                 option.Purpose = "protect_params";
                 option.Params = new[] { "id", "ids", "Id", "TagIds", "CategoryIds" };
+                option.AddProtectValue<JsonResult>(r => r.Value);
             });
             #endregion
 

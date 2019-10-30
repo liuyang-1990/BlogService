@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using Blog.Model.ViewModel;
-using Microsoft.AspNetCore.DataProtection;
+﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Linq;
 
 namespace Blog.Infrastructure.Extensions.ParamProtection
 {
@@ -26,15 +25,28 @@ namespace Blog.Infrastructure.Extensions.ParamProtection
             {
                 return;
             }
-            var prop = ReflectionExtensions.TypePropertyCache.GetOrAdd(typeof(ObjectResult), t => t.GetProperties()).FirstOrDefault(p => p.Name == "Value");
-            var val = prop?.GetValueGetter()?.Invoke(context.Result);
-            if (val != null)
-            {
-                var obj = JToken.FromObject(val);
-                ProtectParams(obj);
-                prop.GetValueSetter().Invoke(context.Result, obj);
-            }
 
+            foreach (var (key, value) in _protectionConfig.ProtectResponseValues)
+            {
+                if (key.IsInstanceOfType(context.Result))
+                {
+                    var prop = ReflectionExtensions.TypePropertyCache.GetOrAdd(key, t => t.GetProperties()).FirstOrDefault(p => p.Name == value);
+                    var val = prop?.GetValueGetter()?.Invoke(context.Result);
+                    if (val != null)
+                    {
+                        var obj = JToken.FromObject(val);
+                        try
+                        {
+                            ProtectParams(obj);
+                        }
+                        catch (Exception)
+                        {
+                            context.Result = new BadRequestResult();
+                        }
+                        prop.GetValueSetter().Invoke(context.Result, obj);
+                    }
+                }
+            }
         }
 
         public void OnResultExecuted(ResultExecutedContext context)
