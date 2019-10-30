@@ -3,11 +3,13 @@ using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
+using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,6 +38,7 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("page")]
+        [SwaggerResponse(200, null, typeof(JsonResultModel<UserInfo>))]
         public async Task<JsonResult> GetPageList([FromQuery]UserSearchRequest request)
         {
             var settings = new JsonSerializerSettings()
@@ -56,6 +59,7 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [SwaggerResponse(200, null, typeof(UserInfo))]
         public async Task<JsonResult> GetDetailInfo(string id)
         {
             var settings = new JsonSerializerSettings()
