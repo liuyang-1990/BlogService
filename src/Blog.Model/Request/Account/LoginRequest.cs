@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Blog.Model.Request
+namespace Blog.Model.Request.Account
 {
     public class LoginRequest
     {

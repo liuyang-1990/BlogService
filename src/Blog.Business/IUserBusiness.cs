@@ -3,6 +3,7 @@ using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using System.Threading.Tasks;
+using Blog.Model.Request.User;
 
 namespace Blog.Business
 {
@@ -11,10 +12,9 @@ namespace Blog.Business
         /// <summary>
         /// 分页获取
         /// </summary>
-        /// <param name="searchParams"></param>
-        /// <param name="param"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param);
+        Task<JsonResultModel<UserInfo>> GetPageList(UserSearchRequest request);
 
         Task<UserInfo> GetUserByUserName(string userName, string password);
 

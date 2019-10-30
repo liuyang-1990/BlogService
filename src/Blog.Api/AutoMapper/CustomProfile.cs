@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Blog.Model.Db;
-using Blog.Model.Request;
 using Blog.Model.Request.Category;
 using Blog.Model.Request.TimeLine;
+using Blog.Model.Request.User;
 
 namespace Blog.Api.AutoMapper
 {
@@ -13,11 +13,12 @@ namespace Blog.Api.AutoMapper
         /// </summary>
         public CustomProfile()
         {
-            CreateMap<UserRequest, UserInfo>();
             CreateMap<CommonTimeLineRequest, TimeLine>();
             CreateMap<UpdateTimeLineRequest, TimeLine>();
             CreateMap<CommonCategoryRequest, CategoryInfo>();
             CreateMap<UpdateCategoryRequest, CategoryInfo>();
+            CreateMap<AddUserRequest, UserInfo>();
+            CreateMap<UpdateUserRequest, UserInfo>();
         }
     }
 }

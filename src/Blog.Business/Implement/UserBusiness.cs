@@ -9,6 +9,7 @@ using Blog.Repository;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
 using System.Threading.Tasks;
+using Blog.Model.Request.User;
 
 namespace Blog.Business.Implement
 {
@@ -26,14 +27,18 @@ namespace Blog.Business.Implement
             _logger = logger;
         }
 
-
-        public async Task<JsonResultModel<UserInfo>> GetPageList(UserRequest searchParams, GridParams param)
+        /// <summary>
+        /// 分页获取用户信息
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<UserInfo>> GetPageList(UserSearchRequest request)
         {
             var exp = Expressionable.Create<UserInfo>()
-                .AndIF(true, it => it.Status == searchParams.Status)
-                .AndIF(!string.IsNullOrEmpty(searchParams.UserName), it => it.UserName.Contains(searchParams.UserName))
+                .AndIF(true, it => it.Status == request.Status)
+                .AndIF(!string.IsNullOrEmpty(request.UserName), it => it.UserName.Contains(request.UserName))
                 .ToExpression();
-            return await _userRepository.QueryByPage(param, exp);
+            return await _userRepository.QueryByPage(request, exp);
         }
 
 

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Blog.Model.Request.User;
 using Xunit;
 
 namespace Blog.Test.Business
@@ -41,7 +42,7 @@ namespace Blog.Test.Business
             _userRepository
                 .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
-            var actualModel = await _userBusiness.GetPageList(new UserRequest() { Status = 1 }, new GridParams());
+            var actualModel = await _userBusiness.GetPageList(new UserSearchRequest() { Status = 1 });
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);
@@ -53,7 +54,7 @@ namespace Blog.Test.Business
         {
 
             // _userRepository.Setup(x => x.IsExist(userInfo, UserAction.Add)).ReturnsAsync(() => isExist);
-           // _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => "1");
+            // _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => "1");
             var actualModel = await _userBusiness.Insert(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

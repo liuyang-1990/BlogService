@@ -1,7 +1,7 @@
 ﻿using Blog.Business;
 using Blog.Infrastructure;
 using Blog.Model;
-using Blog.Model.Request;
+using Blog.Model.Request.Account;
 using Blog.Model.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

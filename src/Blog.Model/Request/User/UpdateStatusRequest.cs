@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Blog.Model.Request
+namespace Blog.Model.Request.User
 {
     public class UpdateStatusRequest
     {

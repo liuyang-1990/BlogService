@@ -1,6 +1,7 @@
-﻿using Blog.Business;
+﻿using AutoMapper;
+using Blog.Business;
 using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.User;
 using Blog.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -22,19 +23,20 @@ namespace Blog.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBusiness _userBusiness;
-        public UserController(IUserBusiness userBusiness)
+        private readonly IMapper _mapper;
+        public UserController(IUserBusiness userBusiness, IMapper mapper)
         {
             _userBusiness = userBusiness;
+            _mapper = mapper;
         }
 
         /// <summary>
         /// 分页获取用户信息
         /// </summary>
-        /// <param name="searchParams"></param>
-        /// <param name="param"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        public async Task<JsonResult> GetPageList([FromQuery]UserRequest searchParams, [FromQuery]GridParams param)
+        public async Task<JsonResult> GetPageList([FromQuery]UserSearchRequest request)
         {
             var settings = new JsonSerializerSettings()
             {
@@ -44,7 +46,7 @@ namespace Blog.Api.Controllers
                     "Password"
                 })
             };
-            var model = await _userBusiness.GetPageList(searchParams, param);
+            var model = await _userBusiness.GetPageList(request);
             return new JsonResult(model, settings);
         }
 
@@ -71,12 +73,23 @@ namespace Blog.Api.Controllers
         /// <summary>
         /// 新增用户信息
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddUser([FromBody]UserInfo user)
+        public async Task<ResultModel<string>> AddUser([FromBody]AddUserRequest request)
         {
-            return await _userBusiness.Insert(user);
+            return await _userBusiness.Insert(_mapper.Map<UserInfo>(request));
+        }
+
+        /// <summary>
+        /// 更新用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<ResultModel<string>> UpdateUser([FromBody]UpdateUserRequest request)
+        {
+            return await _userBusiness.Update(_mapper.Map<UserInfo>(request));
         }
 
         /// <summary>
@@ -88,16 +101,6 @@ namespace Blog.Api.Controllers
         public async Task<ResultModel<string>> DeleteUser(string id)
         {
             return await _userBusiness.Delete(id);
-        }
-        /// <summary>
-        /// 更新用户
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        [HttpPut]
-        public async Task<ResultModel<string>> UpdateUser([FromBody]UserInfo user)
-        {
-            return await _userBusiness.Update(user);
         }
 
         /// <summary>
