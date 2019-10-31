@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Blog.Repository.Implement
 {
@@ -42,27 +43,11 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<List<T>> QueryAll()
         {
-            return await Db.Queryable<T>().ToListAsync();
-        }
+            return await Db.Queryable<T>().Mapper(it =>
+            {
+                it.Id = DataProtector.Protect(it.Id);
 
-        /// <summary>
-        /// 查询所有
-        /// </summary>
-        /// <param name="strWhere">查询条件</param>
-        /// <returns></returns>
-        public virtual async Task<List<T>> QueryAll(string strWhere)
-        {
-            return await Db.Queryable<T>().WhereIF(!string.IsNullOrEmpty(strWhere), strWhere).ToListAsync();
-        }
-
-        /// <summary>
-        /// 查询所有
-        /// </summary>
-        /// <param name="whereExpression">查询条件</param>
-        /// <returns></returns>
-        public virtual async Task<List<T>> QueryAll(Expression<Func<T, bool>> whereExpression)
-        {
-            return await Db.Queryable<T>().WhereIF(whereExpression != null, whereExpression).ToListAsync();
+            }).ToListAsync();
         }
 
         /// <summary>
@@ -76,7 +61,11 @@ namespace Blog.Repository.Implement
             RefAsync<int> totalCount = 0;
             var queryable = Db.Queryable<T>().WhereIF(whereExpression != null, whereExpression)
                 .OrderByIF(!string.IsNullOrEmpty(param.SortField) && !string.IsNullOrEmpty(param.SortOrder),
-                    param.SortField + " " + param.SortOrder);
+                    param.SortField + " " + param.SortOrder)
+                .Mapper(it =>
+                {
+                    it.Id = DataProtector.Protect(it.Id);
+                });
             return new JsonResultModel<T>()
             {
                 Rows = await queryable.ToPageListAsync(param.PageNum, param.PageSize, totalCount),
@@ -91,7 +80,11 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<T> QueryByWhere(Expression<Func<T, bool>> whereExpression)
         {
-            return await Db.Queryable<T>().FirstAsync(whereExpression);
+            return await Db.Queryable<T>().Mapper(it =>
+            {
+                it.Id = DataProtector.Protect(it.Id);
+
+            }).FirstAsync(whereExpression);
         }
 
         /// <summary>
@@ -101,7 +94,11 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<T> QueryById(string id)
         {
-            return await Db.Queryable<T>().FirstAsync(x => x.Id == id);
+            return await Db.Queryable<T>().Mapper(it =>
+            {
+                it.Id = DataProtector.Protect(it.Id);
+
+            }).FirstAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -111,7 +108,29 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public virtual async Task<List<T>> QueryByIds(List<string> ids)
         {
-            return await Db.Queryable<T>().In(ids).ToListAsync();
+            return await Db.Queryable<T>().In(ids).Mapper(it =>
+            {
+                it.Id = DataProtector.Protect(it.Id);
+
+            }).ToListAsync();
+        }
+
+        #endregion
+
+        #region JoinQuery
+
+        public virtual async Task<T2> JoinQuery<T, T1, T2>(
+             Expression<Func<T, T1, object[]>> joinExpression,
+             Expression<Func<T, T1, T2>> selectExpression,
+             Expression<Func<T, T1, bool>> whereLambda) where T : ArticleCell
+        {
+            return await Db.Queryable(joinExpression)
+                .Where(whereLambda)
+                .Select(selectExpression)
+                .Mapper(it =>
+                {
+
+                }).FirstAsync();
         }
 
         #endregion

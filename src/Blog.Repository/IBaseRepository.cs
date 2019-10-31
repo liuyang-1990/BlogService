@@ -25,20 +25,6 @@ namespace Blog.Repository
         Task<List<T>> QueryAll();
 
         /// <summary>
-        /// 查询所有
-        /// </summary>
-        /// <param name="strWhere">查询条件</param>
-        /// <returns></returns>
-        Task<List<T>> QueryAll(string strWhere);
-
-        /// <summary>
-        /// 查询所有
-        /// </summary>
-        /// <param name="whereExpression">查询条件</param>
-        /// <returns></returns>
-        Task<List<T>> QueryAll(Expression<Func<T, bool>> whereExpression);
-
-        /// <summary>
         /// 分页查询
         /// </summary>
         /// <param name="param">分页以及排序参数</param>
@@ -66,6 +52,22 @@ namespace Blog.Repository
         /// <param name="ids"></param>
         /// <returns></returns>
         Task<List<T>> QueryByIds(List<string> ids);
+
+        /// <summary>
+        /// 多表联合查询
+        /// </summary>
+        /// <typeparam name="T">一表</typeparam>
+        /// <typeparam name="T1">二表</typeparam>
+        /// <typeparam name="T2">返回实体</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereLambda"></param>
+        /// <returns></returns>
+        Task<T2> JoinQuery<T, T1, T2>(
+            Expression<Func<T, T1, object[]>> joinExpression,
+            Expression<Func<T, T1, T2>> selectExpression,
+            Expression<Func<T, T1, bool>> whereLambda) where T2 : class;
+
 
         /// <summary>
         /// 新增实体数据

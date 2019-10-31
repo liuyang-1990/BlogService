@@ -26,7 +26,7 @@ namespace Blog.Infrastructure.Extensions
             builder.Services.Configure<MvcOptions>(option =>
             {
                 option.Filters.Add<ParamsProtectionActionFilter>();
-                option.Filters.Add<ParamsProtectionResultFilter>();
+              //  option.Filters.Add<ParamsProtectionResultFilter>();
             });
             return builder;
         }
