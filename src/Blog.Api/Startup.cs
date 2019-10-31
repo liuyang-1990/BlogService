@@ -74,7 +74,7 @@ namespace Blog.Api
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-            });
+            }).AddNewtonsoftJson();
 
             #region  URL 地址转换成小写的形式
             services.AddRouting(options =>

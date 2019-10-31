@@ -1,4 +1,5 @@
-﻿using Blog.Business;
+﻿using AutoMapper;
+using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.Tag;
 using Blog.Model.Response;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 
 namespace Blog.Api.Controllers
 {
