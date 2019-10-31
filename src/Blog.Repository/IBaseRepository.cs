@@ -56,17 +56,17 @@ namespace Blog.Repository
         /// <summary>
         /// 多表联合查询
         /// </summary>
-        /// <typeparam name="T">一表</typeparam>
-        /// <typeparam name="T1">二表</typeparam>
-        /// <typeparam name="T2">返回实体</typeparam>
+        /// <typeparam name="T1">一表</typeparam>
+        /// <typeparam name="T2">二表</typeparam>
+        /// <typeparam name="T3">返回实体</typeparam>
         /// <param name="joinExpression"></param>
         /// <param name="selectExpression"></param>
         /// <param name="whereLambda"></param>
         /// <returns></returns>
-        Task<T2> JoinQuery<T, T1, T2>(
-            Expression<Func<T, T1, object[]>> joinExpression,
-            Expression<Func<T, T1, T2>> selectExpression,
-            Expression<Func<T, T1, bool>> whereLambda) where T2 : class;
+        Task<T3> JoinQuery<T1, T2, T3>(
+            Expression<Func<T1, T2, object[]>> joinExpression,
+            Expression<Func<T1, T2, T3>> selectExpression,
+            Expression<Func<T1, T2, bool>> whereLambda) where T3 : class;
 
 
         /// <summary>

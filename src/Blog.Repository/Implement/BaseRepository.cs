@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Text.Json;
 
 namespace Blog.Repository.Implement
 {
@@ -119,10 +118,10 @@ namespace Blog.Repository.Implement
 
         #region JoinQuery
 
-        public virtual async Task<T2> JoinQuery<T, T1, T2>(
-             Expression<Func<T, T1, object[]>> joinExpression,
-             Expression<Func<T, T1, T2>> selectExpression,
-             Expression<Func<T, T1, bool>> whereLambda) where T : ArticleCell
+        public virtual async Task<T3> JoinQuery<T1, T2, T3>(
+            Expression<Func<T1, T2, object[]>> joinExpression,
+            Expression<Func<T1, T2, T3>> selectExpression,
+            Expression<Func<T1, T2, bool>> whereLambda) where T3 : class
         {
             return await Db.Queryable(joinExpression)
                 .Where(whereLambda)
