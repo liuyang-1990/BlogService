@@ -1,10 +1,11 @@
 ﻿using AspectCore.Injector;
 using Blog.Model;
 using Blog.Model.Response;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+
 
 namespace Blog.Business.Implement
 {
@@ -26,7 +27,8 @@ namespace Blog.Business.Implement
             var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsAsync<List<Province>>();
+                var stream =await response.Content.ReadAsStreamAsync();
+                return await JsonSerializer.DeserializeAsync<List<Province>>(stream);
             }
             return null;
         }
@@ -39,7 +41,8 @@ namespace Blog.Business.Implement
             var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsAsync<List<City>>();
+                var stream = await response.Content.ReadAsStreamAsync();
+                return await JsonSerializer.DeserializeAsync<List<City>>(stream);
             }
             return null;
         }

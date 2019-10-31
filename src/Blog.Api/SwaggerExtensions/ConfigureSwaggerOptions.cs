@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 
 namespace Blog.Api.SwaggerExtensions
 {
@@ -22,16 +23,16 @@ namespace Blog.Api.SwaggerExtensions
             }
         }
 
-        private static Info CreateInfoForApiVersion(ApiVersionDescription description)
+        private static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
         {
-            var info = new Info()
+            var info = new OpenApiInfo()
             {
                 Title = "Blog Service",
                 Version = description.ApiVersion.ToString(),
                 //Description = "",
-                Contact = new Contact() { Name = "Liu Yang", Email = "xy_liuy0305@163.com" },
-                TermsOfService = "Blog",
-                License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
+                Contact = new OpenApiContact() { Name = "Liu Yang", Email = "xy_liuy0305@163.com" },
+                TermsOfService = new Uri("https://api.nayoung515.top/swagger"),
+                License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             };
 
             if (description.IsDeprecated)

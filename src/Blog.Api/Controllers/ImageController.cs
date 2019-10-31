@@ -19,9 +19,9 @@ namespace Blog.Api.Controllers
     {
         private readonly string[] _pictureFormatArray = { "png", "jpg", "jpeg", "bmp", "gif", "ico" };
 
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
-        public ImageController(IHostingEnvironment environment, IConfiguration configuration)
+        public ImageController(IWebHostEnvironment environment, IConfiguration configuration)
         {
             _environment = environment;
             _configuration = configuration;

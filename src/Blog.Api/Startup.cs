@@ -1,12 +1,12 @@
 ﻿using AspectCore.Configuration;
 using AspectCore.Extensions.DependencyInjection;
+using AspectCore.Injector;
 using AutoMapper;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
 using Blog.Api.SwaggerExtensions;
 using Blog.Infrastructure;
 using Blog.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -17,14 +17,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Prometheus;
 using SqlSugar;
 using StackExchange.Profiling;
-using StackExchange.Profiling.Storage;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -35,6 +36,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 
+
 namespace Blog.Api
 {
     /// <summary>
@@ -43,7 +45,7 @@ namespace Blog.Api
     public class Startup
     {
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             Env = env;
@@ -57,28 +59,21 @@ namespace Blog.Api
         /// <summary>
         /// Hosting Environment属性
         /// </summary>
-        public IHostingEnvironment Env { get; }
+        public IWebHostEnvironment Env { get; }
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
+
+            services.AddControllers(options =>
             {
                 if (!Env.IsDevelopment())
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-                //options.Filters.Add<DecryptReferenceFilter>();
-                //options.Filters.Add<ParamsProtectionResultFilter>();
-
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-              .AddJsonOptions(options =>
-            {
-                //asp.net core default use CamelCaseNamingStrategy, we disable it.
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
 
             #region  URL 地址转换成小写的形式
@@ -92,10 +87,8 @@ namespace Blog.Api
             services.AddMiniProfiler(options =>
              {
                  options.RouteBasePath = "/profiler";
-                 if (options.Storage is MemoryCacheStorage memoryCacheStorage)
-                 {
-                     memoryCacheStorage.CacheDuration = TimeSpan.FromMinutes(10);
-                 }
+                 options.PopupRenderPosition = RenderPosition.Left;
+                 options.PopupShowTimeWithChildren = true;
              });
 
 
@@ -124,20 +117,24 @@ namespace Blog.Api
             services.AddSwaggerGen(options =>
              {
                  options.CustomSchemaIds(x => x.FullName);
-                 options.DescribeAllEnumsAsStrings();
                  options.OperationFilter<SwaggerDefaultValues>();
                  var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
                  var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
                  options.IncludeXmlComments(xmlPath, true);
                  //添加header验证信息
-                 var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
-                 options.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
-                 options.AddSecurityDefinition("Bearer", new ApiKeyScheme
+
+                 options.OperationFilter<AddResponseHeadersFilter>();
+                 options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+
+                 options.OperationFilter<SecurityRequirementsOperationFilter>();
+                 //var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
+                 //options.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
+                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                  {
                      Description = "JWT授权(数据将在请求头中进行传输) 参数结构: \"Authorization: Bearer {token}\"",
                      Name = "Authorization",//jwt默认的参数名称
-                     In = "header",//jwt默认存放Authorization信息的位置(请求头中)
-                     Type = "apiKey"
+                     In = ParameterLocation.Header,//jwt默认存放Authorization信息的位置(请求头中)
+                     Type = SecuritySchemeType.ApiKey
                  });
 
              });
@@ -146,11 +143,7 @@ namespace Blog.Api
 
             #region 认证  
             // 认证，就是根据登录的时候，生成的令牌，检查其是否合法，这个主要是证明没有被篡改
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
+            services.AddAuthentication("Bearer").AddJwtBearer(o =>
             {
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -278,7 +271,7 @@ namespace Blog.Api
             ////第三方IOC接管 core内置DI容器 
             //return new AutofacServiceProvider(container);
             // return CoreContainer.Init(services);
-            return AspectCoreContainer.BuildServiceProvider(services);
+            // return AspectCoreContainer.BuildServiceProvider(services);
             #endregion
 
 
@@ -313,14 +306,6 @@ namespace Blog.Api
             });
             #endregion
 
-            //跨域
-            app.UseCors("LimitRequests");
-
-            //自定义认证
-            app.UseMiddleware<AuthenticationMiddleware>();
-            //认证
-            app.UseAuthentication();
-
             // 返回错误码
             app.UseStatusCodePages();
             //miniProfiler
@@ -349,8 +334,30 @@ namespace Blog.Api
             #endregion
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseMvc();
 
+            app.UseRouting();
+
+            //跨域
+            app.UseCors("LimitRequests");
+
+
+            //自定义认证
+            app.UseMiddleware<AuthenticationMiddleware>();
+            //认证
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+
+        public void ConfigureContainer(IServiceContainer containerBuilder)
+        {
+            AspectCoreContainer.BuildServiceProvider(containerBuilder);
         }
     }
 

@@ -33,6 +33,21 @@ namespace Blog.Infrastructure
             return resolver = container.Build();
         }
 
+        public static void BuildServiceProvider(IServiceContainer containerBuilder)
+        {
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()
+           .Where(t => t.IsClass && !t.IsAbstract &&
+                  t.GetCustomAttributes<InjectorAttribute>() != null));
+
+            var serviceGroup = types.SelectMany(service => service.GetCustomAttributes<InjectorAttribute>()
+                .Select(x => new { Attr = x, Impl = service }));
+            foreach (var service in serviceGroup)
+            {
+                containerBuilder.AddType(service.Attr.ServiceType, service.Impl, service.Attr.LifeTime);
+            }
+            resolver = containerBuilder.Build();
+        }
+
         public static T Resolve<T>()
         {
             return resolver.Resolve<T>();
