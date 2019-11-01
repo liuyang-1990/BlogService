@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using SqlSugar;
+﻿using SqlSugar;
 using System;
+using System.Text.Json.Serialization;
 
 namespace Blog.Model
 {

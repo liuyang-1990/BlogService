@@ -3,12 +3,12 @@ using Blog.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Blog.Api
@@ -68,7 +68,7 @@ namespace Blog.Api
                 }
                 //此时刷新token
                 var refreshToken = httpContext.Request.Headers["x-refresh-token"].ToString();
-                var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonConvert.DeserializeObject<JwtToken>(userData.Value));
+                var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonSerializer.Deserialize<JwtToken>(userData.Value));
                 if (newToken == null)
                 {
                     return _next(httpContext);

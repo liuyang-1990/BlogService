@@ -7,12 +7,6 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -38,19 +32,9 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("page")]
-        [SwaggerResponse(200, null, typeof(JsonResultModel<UserInfo>))]
-        public async Task<JsonResult> GetPageList([FromQuery]UserSearchRequest request)
+        public async Task<JsonResultModel<UserInfo>> GetPageList([FromQuery]UserSearchRequest request)
         {
-            var settings = new JsonSerializerSettings()
-            {
-                //ignore these properties because not used 
-                ContractResolver = new CriteriaContractResolver(new List<string>()
-                {
-                    "Password"
-                })
-            };
-            var model = await _userBusiness.GetPageList(request);
-            return new JsonResult(model, settings);
+            return await _userBusiness.GetPageList(request);
         }
 
         /// <summary>
@@ -59,19 +43,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [SwaggerResponse(200, null, typeof(UserInfo))]
-        public async Task<JsonResult> GetDetailInfo(string id)
+        public async Task<UserInfo> GetDetailInfo(string id)
         {
-            var settings = new JsonSerializerSettings()
-            {
-                //ignore these properties because not used 
-                ContractResolver = new CriteriaContractResolver(new List<string>()
-                {
-                    "Password"
-                })
-            };
-            var userInfo = await _userBusiness.GetDetail(id);
-            return new JsonResult(userInfo, settings);
+            return await _userBusiness.GetDetail(id);
         }
 
         /// <summary>
@@ -131,20 +105,20 @@ namespace Blog.Api.Controllers
 
     }
 
-    public class CriteriaContractResolver : DefaultContractResolver
-    {
-        readonly IEnumerable<string> _ignoreProperties;
+    //public class CriteriaContractResolver : DefaultContractResolver
+    //{
+    //    readonly IEnumerable<string> _ignoreProperties;
 
-        public CriteriaContractResolver(IEnumerable<string> ignoreProperties)
-        {
-            _ignoreProperties = ignoreProperties;
-        }
+    //    public CriteriaContractResolver(IEnumerable<string> ignoreProperties)
+    //    {
+    //        _ignoreProperties = ignoreProperties;
+    //    }
 
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-        {
-            JsonProperty property = base.CreateProperty(member, memberSerialization);
-            property.ShouldSerialize = instance => !_ignoreProperties.Contains(property.PropertyName);
-            return property;
-        }
-    }
+    //    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+    //    {
+    //        JsonProperty property = base.CreateProperty(member, memberSerialization);
+    //        property.ShouldSerialize = instance => !_ignoreProperties.Contains(property.PropertyName);
+    //        return property;
+    //    }
+    //}
 }

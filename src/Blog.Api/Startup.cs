@@ -33,7 +33,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace Blog.Api
 {
@@ -65,14 +66,19 @@ namespace Blog.Api
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers(options =>
             {
                 if (!Env.IsDevelopment())
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-            }).AddNewtonsoftJson();
+            })
+             .AddJsonOptions(option =>
+             {
+                 //防止中文会被编码
+                 option.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+             })
+             .AddNewtonsoftJson();
 
             #region  URL 地址转换成小写的形式
             services.AddRouting(options =>

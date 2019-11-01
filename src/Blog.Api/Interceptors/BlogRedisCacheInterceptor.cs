@@ -2,10 +2,10 @@
 using Blog.Infrastructure;
 using Blog.Model;
 using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Interceptors
@@ -25,12 +25,12 @@ namespace Blog.Api.Interceptors
                 {
                     if (method.IsReturnTask())
                     {
-                        dynamic result = JsonConvert.DeserializeObject(value, method.ReturnType.GenericTypeArguments[0]);
+                        dynamic result = JsonSerializer.Deserialize(value, method.ReturnType.GenericTypeArguments[0]);
                         context.ReturnValue = Task.FromResult(result);
                     }
                     else
                     {
-                        context.ReturnValue = JsonConvert.DeserializeObject(value, method.ReturnType);
+                        context.ReturnValue = JsonSerializer.Deserialize(value, method.ReturnType);
                     }
                 }
                 else
@@ -39,7 +39,7 @@ namespace Blog.Api.Interceptors
                     dynamic returnValue = context.ReturnValue;
                     if (method.IsReturnTask())
                         returnValue = returnValue.Result;
-                    string val = JsonConvert.SerializeObject(returnValue);
+                    string val = JsonSerializer.Serialize(returnValue);
                     await cache.SetStringAsync(key, val, new DistributedCacheEntryOptions()
                     {
                         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(attribute.AbsoluteExpiration)

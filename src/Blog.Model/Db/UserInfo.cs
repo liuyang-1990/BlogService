@@ -1,5 +1,6 @@
 ﻿using SqlSugar;
 using System;
+using System.Text.Json.Serialization;
 
 namespace Blog.Model.Db
 {
@@ -14,6 +15,7 @@ namespace Blog.Model.Db
         /// <summary>
         /// 密码
         /// </summary>
+        [JsonIgnore]
         public string Password { get; set; }
 
         /// <summary>
