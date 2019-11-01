@@ -180,6 +180,13 @@ namespace Blog.Repository
         Task<bool> Update(List<T> listEntity);
 
         /// <summary>
+        /// 更新实体数据
+        /// </summary>
+        /// <param name="whereColumns"></param>
+        /// <returns></returns>
+        Task<bool> UpdateByWhere(Expression<Func<T, object>> whereColumns);
+
+        /// <summary>
         /// 根据主键批量更新部分列
         /// </summary>
         /// <param name="ids">主键</param>
@@ -208,5 +215,18 @@ namespace Blog.Repository
         /// <returns></returns>
         Task<bool> DeleteByIds(List<string> ids);
 
+        /// <summary>
+        /// 真删除
+        /// </summary>
+        /// <param name="whereExpression"></param>
+        /// <returns></returns>
+        Task<bool> DeleteByWhere(Expression<Func<T, bool>> whereExpression);
+
+        /// <summary>
+        /// 使用事务
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        Task<DbResult<bool>> UseTranAsync(Action action);
     }
 }

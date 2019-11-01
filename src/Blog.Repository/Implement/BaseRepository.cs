@@ -32,7 +32,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="whereExpression">查询条件</param>
         /// <returns></returns>
-        public virtual async Task<bool> QueryIsExist(Expression<Func<T, bool>> whereExpression)
+        public async Task<bool> QueryIsExist(Expression<Func<T, bool>> whereExpression)
         {
             return await Db.Queryable<T>().AnyAsync(whereExpression);
         }
@@ -41,7 +41,7 @@ namespace Blog.Repository.Implement
         /// 查询所有
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<List<T>> QueryAll()
+        public async Task<List<T>> QueryAll()
         {
             return await Db.Queryable<T>().Mapper(it =>
             {
@@ -56,7 +56,7 @@ namespace Blog.Repository.Implement
         /// <param name="param">分页以及排序参数</param>
         /// <param name="whereExpression">条件</param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<T>> QueryByPage(GridParams param, Expression<Func<T, bool>> whereExpression)
+        public async Task<JsonResultModel<T>> QueryByPage(GridParams param, Expression<Func<T, bool>> whereExpression)
         {
             RefAsync<int> totalCount = 0;
             var queryable = Db.Queryable<T>().WhereIF(whereExpression != null, whereExpression)
@@ -81,7 +81,7 @@ namespace Blog.Repository.Implement
         /// <param name="selectExpression">select</param>
         /// <param name="totalCount">返回总条数</param>
         /// <returns></returns>
-        public virtual async Task<List<object>> QueryByPage(GridParams param,
+        public async Task<List<object>> QueryByPage(GridParams param,
             Expression<Func<T, bool>> whereExpression,
             Expression<Func<T, object>> groupByExpression,
             Expression<Func<T, object>> selectExpression, RefAsync<int> totalCount)
@@ -96,7 +96,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="whereExpression">where条件</param>
         /// <returns></returns>
-        public virtual async Task<T> QueryByWhere(Expression<Func<T, bool>> whereExpression)
+        public async Task<T> QueryByWhere(Expression<Func<T, bool>> whereExpression)
         {
             return await Db.Queryable<T>().Mapper(it =>
             {
@@ -110,7 +110,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
-        public virtual async Task<T> QueryById(string id)
+        public async Task<T> QueryById(string id)
         {
             return await Db.Queryable<T>().Mapper(it =>
             {
@@ -124,7 +124,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="ids">主键</param>
         /// <returns></returns>
-        public virtual async Task<List<T>> QueryByIds(List<string> ids)
+        public async Task<List<T>> QueryByIds(List<string> ids)
         {
             return await Db.Queryable<T>().In(ids).Mapper(it =>
             {
@@ -138,7 +138,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="ids">主键</param>
         /// <returns></returns>
-        public virtual async Task<List<T>> QueryByIds(List<object> ids)
+        public async Task<List<T>> QueryByIds(List<object> ids)
         {
             return await Db.Queryable<T>().In(ids).Mapper(it =>
             {
@@ -153,7 +153,7 @@ namespace Blog.Repository.Implement
         /// <param name="ids">主键</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        public virtual async Task<List<T1>> QueryByIds<T1>(List<object> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property
+        public async Task<List<T1>> QueryByIds<T1>(List<object> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property
         {
             return await Db.Queryable<T>().In(ids).Select(selectExpression).Mapper(it =>
             {
@@ -168,7 +168,7 @@ namespace Blog.Repository.Implement
         /// <param name="whereExpression">where条件</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        public virtual async Task<List<object>> QueryByWhere(Expression<Func<T, bool>> whereExpression, Expression<Func<T, object>> selectExpression)
+        public async Task<List<object>> QueryByWhere(Expression<Func<T, bool>> whereExpression, Expression<Func<T, object>> selectExpression)
         {
             return await Db.Queryable<T>().Where(whereExpression).Select(selectExpression).ToListAsync();
         }
@@ -177,7 +177,7 @@ namespace Blog.Repository.Implement
 
         #region JoinQuery
 
-        public virtual async Task<T3> JoinQuery<T1, T2, T3>(
+        public async Task<T3> JoinQuery<T1, T2, T3>(
             Expression<Func<T1, T2, object[]>> joinExpression,
             Expression<Func<T1, T2, T3>> selectExpression,
             Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity
@@ -200,7 +200,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="entity"></param>
         /// <returns>返回自增量</returns>
-        public virtual async Task<int> Insert(T entity)
+        public async Task<int> Insert(T entity)
         {
             return await Db.Insertable(entity).ExecuteReturnIdentityAsync();
         }
@@ -211,7 +211,7 @@ namespace Blog.Repository.Implement
         /// <param name="entity">实体类</param>
         /// <param name="insertColumns">指定只插入列</param>
         /// <returns>返回自增量</returns>
-        public virtual async Task<int> Insert(T entity, Expression<Func<T, object>> insertColumns)
+        public async Task<int> Insert(T entity, Expression<Func<T, object>> insertColumns)
         {
             return await Db.Insertable(entity).InsertColumns(insertColumns).ExecuteReturnIdentityAsync();
         }
@@ -222,7 +222,7 @@ namespace Blog.Repository.Implement
         /// <param name="entity">实体类</param>
         /// <param name="insertColumns">指定只插入列</param>
         /// <returns>返回自增量</returns>
-        public virtual async Task<int> Insert(T entity, params string[] insertColumns)
+        public async Task<int> Insert(T entity, params string[] insertColumns)
         {
             return await Db.Insertable(entity).InsertColumns(insertColumns).ExecuteReturnIdentityAsync();
         }
@@ -233,7 +233,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="listEntity"></param>
         /// <returns>受影响行数</returns>
-        public virtual async Task<int> Insert(List<T> listEntity)
+        public async Task<int> Insert(List<T> listEntity)
         {
             return await Db.Insertable(listEntity).ExecuteCommandAsync();
         }
@@ -247,7 +247,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="entity">实体类</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity)
+        public async Task<bool> Update(T entity)
         {
             entity.ModifyTime = DateTime.Now;
             return await Db.Updateable(entity).ExecuteCommandHasChangeAsync();
@@ -259,7 +259,7 @@ namespace Blog.Repository.Implement
         /// <param name="entity">实体类</param>
         /// <param name="ignoreAllDefaultAndNullValue">是NULL的列和默认值的列不更新</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, bool ignoreAllDefaultAndNullValue)
+        public async Task<bool> Update(T entity, bool ignoreAllDefaultAndNullValue)
         {
             entity.ModifyTime = DateTime.Now;
             return await Db.Updateable(entity).IgnoreColumns(ignoreAllDefaultAndNullValue, ignoreAllDefaultValue: ignoreAllDefaultAndNullValue).ExecuteCommandHasChangeAsync();
@@ -271,7 +271,7 @@ namespace Blog.Repository.Implement
         /// <param name="entity">实体类</param>
         /// <param name="updateColumns">更新的列</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, Expression<Func<T, object>> updateColumns)
+        public async Task<bool> Update(T entity, Expression<Func<T, object>> updateColumns)
         {
             entity.ModifyTime = DateTime.Now;
             return await Db.Updateable(entity).UpdateColumns(updateColumns).ExecuteCommandHasChangeAsync();
@@ -283,7 +283,7 @@ namespace Blog.Repository.Implement
         /// <param name="entity">实体类</param>
         /// <param name="ignoreColumns">不更新的列</param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(T entity, params string[] ignoreColumns)
+        public async Task<bool> Update(T entity, params string[] ignoreColumns)
         {
             entity.ModifyTime = DateTime.Now;
             return await Db.Updateable(entity).IgnoreColumns(ignoreColumns).ExecuteCommandHasChangeAsync();
@@ -294,17 +294,27 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="listEntity"></param>
         /// <returns></returns>
-        public virtual async Task<bool> Update(List<T> listEntity)
+        public async Task<bool> Update(List<T> listEntity)
         {
             return await Db.Updateable(listEntity).ExecuteCommandHasChangeAsync();
         }
+        /// <summary>
+        /// 更新实体数据
+        /// </summary>
+        /// <param name="whereColumns"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateByWhere(Expression<Func<T, object>> whereColumns)
+        {
+            return await Db.Updateable<T>().WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
+        }
+
         /// <summary>
         /// 根据主键批量更新某一列
         /// </summary>
         /// <param name="ids">主键</param>
         /// <param name="updateExpression">某一列</param>
         /// <returns></returns>
-        public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression)
+        public async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, bool>> updateExpression)
         {
             return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
@@ -315,7 +325,7 @@ namespace Blog.Repository.Implement
         /// <param name="ids">主键</param>
         /// <param name="updateExpression">部分列</param>
         /// <returns></returns>
-        public virtual async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, T>> updateExpression)
+        public async Task<bool> UpdateByIds(List<string> ids, Expression<Func<T, T>> updateExpression)
         {
             return await Db.Updateable<T>().SetColumns(updateExpression).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
@@ -327,7 +337,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
-        public virtual async Task<bool> DeleteById(string id)
+        public async Task<bool> DeleteById(string id)
         {
             return await Db.Updateable<T>().SetColumns(it => it.IsDeleted == 1).Where(it => it.Id == id).ExecuteCommandHasChangeAsync();
         }
@@ -337,13 +347,34 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public virtual async Task<bool> DeleteByIds(List<string> ids)
+        public async Task<bool> DeleteByIds(List<string> ids)
         {
             var list = await this.QueryByIds(ids);
             return await Db.Updateable(list).SetColumns(it => it.IsDeleted == 1).ExecuteCommandHasChangeAsync();
         }
+
+        /// <summary>
+        /// 真删除
+        /// </summary>
+        /// <param name="whereExpression"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteByWhere(Expression<Func<T, bool>> whereExpression)
+        {
+            return await Db.Deleteable<T>().Where(whereExpression).ExecuteCommandHasChangeAsync();
+        }
         #endregion
 
+        #region Tran
+        /// <summary>
+        /// 使用事务
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public async Task<DbResult<bool>> UseTranAsync(Action action)
+        {
+            return await Db.Ado.UseTranAsync(action);
+        }
 
+        #endregion
     }
 }

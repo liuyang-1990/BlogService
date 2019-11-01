@@ -8,6 +8,7 @@ using Blog.Model.ViewModel;
 using Blog.Repository;
 using SqlSugar;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -17,6 +18,7 @@ namespace Blog.Business.Implement
     {
 
         private readonly IArticleRepository _articleRepository;
+        private readonly IArticleContentRepository _articleContentRepository;
         private readonly IArticleTagRepository _articleTagRepository;
         private readonly IArticleCategoryRepository _articleCategoryRepository;
         private readonly ITagRepository _tagRepository;
@@ -24,6 +26,7 @@ namespace Blog.Business.Implement
 
         public ArticleBusiness(
             IArticleRepository articleRepository,
+            IArticleContentRepository articleContentRepository,
             IArticleTagRepository articleTagRepository,
             IArticleCategoryRepository articleCategoryRepository,
             ITagRepository tagRepository,
@@ -32,6 +35,7 @@ namespace Blog.Business.Implement
         {
             BaseRepository = articleRepository;
             _articleRepository = articleRepository;
+            _articleContentRepository = articleContentRepository;
             _articleTagRepository = articleTagRepository;
             _articleCategoryRepository = articleCategoryRepository;
             _tagRepository = tagRepository;
@@ -79,9 +83,30 @@ namespace Blog.Business.Implement
             {
                 Content = request.Content
             };
-            response.IsSuccess = await _articleRepository.Insert(article, content, request.TagIds, request.CategoryIds);
-            response.Status = response.IsSuccess ? "0" : "1";
 
+            var result = await _articleRepository.UseTranAsync(async () =>
+            {
+                //插入文章基本信息
+                var id = await _articleRepository.Insert(article);
+                content.ArticleId = id.ToString();
+                //插入文章内容信息
+                await _articleContentRepository.Insert(content);
+                var articleTags = request.TagIds.Select(tagId => new ArticleTag()
+                {
+                    TagId = tagId,
+                    ArticleId = id.ToString()
+                }).ToList();
+                await _articleTagRepository.Insert(articleTags);
+                var articleCategories = request.CategoryIds.Select(categoryId => new ArticleCategory()
+                {
+                    ArticleId = id.ToString(),
+                    CategoryId = categoryId
+                }).ToList();
+                await _articleCategoryRepository.Insert(articleCategories);
+            });
+            response.IsSuccess = result.IsSuccess;
+            response.Status = response.IsSuccess ? "0" : "1";
+            response.ResultInfo = result.ErrorMessage;
             return response;
         }
 
@@ -112,8 +137,31 @@ namespace Blog.Business.Implement
                 ArticleId = article.Id,
                 ModifyTime = DateTime.Now
             };
-            response.IsSuccess = await _articleRepository.Update(article, content, request.TagIds, request.CategoryIds);
+            var result = await _articleRepository.UseTranAsync(async () =>
+            {
+                await _articleRepository.Update(article);
+                await _articleContentRepository.UpdateByWhere(it => it.ArticleId);
+                ////先删除再添加
+                await _articleTagRepository.DeleteByWhere(x => x.ArticleId == article.Id);
+                await _articleCategoryRepository.DeleteByWhere(x => x.ArticleId == article.Id);
+                var articleTags = request.TagIds.Select(tagId => new ArticleTag()
+                {
+                    TagId = tagId,
+                    ArticleId = article.Id,
+                }).ToList();
+                await _articleTagRepository.Insert(articleTags);
+
+                var articleCategories = request.CategoryIds.Select(categoryId => new ArticleCategory()
+                {
+                    ArticleId = article.Id,
+                    CategoryId = categoryId
+                }).ToList();
+                await _articleCategoryRepository.Insert(articleCategories);
+            });
+
+            response.IsSuccess = result.IsSuccess;
             response.Status = response.IsSuccess ? "0" : "1";
+            response.ResultInfo = result.ErrorMessage;
             return response;
         }
 
