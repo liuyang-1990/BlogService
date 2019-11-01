@@ -2,7 +2,7 @@
 
 namespace Blog.Model.ViewModel
 {
-    public class ArticleViewModel : ArticleCell
+    public class ArticleViewModel : ArticleCell, IEntity
     {
         public string Id { get; set; }
 

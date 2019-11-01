@@ -2,6 +2,7 @@
 using Blog.Infrastructure.Extensions;
 using Blog.Model;
 using Blog.Model.Request;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.DataProtection;
 using SqlSugar;
@@ -71,7 +72,25 @@ namespace Blog.Repository.Implement
                 TotalRows = totalCount
             };
         }
-
+        /// <summary>
+        ///  分页查询
+        /// </summary>
+        /// <param name="param">分页以及排序参数</param>
+        /// <param name="whereExpression">条件</param>
+        /// <param name="groupByExpression">groupBy</param>
+        /// <param name="selectExpression">select</param>
+        /// <param name="totalCount">返回总条数</param>
+        /// <returns></returns>
+        public virtual async Task<List<object>> QueryByPage(GridParams param,
+            Expression<Func<T, bool>> whereExpression,
+            Expression<Func<T, object>> groupByExpression,
+            Expression<Func<T, object>> selectExpression, RefAsync<int> totalCount)
+        {
+            return await Db.Queryable<T>().Where(whereExpression)
+                .GroupBy(groupByExpression)
+                .Select(selectExpression)
+                .ToPageListAsync(param.PageNum, param.PageSize, totalCount);
+        }
         /// <summary>
         /// 根据where条件查询一条数据
         /// </summary>
@@ -103,7 +122,7 @@ namespace Blog.Repository.Implement
         /// <summary>
         /// 根据ID查询数据列表
         /// </summary>
-        /// <param name="ids"></param>
+        /// <param name="ids">主键</param>
         /// <returns></returns>
         public virtual async Task<List<T>> QueryByIds(List<string> ids)
         {
@@ -114,6 +133,46 @@ namespace Blog.Repository.Implement
             }).ToListAsync();
         }
 
+        /// <summary>
+        /// 根据ID查询数据列表
+        /// </summary>
+        /// <param name="ids">主键</param>
+        /// <returns></returns>
+        public virtual async Task<List<T>> QueryByIds(List<object> ids)
+        {
+            return await Db.Queryable<T>().In(ids).Mapper(it =>
+            {
+                it.Id = DataProtector.Protect(it.Id);
+
+            }).ToListAsync();
+        }
+        /// <summary>
+        /// 根据ID查询数据列表
+        /// </summary>
+        /// <typeparam name="T1">返回的对象</typeparam>
+        /// <param name="ids">主键</param>
+        /// <param name="selectExpression">查询某几列</param>
+        /// <returns></returns>
+        public virtual async Task<List<T1>> QueryByIds<T1>(List<object> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property
+        {
+            return await Db.Queryable<T>().In(ids).Select(selectExpression).Mapper(it =>
+            {
+                it.Id = DataProtector.Protect(it.Id);
+
+            }).ToListAsync();
+        }
+
+        /// <summary>
+        ///  根据where条件查询某几列
+        /// </summary>
+        /// <param name="whereExpression">where条件</param>
+        /// <param name="selectExpression">查询某几列</param>
+        /// <returns></returns>
+        public virtual async Task<List<object>> QueryByWhere(Expression<Func<T, bool>> whereExpression, Expression<Func<T, object>> selectExpression)
+        {
+            return await Db.Queryable<T>().Where(whereExpression).Select(selectExpression).ToListAsync();
+        }
+
         #endregion
 
         #region JoinQuery
@@ -121,13 +180,14 @@ namespace Blog.Repository.Implement
         public virtual async Task<T3> JoinQuery<T1, T2, T3>(
             Expression<Func<T1, T2, object[]>> joinExpression,
             Expression<Func<T1, T2, T3>> selectExpression,
-            Expression<Func<T1, T2, bool>> whereLambda) where T3 : class
+            Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity
         {
             return await Db.Queryable(joinExpression)
                 .Where(whereLambda)
                 .Select(selectExpression)
                 .Mapper(it =>
                 {
+                    it.Id = DataProtector.Protect(it.Id);
 
                 }).FirstAsync();
         }

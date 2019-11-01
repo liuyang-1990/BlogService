@@ -17,11 +17,25 @@ namespace Blog.Business.Implement
     {
 
         private readonly IArticleRepository _articleRepository;
+        private readonly IArticleTagRepository _articleTagRepository;
+        private readonly IArticleCategoryRepository _articleCategoryRepository;
+        private readonly ITagRepository _tagRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public ArticleBusiness(IArticleRepository articleRepository)
+        public ArticleBusiness(
+            IArticleRepository articleRepository,
+            IArticleTagRepository articleTagRepository,
+            IArticleCategoryRepository articleCategoryRepository,
+            ITagRepository tagRepository,
+            ICategoryRepository categoryRepository
+            )
         {
             BaseRepository = articleRepository;
             _articleRepository = articleRepository;
+            _articleTagRepository = articleTagRepository;
+            _articleCategoryRepository = articleCategoryRepository;
+            _tagRepository = tagRepository;
+            _categoryRepository = categoryRepository;
         }
         /// <summary>
         /// 分页获取
@@ -110,7 +124,41 @@ namespace Blog.Business.Implement
         /// <returns></returns>
         public async Task<ArticleDetailResponse> GetArticleDetail(string id)
         {
-            return await _articleRepository.GetArticleDetail(id);
+            var response = new ArticleDetailResponse();
+            //文章详情
+            response.ArticleInfo = await _articleRepository.JoinQuery<ArticleInfo, ArticleContent, ArticleViewModel>(
+                   (ai, ac) => new object[] { JoinType.Inner, ai.Id == ac.ArticleId },
+                   (ai, ac) => new ArticleViewModel()
+                   {
+                       Id = ai.Id,
+                       Title = ai.Title,
+                       IsOriginal = ai.IsOriginal,
+                       Abstract = ai.Abstract,
+                       ImageUrl = ai.ImageUrl,
+                       Content = ac.Content,
+                       Comments = ai.Comments,
+                       Likes = ai.Likes,
+                       Views = ai.Views,
+                       Status = ai.Status,
+                       CreateTime = ai.CreateTime
+                   },
+                   (ai, ac) => ai.Id == id && ai.IsDeleted == 0
+                   );
+            //分类信息
+            var cIds = await _articleCategoryRepository.QueryByWhere(x => x.ArticleId == id, x => x.CategoryId);
+            response.Categories = await _categoryRepository.QueryByIds(cIds, x => new Property()
+            {
+                Id = x.Id,
+                Value = x.CategoryName
+            });
+            //标签信息
+            var tIds = await _articleTagRepository.QueryByWhere(x => x.ArticleId == id, x => x.TagId);
+            response.Categories = await _tagRepository.QueryByIds(tIds, x => new Property()
+            {
+                Id = x.Id,
+                Value = x.TagName
+            });
+            return response;
         }
         /// <summary>
         ///  根据分类获取文章
@@ -120,7 +168,18 @@ namespace Blog.Business.Implement
         /// <returns></returns>
         public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param)
         {
-            return await _articleRepository.GetArticleByCategory(categoryId, param);
+            RefAsync<int> total = 0;
+            var articleIds = await _articleCategoryRepository.QueryByPage(param,
+                x => x.CategoryId == categoryId,
+                x => x.ArticleId,
+                x => x.ArticleId,
+                total
+                );
+            return new JsonResultModel<ArticleInfo>()
+            {
+                Rows = await _articleRepository.QueryByIds(articleIds),
+                TotalRows = total
+            };
         }
         /// <summary>
         /// 根据标签获取文章
@@ -130,7 +189,18 @@ namespace Blog.Business.Implement
         /// <returns></returns>
         public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, GridParams param)
         {
-            return await _articleRepository.GetArticleByTag(tagId, param);
+            RefAsync<int> total = 0;
+            var articleIds = await _articleTagRepository.QueryByPage(param,
+                x => x.TagId == tagId,
+                x => x.ArticleId,
+                x => x.ArticleId,
+                total
+                );
+            return new JsonResultModel<ArticleInfo>()
+            {
+                Rows = await _articleRepository.QueryByIds(articleIds),
+                TotalRows = total
+            };
         }
     }
 }

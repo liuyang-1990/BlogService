@@ -1,6 +1,8 @@
 ﻿using Blog.Model;
 using Blog.Model.Request;
+using Blog.Model.Response;
 using Blog.Model.ViewModel;
+using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -33,6 +35,21 @@ namespace Blog.Repository
         Task<JsonResultModel<T>> QueryByPage(GridParams param, Expression<Func<T, bool>> whereExpression);
 
         /// <summary>
+        ///  分页查询
+        /// </summary>
+        /// <param name="param">分页以及排序参数</param>
+        /// <param name="whereExpression">条件</param>
+        /// <param name="groupByExpression">groupBy</param>
+        /// <param name="selectExpression">select</param>
+        /// <param name="totalCount">返回总条数</param>
+        /// <returns></returns>
+        Task<List<object>> QueryByPage(GridParams param,
+            Expression<Func<T, bool>> whereExpression,
+            Expression<Func<T, object>> groupByExpression,
+            Expression<Func<T, object>> selectExpression, RefAsync<int> totalCount);
+
+
+        /// <summary>
         /// 根据where条件查询一条数据
         /// </summary>
         /// <param name="whereExpression">where条件</param>
@@ -46,12 +63,36 @@ namespace Blog.Repository
         /// <returns></returns>
         Task<T> QueryById(string id);
 
+
+        /// <summary>
+        ///  根据ID查询数据列表
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<List<T>> QueryByIds(List<string> ids);
+
         /// <summary>
         /// 根据ID查询数据列表
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        Task<List<T>> QueryByIds(List<string> ids);
+        Task<List<T>> QueryByIds(List<object> ids);
+
+        /// <summary>
+        /// 根据ID查询数据列表
+        /// </summary>
+        /// <typeparam name="T1">返回的对象</typeparam>
+        /// <param name="ids">主键</param>
+        /// <param name="selectExpression">查询某几列</param>
+        /// <returns></returns>
+        Task<List<T1>> QueryByIds<T1>(List<object> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property;
+        /// <summary>
+        ///  根据where条件查询某几列
+        /// </summary>
+        /// <param name="whereExpression">where条件</param>
+        /// <param name="selectExpression">查询某几列</param>
+        /// <returns></returns>
+        Task<List<object>> QueryByWhere(Expression<Func<T, bool>> whereExpression, Expression<Func<T, object>> selectExpression);
 
         /// <summary>
         /// 多表联合查询
@@ -66,7 +107,7 @@ namespace Blog.Repository
         Task<T3> JoinQuery<T1, T2, T3>(
             Expression<Func<T1, T2, object[]>> joinExpression,
             Expression<Func<T1, T2, T3>> selectExpression,
-            Expression<Func<T1, T2, bool>> whereLambda) where T3 : class;
+            Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity;
 
 
         /// <summary>
