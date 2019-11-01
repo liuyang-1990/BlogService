@@ -81,16 +81,18 @@ namespace Blog.Repository.Implement
         /// <param name="selectExpression">select</param>
         /// <param name="totalCount">返回总条数</param>
         /// <returns></returns>
-        public async Task<List<object>> QueryByPage(GridParams param,
+        public async Task<List<TResult>> QueryByPage<TResult>(GridParams param,
             Expression<Func<T, bool>> whereExpression,
             Expression<Func<T, object>> groupByExpression,
-            Expression<Func<T, object>> selectExpression, RefAsync<int> totalCount)
+            Expression<Func<T, TResult>> selectExpression,
+            RefAsync<int> totalCount)
         {
             return await Db.Queryable<T>().Where(whereExpression)
                 .GroupBy(groupByExpression)
                 .Select(selectExpression)
                 .ToPageListAsync(param.PageNum, param.PageSize, totalCount);
         }
+
         /// <summary>
         /// 根据where条件查询一条数据
         /// </summary>
@@ -153,7 +155,7 @@ namespace Blog.Repository.Implement
         /// <param name="ids">主键</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        public async Task<List<T1>> QueryByIds<T1>(List<object> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property
+        public async Task<List<T1>> QueryByIds<T1>(List<string> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property
         {
             return await Db.Queryable<T>().In(ids).Select(selectExpression).Mapper(it =>
             {
@@ -168,7 +170,7 @@ namespace Blog.Repository.Implement
         /// <param name="whereExpression">where条件</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        public async Task<List<object>> QueryByWhere(Expression<Func<T, bool>> whereExpression, Expression<Func<T, object>> selectExpression)
+        public async Task<List<TResult>> QueryByWhere<TResult>(Expression<Func<T, bool>> whereExpression, Expression<Func<T, TResult>> selectExpression)
         {
             return await Db.Queryable<T>().Where(whereExpression).Select(selectExpression).ToListAsync();
         }
@@ -298,14 +300,16 @@ namespace Blog.Repository.Implement
         {
             return await Db.Updateable(listEntity).ExecuteCommandHasChangeAsync();
         }
+
         /// <summary>
         /// 更新实体数据
         /// </summary>
-        /// <param name="whereColumns"></param>
+        /// <param name="updateObj">要更新的实体</param>
+        /// <param name="whereColumns">更新的条件</param>
         /// <returns></returns>
-        public async Task<bool> UpdateByWhere(Expression<Func<T, object>> whereColumns)
+        public async Task<bool> UpdateByWhere(T updateObj, Expression<Func<T, object>> whereColumns)
         {
-            return await Db.Updateable<T>().WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(updateObj).WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>

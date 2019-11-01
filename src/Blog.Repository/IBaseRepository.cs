@@ -43,11 +43,11 @@ namespace Blog.Repository
         /// <param name="selectExpression">select</param>
         /// <param name="totalCount">返回总条数</param>
         /// <returns></returns>
-        Task<List<object>> QueryByPage(GridParams param,
+        Task<List<TResult>> QueryByPage<TResult>(GridParams param,
             Expression<Func<T, bool>> whereExpression,
             Expression<Func<T, object>> groupByExpression,
-            Expression<Func<T, object>> selectExpression, RefAsync<int> totalCount);
-
+            Expression<Func<T, TResult>> selectExpression,
+            RefAsync<int> totalCount);
 
         /// <summary>
         /// 根据where条件查询一条数据
@@ -85,14 +85,14 @@ namespace Blog.Repository
         /// <param name="ids">主键</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        Task<List<T1>> QueryByIds<T1>(List<object> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property;
+        Task<List<T1>> QueryByIds<T1>(List<string> ids, Expression<Func<T, T1>> selectExpression) where T1 : Property;
         /// <summary>
         ///  根据where条件查询某几列
         /// </summary>
         /// <param name="whereExpression">where条件</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        Task<List<object>> QueryByWhere(Expression<Func<T, bool>> whereExpression, Expression<Func<T, object>> selectExpression);
+        Task<List<TResult>> QueryByWhere<TResult>(Expression<Func<T, bool>> whereExpression, Expression<Func<T, TResult>> selectExpression);
 
         /// <summary>
         /// 多表联合查询
@@ -182,9 +182,10 @@ namespace Blog.Repository
         /// <summary>
         /// 更新实体数据
         /// </summary>
-        /// <param name="whereColumns"></param>
+        /// <param name="updateObj">要更新的实体</param>
+        /// <param name="whereColumns">更新的条件</param>
         /// <returns></returns>
-        Task<bool> UpdateByWhere(Expression<Func<T, object>> whereColumns);
+        Task<bool> UpdateByWhere(T updateObj, Expression<Func<T, object>> whereColumns);
 
         /// <summary>
         /// 根据主键批量更新部分列

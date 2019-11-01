@@ -140,7 +140,7 @@ namespace Blog.Business.Implement
             var result = await _articleRepository.UseTranAsync(async () =>
             {
                 await _articleRepository.Update(article);
-                await _articleContentRepository.UpdateByWhere(it => it.ArticleId);
+                await _articleContentRepository.UpdateByWhere(content, it => it.ArticleId);
                 ////先删除再添加
                 await _articleTagRepository.DeleteByWhere(x => x.ArticleId == article.Id);
                 await _articleCategoryRepository.DeleteByWhere(x => x.ArticleId == article.Id);
@@ -150,7 +150,6 @@ namespace Blog.Business.Implement
                     ArticleId = article.Id,
                 }).ToList();
                 await _articleTagRepository.Insert(articleTags);
-
                 var articleCategories = request.CategoryIds.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = article.Id,
@@ -201,7 +200,7 @@ namespace Blog.Business.Implement
             });
             //标签信息
             var tIds = await _articleTagRepository.QueryByWhere(x => x.ArticleId == id, x => x.TagId);
-            response.Categories = await _tagRepository.QueryByIds(tIds, x => new Property()
+            response.Tags = await _tagRepository.QueryByIds(tIds, x => new Property()
             {
                 Id = x.Id,
                 Value = x.TagName
