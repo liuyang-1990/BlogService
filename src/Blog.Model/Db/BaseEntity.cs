@@ -1,6 +1,6 @@
-﻿using SqlSugar;
+﻿using Newtonsoft.Json;
+using SqlSugar;
 using System;
-using System.Text.Json.Serialization;
 
 namespace Blog.Model
 {
@@ -23,7 +23,7 @@ namespace Blog.Model
         /// 创建时间
         /// </summary>
         [SugarColumn(IsOnlyIgnoreUpdate = true)]
-        public DateTime CreateTime { get; set; }
+        public DateTime CreateTime { get; set; } = DateTime.Now;
         ///<summary>
         /// 修改时间
         /// </summary>

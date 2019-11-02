@@ -22,6 +22,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Prometheus;
 using SqlSugar;
 using StackExchange.Profiling;
@@ -33,8 +34,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Unicode;
 
 namespace Blog.Api
 {
@@ -73,12 +72,15 @@ namespace Blog.Api
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
             })
-             .AddJsonOptions(option =>
+             //.AddJsonOptions(option =>
+             //{
+             //    //防止中文会被编码
+             //    option.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+             //})
+             .AddNewtonsoftJson(option =>
              {
-                 //防止中文会被编码
-                 option.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-             })
-             .AddNewtonsoftJson();
+                 option.SerializerSettings.ContractResolver = new DefaultContractResolver();
+             });
 
             #region  URL 地址转换成小写的形式
             services.AddRouting(options =>

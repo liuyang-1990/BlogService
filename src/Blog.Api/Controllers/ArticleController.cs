@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.Article;
@@ -23,12 +22,10 @@ namespace Blog.Api.Controllers
     public class ArticleController : ControllerBase
     {
         private readonly IArticleBusiness _articleBusiness;
-        private readonly IMapper _mapper;
 
-        public ArticleController(IArticleBusiness articleBusiness, IMapper mapper)
+        public ArticleController(IArticleBusiness articleBusiness)
         {
             _articleBusiness = articleBusiness;
-            _mapper = mapper;
         }
 
         /// <summary>

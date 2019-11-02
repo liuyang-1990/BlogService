@@ -4,6 +4,7 @@ using Blog.Model.Response;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,7 +12,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace Blog.Infrastructure.Implement
 {
@@ -48,7 +48,7 @@ namespace Blog.Infrastructure.Implement
             };
             // 可以将一个用户的多个角色全部赋予
             claims.AddRange(tokenModel.Role.ToString().Split(",").Select(s => new Claim(ClaimTypes.Role, s)));
-            claims.Add(new Claim(ClaimTypes.UserData, JsonSerializer.Serialize(tokenModel)));
+            claims.Add(new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(tokenModel)));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtAuth:SecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var jwt = new JwtSecurityToken(
