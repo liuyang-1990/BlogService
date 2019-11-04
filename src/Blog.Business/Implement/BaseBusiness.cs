@@ -3,7 +3,6 @@ using Blog.Model.Request;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
-using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -65,7 +64,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Update(T entity)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.Insert(entity) > 0;
+            response.IsSuccess = await BaseRepository.Update(entity);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
