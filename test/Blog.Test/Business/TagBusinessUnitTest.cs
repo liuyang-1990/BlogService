@@ -1,7 +1,7 @@
 ﻿using Blog.Business.Implement;
-using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request;
+using Blog.Model.Request.Tag;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Blog.Model.Request.Tag;
 using Xunit;
 
 namespace Blog.Test.Business
@@ -32,8 +31,9 @@ namespace Blog.Test.Business
         [MemberData(nameof(Data))]
         public async Task Insert_Test(TagInfo tagInfo, bool isExist, ResultModel<string> expectedModel)
         {
-          //  _tagRespoitory.Setup(x => x.IsExist(tagInfo, UserAction.Add)).ReturnsAsync(() => isExist);
-           // _tagRespoitory.Setup(x => x.Insert(tagInfo)).ReturnsAsync(() => "1");
+            _tagRespoitory
+                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
+            _tagRespoitory.Setup(x => x.Insert(It.IsAny<TagInfo>())).ReturnsAsync(1);
             var actualModel = await _tagBusiness.Insert(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
@@ -83,7 +83,7 @@ namespace Blog.Test.Business
         [Fact]
         public async Task GetAllTags_Test()
         {
-          //  _tagRespoitory.Setup(x => x.GetAllTags()).ReturnsAsync(() => new List<TagInfo>() { new TagInfo() });
+            _tagRespoitory.Setup(x => x.QueryAll()).ReturnsAsync(() => new List<TagInfo>() { new TagInfo() });
             var actualModel = await _tagBusiness.GetAllTags();
             Assert.Single(actualModel);
         }
@@ -92,8 +92,9 @@ namespace Blog.Test.Business
         [MemberData(nameof(Data))]
         public async Task Update_Test(TagInfo tagInfo, bool isExist, ResultModel<string> expectedModel)
         {
-          //  _tagRespoitory.Setup(x => x.IsExist(tagInfo, UserAction.Update)).ReturnsAsync(() => isExist);
-           // _tagRespoitory.Setup(x => x.Update(tagInfo, true, true)).ReturnsAsync(() => true);
+            _tagRespoitory
+                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
+            _tagRespoitory.Setup(x => x.Update(It.IsAny<TagInfo>())).ReturnsAsync(true);
             var actualModel = await _tagBusiness.Update(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

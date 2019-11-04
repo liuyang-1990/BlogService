@@ -2,6 +2,7 @@
 using Blog.Infrastructure;
 using Blog.Model.Db;
 using Blog.Model.Request;
+using Blog.Model.Request.User;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
@@ -12,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Blog.Model.Request.User;
 using Xunit;
 
 namespace Blog.Test.Business
@@ -21,14 +21,14 @@ namespace Blog.Test.Business
     {
         private readonly Mock<IUserRepository> _userRepository;
         private readonly UserBusiness _userBusiness;
-        private readonly Mock<ILogger<UserBusiness>> _logger;
+
         public UserBusinessUnitTest()
         {
             var md5Helper = new Mock<IMd5Helper>();
-            _logger = new Mock<ILogger<UserBusiness>>();
+            var logger = new Mock<ILogger<UserBusiness>>();
             _userRepository = new Mock<IUserRepository>();
             md5Helper.Setup(x => x.Encrypt32(It.IsAny<string>())).Returns("123");
-            _userBusiness = new UserBusiness(_userRepository.Object, md5Helper.Object, _logger.Object);
+            _userBusiness = new UserBusiness(_userRepository.Object, md5Helper.Object, logger.Object);
         }
 
         [Fact]
@@ -53,8 +53,9 @@ namespace Blog.Test.Business
         public async Task Insert_Test(UserInfo userInfo, bool isExist, ResultModel<string> expectedModel)
         {
 
-            // _userRepository.Setup(x => x.IsExist(userInfo, UserAction.Add)).ReturnsAsync(() => isExist);
-            // _userRepository.Setup(x => x.Insert(userInfo)).ReturnsAsync(() => "1");
+            _userRepository
+                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<UserInfo, bool>>>())).ReturnsAsync(isExist);
+            _userRepository.Setup(x => x.Insert(It.IsAny<UserInfo>())).ReturnsAsync(1);
             var actualModel = await _userBusiness.Insert(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
