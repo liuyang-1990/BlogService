@@ -42,7 +42,7 @@ publish_package:
         - dotnet --info
         - dotnet build $Solution
     script:
-        - cd ./test/Blog.Api
+        - cd ./src/Blog.Api
         - dotnet publish -c Release  -o ../../publish
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
