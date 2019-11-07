@@ -42,7 +42,8 @@ publish_package:
         - dotnet --info
         - dotnet build $Solution
     script:
-        - dotnet publish -c Release $Solution  -o ../../../publish
+        - cd ./test/Blog.Api
+        - dotnet publish -c Release  -o ../../publish
     artifacts:
         name: "${CI_PROJECT_PATH_SLUG}_${CI_COMMIT_REF_NAME}_pipeline${CI_PIPELINE_ID}_job${CI_JOB_ID}"
         when: on_success
