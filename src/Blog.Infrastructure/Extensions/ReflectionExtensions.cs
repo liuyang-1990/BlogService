@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Blog.Infrastructure.Extensions
 {
@@ -42,6 +43,18 @@ namespace Blog.Infrastructure.Extensions
                         obj, value);
                 return expr.Compile();
             });
+        }
+
+
+
+        public static bool IsVoid(this MethodInfo methodInfo)
+        {
+            return methodInfo != null && methodInfo.ReturnType == typeof(void);
+        }
+
+        public static bool IsTask(this MethodInfo methodInfo)
+        {
+            return methodInfo != null && methodInfo.ReturnType == typeof(Task);
         }
     }
 }

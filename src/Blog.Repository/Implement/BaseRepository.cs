@@ -21,8 +21,8 @@ namespace Blog.Repository.Implement
 
         protected BaseRepository()
         {
-            Db = AspectCoreContainer.Resolve<IDbContext>().GetDbContext();
-            DataProtector = AspectCoreContainer.Resolve<IDataProtectionProvider>().CreateProtector("protect_params");
+            Db = AspectCoreContainer.GetService<IDbContext>().GetDbContext();
+            DataProtector = AspectCoreContainer.GetService<IDataProtectionProvider>().CreateProtector("protect_params");
         }
 
         #region Query

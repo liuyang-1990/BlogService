@@ -20,7 +20,7 @@ namespace Blog.Api.Interceptors
             }
             catch (Exception ex)
             {
-                var logger = AspectCoreContainer.Resolve<ILogger<MiniProfilerInterceptor>>();
+                var logger = AspectCoreContainer.GetService<ILogger<MiniProfilerInterceptor>>();
                 logger.LogError(ex.StackTrace);
                 MiniProfiler.Current.CustomTiming("Errors：", ex.Message);
             }

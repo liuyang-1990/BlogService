@@ -1,43 +1,18 @@
-﻿using AspectCore.Configuration;
-using AspectCore.Extensions.DependencyInjection;
-using AspectCore.Injector;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using AspectCore.Injector;
+using Blog.Model;
 using System;
 using System.Linq;
-using Blog.Model;
+using System.Reflection;
 
 namespace Blog.Infrastructure
 {
     public class AspectCoreContainer
     {
-        private static IServiceResolver resolver { get; set; }
-
-        public static IServiceProvider BuildServiceProvider(IServiceCollection services, Action<IAspectConfiguration> configure = null)
-        {
-            if (services == null) throw new ArgumentNullException(nameof(services));
-            services.ConfigureDynamicProxy(configure);
-            services.AddAspectCoreContainer();
-
-            var container = services.ToServiceContainer();
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract &&
-                   t.GetCustomAttributes<InjectorAttribute>() != null));
-
-            var serviceGroup = types.SelectMany(service => service.GetCustomAttributes<InjectorAttribute>()
-                .Select(x => new { Attr = x, Impl = service }));
-            foreach (var service in serviceGroup)
-            {
-                container.AddType(service.Attr.ServiceType, service.Impl, service.Attr.LifeTime);
-            }
-            return resolver = container.Build();
-        }
-
+        private static IServiceResolver _serviceResolver;
         public static void BuildServiceProvider(IServiceContainer containerBuilder)
         {
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()
-           .Where(t => t.IsClass && !t.IsAbstract &&
-                  t.GetCustomAttributes<InjectorAttribute>() != null));
+           .Where(t => t.IsClass && !t.IsAbstract && t.IsDefined(typeof(InjectorAttribute), true)));
 
             var serviceGroup = types.SelectMany(service => service.GetCustomAttributes<InjectorAttribute>()
                 .Select(x => new { Attr = x, Impl = service }));
@@ -45,12 +20,17 @@ namespace Blog.Infrastructure
             {
                 containerBuilder.AddType(service.Attr.ServiceType, service.Impl, service.Attr.LifeTime);
             }
-            resolver = containerBuilder.Build();
+            _serviceResolver = containerBuilder.Build();
         }
 
-        public static T Resolve<T>()
+        public static T GetService<T>()
         {
-            return resolver.Resolve<T>();
+            return _serviceResolver.Resolve<T>();
+        }
+
+        public static object GetService(Type type)
+        {
+            return _serviceResolver.Resolve(type);
         }
     }
 }
