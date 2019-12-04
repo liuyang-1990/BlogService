@@ -8,7 +8,6 @@ using Blog.Api.SwaggerExtensions;
 using Blog.Infrastructure;
 using Blog.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +15,6 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -32,7 +30,6 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
 
 namespace Blog.Api
@@ -232,15 +229,15 @@ namespace Blog.Api
 
             #region HealthCheck
 
-            var drivers = DriveInfo.GetDrives();
-            var targetDriver = drivers.FirstOrDefault(x => x.DriveType == DriveType.Fixed);
-            services.AddHealthChecks()
-                   .AddPrivateMemoryHealthCheck(1000_000_000L)
-                   .AddVirtualMemorySizeHealthCheck(1000_000_000L)
-                   .AddWorkingSetHealthCheck(1000_000_000L)
-                   .AddRedis(Configuration["RedisCaching:ConnectionString"])
-                   .AddDiskStorageHealthCheck(x => x.AddDrive(targetDriver?.Name, 1000))
-                   .AddMySql(Configuration["ConnectionStrings:ConnectionString"]);
+            //var drivers = DriveInfo.GetDrives();
+            //var targetDriver = drivers.FirstOrDefault(x => x.DriveType == DriveType.Fixed);
+            //services.AddHealthChecks()
+            //       .AddPrivateMemoryHealthCheck(1000_000_000L)
+            //       .AddVirtualMemorySizeHealthCheck(1000_000_000L)
+            //       .AddWorkingSetHealthCheck(1000_000_000L)
+            //       .AddRedis(Configuration["RedisCaching:ConnectionString"])
+            //       .AddDiskStorageHealthCheck(x => x.AddDrive(targetDriver?.Name, 1000))
+            //       .AddMySql(Configuration["ConnectionStrings:ConnectionString"]);
 
             #endregion
 
@@ -323,20 +320,20 @@ namespace Blog.Api
             #endregion
 
             #region HealthCheck
-            app.UseHealthChecks("/healthz", new HealthCheckOptions()
-            {
-                ResponseWriter = async (context, report) =>
-                {
-                    var result = JsonConvert.SerializeObject(
-                        new
-                        {
-                            status = report.Status.ToString(),
-                            errors = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
-                        });
-                    context.Response.ContentType = MediaTypeNames.Application.Json;
-                    await context.Response.WriteAsync(result);
-                }
-            });
+            //app.UseHealthChecks("/healthz", new HealthCheckOptions()
+            //{
+            //    ResponseWriter = async (context, report) =>
+            //    {
+            //        var result = JsonConvert.SerializeObject(
+            //            new
+            //            {
+            //                status = report.Status.ToString(),
+            //                errors = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
+            //            });
+            //        context.Response.ContentType = MediaTypeNames.Application.Json;
+            //        await context.Response.WriteAsync(result);
+            //    }
+            //});
             #endregion
             app.UseStaticFiles();
             app.UseCookiePolicy();
