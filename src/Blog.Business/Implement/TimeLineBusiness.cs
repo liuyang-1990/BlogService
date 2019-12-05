@@ -1,13 +1,14 @@
-﻿using AspectCore.Injector;
+﻿using Blog.Infrastructure.DI;
 using Blog.Model;
 using Blog.Model.Db;
 using Blog.Repository;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(ITimeLineBusiness), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(ITimeLineBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
     public class TimeLineBusiness : BaseBusiness<TimeLine>, ITimeLineBusiness
     {
         private readonly ITimeLineRepository _timeLineRepository;

@@ -1,5 +1,4 @@
-﻿using AspectCore.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
@@ -11,14 +10,14 @@ namespace Blog.Api
         public static void Main(string[] args)
         {
             // NLog: setup the logger first to catch all errors
-            NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+           // NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             CreateHostBuilder(args).Build().Run();
 
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .UseServiceProviderFactory(new AspectCoreServiceProviderFactory())
+          //  .UseServiceProviderFactory(new AspectCoreServiceProviderFactory())
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();

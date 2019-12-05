@@ -1,17 +1,18 @@
-﻿using AspectCore.Injector;
+﻿using Blog.Infrastructure.DI;
 using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request.Tag;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
+using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(ITagBusiness), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(ITagBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
     public class TagBusiness : BaseBusiness<TagInfo>, ITagBusiness
     {
         private readonly ITagRepository _tagRepository;

@@ -1,11 +1,11 @@
-﻿using AspectCore.Injector;
-using Blog.Model;
+﻿using Blog.Infrastructure.DI;
+using Microsoft.Extensions.DependencyInjection;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Blog.Infrastructure.Implement
 {
-    [Injector(typeof(IMd5Helper), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(IMd5Helper), ServiceLifetime = ServiceLifetime.Scoped)]
     public class Md5Helper : IMd5Helper
     {
         public string Encrypt32(string originStr)

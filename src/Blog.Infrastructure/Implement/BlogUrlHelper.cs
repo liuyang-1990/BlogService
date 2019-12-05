@@ -1,11 +1,11 @@
-﻿using AspectCore.Injector;
-using Blog.Model;
+﻿using Blog.Infrastructure.DI;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Blog.Infrastructure.Implement
 {
-    [Injector(typeof(IBlogUrlHelper), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(IBlogUrlHelper), ServiceLifetime = ServiceLifetime.Scoped)]
     public class BlogUrlHelper : IBlogUrlHelper
     {
 

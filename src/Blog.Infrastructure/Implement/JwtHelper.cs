@@ -1,8 +1,9 @@
-﻿using AspectCore.Injector;
+﻿using Blog.Infrastructure.DI;
 using Blog.Model;
 using Blog.Model.Response;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -18,7 +19,7 @@ namespace Blog.Infrastructure.Implement
     /// <summary>
     /// 生成Token，和解析Token
     /// </summary>
-    [Injector(typeof(IJwtHelper), LifeTime = Lifetime.Singleton)]
+    [Injector(typeof(IJwtHelper), ServiceLifetime = ServiceLifetime.Singleton)]
     public class JwtHelper : IJwtHelper
     {
         private readonly IDistributedCache _cache;

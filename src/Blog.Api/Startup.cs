@@ -1,6 +1,5 @@
 ﻿using AspectCore.Configuration;
 using AspectCore.Extensions.DependencyInjection;
-using AspectCore.Injector;
 using AutoMapper;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
@@ -31,6 +30,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Blog.Infrastructure.DI;
 
 namespace Blog.Api
 {
@@ -357,11 +357,15 @@ namespace Blog.Api
             });
         }
 
-
-        public void ConfigureContainer(IServiceContainer containerBuilder)
+        public void ConfigureContainer(IServiceCollection serviceCollection)
         {
-            AspectCoreContainer.BuildServiceProvider(containerBuilder);
+            CoreContainer.BuildServiceProvider(serviceCollection);
         }
+
+        //public void ConfigureContainer(IServiceContainer containerBuilder)
+        //{
+        //    AspectCoreContainer.BuildServiceProvider(containerBuilder);
+        //}
     }
 
 

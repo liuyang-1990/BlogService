@@ -1,18 +1,18 @@
-﻿using AspectCore.Injector;
-using Blog.Infrastructure;
-using Blog.Model;
+﻿using Blog.Infrastructure;
+using Blog.Infrastructure.DI;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(IUserBusiness), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(IUserBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
     public class UserBusiness : BaseBusiness<UserInfo>, IUserBusiness
     {
         private readonly IMd5Helper _md5Helper;

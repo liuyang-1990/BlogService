@@ -1,6 +1,7 @@
-﻿using AspectCore.Injector;
+﻿using Blog.Infrastructure.DI;
 using Blog.Model;
 using Blog.Model.Response;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(IGeographicBusiness), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(IGeographicBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
     public class GeographicBusiness : IGeographicBusiness
     {
         private readonly IHttpClientFactory _httpClientFactory;

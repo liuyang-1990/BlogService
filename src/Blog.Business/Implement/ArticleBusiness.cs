@@ -1,11 +1,11 @@
-﻿using AspectCore.Injector;
-using Blog.Model;
+﻿using Blog.Infrastructure.DI;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.Article;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
+using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 using System;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(IArticleBusiness), LifeTime = Lifetime.Scoped)]
+    [Injector(typeof(IArticleBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
     public class ArticleBusiness : BaseBusiness<ArticleInfo>, IArticleBusiness
     {
 
