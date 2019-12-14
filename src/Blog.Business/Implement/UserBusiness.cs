@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(IUserBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(IUserBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class UserBusiness : BaseBusiness<UserInfo>, IUserBusiness
     {
         private readonly IMd5Helper _md5Helper;

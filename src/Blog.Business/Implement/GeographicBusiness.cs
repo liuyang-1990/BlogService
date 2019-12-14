@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(IGeographicBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(IGeographicBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class GeographicBusiness : IGeographicBusiness
     {
         private readonly IHttpClientFactory _httpClientFactory;

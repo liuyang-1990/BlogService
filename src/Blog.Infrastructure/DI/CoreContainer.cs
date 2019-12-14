@@ -15,7 +15,7 @@ namespace Blog.Infrastructure.DI
                 .Select(x => new { Attr = x, Impl = service }));
             foreach (var service in serviceGroup)
             {
-                serviceCollection.Add(new ServiceDescriptor(service.Attr.ServiceType, service.Impl, service.Attr.ServiceLifetime));
+                serviceCollection.Add(new ServiceDescriptor(service.Attr.ServiceType, service.Impl, service.Attr.Lifetime));
             }
 
         }

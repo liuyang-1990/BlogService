@@ -9,10 +9,10 @@ namespace Blog.Infrastructure.DI
         public InjectorAttribute(Type type)
         {
             ServiceType = type;
-            ServiceLifetime = ServiceLifetime.Singleton;
+            Lifetime = ServiceLifetime.Singleton;
         }
         public Type ServiceType { get; set; }
 
-        public ServiceLifetime ServiceLifetime { get; set; }
+        public ServiceLifetime Lifetime { get; set; }
     }
 }

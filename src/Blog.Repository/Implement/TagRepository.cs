@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Blog.Repository.Implement
 {
-    [Injector(typeof(ITagRepository), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(ITagRepository), Lifetime = ServiceLifetime.Scoped)]
     public class TagRepository : BaseRepository<TagInfo>, ITagRepository
     {
     }

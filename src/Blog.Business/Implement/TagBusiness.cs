@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(ITagBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(ITagBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class TagBusiness : BaseBusiness<TagInfo>, ITagBusiness
     {
         private readonly ITagRepository _tagRepository;

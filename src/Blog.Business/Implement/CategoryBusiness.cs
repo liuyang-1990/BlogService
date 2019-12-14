@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(ICategoryBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(ICategoryBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class CategoryBusiness : BaseBusiness<CategoryInfo>, ICategoryBusiness
     {
         private readonly ICategoryRepository _categoryRepository;

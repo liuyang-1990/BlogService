@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Blog.Repository.Implement
 {
-    [Injector(typeof(IArticleContentRepository), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(IArticleContentRepository), Lifetime = ServiceLifetime.Scoped)]
     public class ArticleContentRepository : BaseRepository<ArticleContent>, IArticleContentRepository
     {
     }

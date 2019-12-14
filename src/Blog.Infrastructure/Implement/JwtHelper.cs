@@ -19,7 +19,7 @@ namespace Blog.Infrastructure.Implement
     /// <summary>
     /// 生成Token，和解析Token
     /// </summary>
-    [Injector(typeof(IJwtHelper), ServiceLifetime = ServiceLifetime.Singleton)]
+    [Injector(typeof(IJwtHelper), Lifetime = ServiceLifetime.Singleton)]
     public class JwtHelper : IJwtHelper
     {
         private readonly IDistributedCache _cache;

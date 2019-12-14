@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(IArticleBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(IArticleBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class ArticleBusiness : BaseBusiness<ArticleInfo>, IArticleBusiness
     {
 

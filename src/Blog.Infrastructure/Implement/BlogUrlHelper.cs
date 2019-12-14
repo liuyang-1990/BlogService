@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Blog.Infrastructure.Implement
 {
-    [Injector(typeof(IBlogUrlHelper), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(IBlogUrlHelper), Lifetime = ServiceLifetime.Scoped)]
     public class BlogUrlHelper : IBlogUrlHelper
     {
 

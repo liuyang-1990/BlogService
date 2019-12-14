@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
 {
-    [Injector(typeof(ITimeLineBusiness), ServiceLifetime = ServiceLifetime.Scoped)]
+    [Injector(typeof(ITimeLineBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class TimeLineBusiness : BaseBusiness<TimeLine>, ITimeLineBusiness
     {
         private readonly ITimeLineRepository _timeLineRepository;
