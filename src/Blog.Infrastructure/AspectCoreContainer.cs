@@ -1,8 +1,6 @@
-﻿using AspectCore.Injector;
-using Blog.Infrastructure.DI;
+﻿using AspectCore.DependencyInjection;
 using System;
-using System.Linq;
-using System.Reflection;
+using System.ComponentModel.Design;
 
 namespace Blog.Infrastructure
 {
@@ -11,16 +9,16 @@ namespace Blog.Infrastructure
         private static IServiceResolver _serviceResolver;
         public static void BuildServiceProvider(IServiceContainer containerBuilder)
         {
-           // var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()
-           //.Where(t => t.IsClass && !t.IsAbstract && t.IsDefined(typeof(InjectorAttribute), true)));
+ // var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()
+            //.Where(t => t.IsClass && !t.IsAbstract && t.IsDefined(typeof(InjectorAttribute), true)));
 
-           // var serviceGroup = types.SelectMany(service => service.GetCustomAttributes<InjectorAttribute>()
-           //     .Select(x => new { Attr = x, Impl = service }));
-           // foreach (var service in serviceGroup)
-           // {
-           //     containerBuilder.AddType(service.Attr.ServiceType, service.Impl, service.Attr.LifeTime);
-           // }
-           // _serviceResolver = containerBuilder.Build();
+            // var serviceGroup = types.SelectMany(service => service.GetCustomAttributes<InjectorAttribute>()
+            //     .Select(x => new { Attr = x, Impl = service }));
+            // foreach (var service in serviceGroup)
+            // {
+            //     containerBuilder.AddType(service.Attr.ServiceType, service.Impl, service.Attr.LifeTime);
+            // }
+            // _serviceResolver = containerBuilder.Build();
         }
 
         public static T GetService<T>()

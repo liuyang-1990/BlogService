@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using JwtToken = Blog.Infrastructure.JwtToken;
+using LoginResponse = Blog.Infrastructure.LoginResponse;
 
 namespace Blog.Api.Controllers
 {

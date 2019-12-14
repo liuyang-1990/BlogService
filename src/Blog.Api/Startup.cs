@@ -359,7 +359,7 @@ namespace Blog.Api
 
         public void ConfigureContainer(IServiceCollection serviceCollection)
         {
-            CoreContainer.BuildServiceProvider(serviceCollection);
+             CoreContainer.Current.BuildServiceProvider(serviceCollection);
         }
 
         //public void ConfigureContainer(IServiceContainer containerBuilder)

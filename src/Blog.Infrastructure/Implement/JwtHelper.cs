@@ -1,6 +1,4 @@
 ﻿using Blog.Infrastructure.DI;
-using Blog.Model;
-using Blog.Model.Response;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

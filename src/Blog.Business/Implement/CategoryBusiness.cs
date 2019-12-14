@@ -1,5 +1,5 @@
-﻿using Blog.Infrastructure.DI;
-using Blog.Model;
+﻿using Blog.Infrastructure;
+using Blog.Infrastructure.DI;
 using Blog.Model.Db;
 using Blog.Model.Request.Category;
 using Blog.Model.Response;

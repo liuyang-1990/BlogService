@@ -1,5 +1,4 @@
 ﻿using Blog.Infrastructure;
-using Blog.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using JwtToken = Blog.Infrastructure.JwtToken;
 
 namespace Blog.Api
 {

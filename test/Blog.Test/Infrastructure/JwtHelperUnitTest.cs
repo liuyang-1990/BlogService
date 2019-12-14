@@ -1,5 +1,4 @@
 ﻿using Blog.Infrastructure.Implement;
-using Blog.Model;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -27,7 +26,7 @@ namespace Blog.Test.Infrastructure
         public void IssueJwt_Test(bool isRefresh)
         {
             var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
-            var res = helper.IssueJwt(new JwtToken()
+            var res = helper.IssueJwt(new Blog.Infrastructure.JwtToken()
             {
                 Uid = "1",
                 Role = "Admin"

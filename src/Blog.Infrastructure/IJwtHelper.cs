@@ -1,6 +1,4 @@
-﻿using Blog.Model;
-using Blog.Model.Response;
-
+﻿
 namespace Blog.Infrastructure
 {
     public interface IJwtHelper

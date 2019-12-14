@@ -1,20 +1,20 @@
 ﻿using AspectCore.DynamicProxy;
-using AspectCore.Injector;
+using Blog.Infrastructure;
 using Blog.Infrastructure.Extensions;
-using Blog.Model;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AspectCore.DependencyInjection;
 
 namespace Blog.Api.Interceptors
 {
     public class BlogRedisCacheInterceptor : AbstractInterceptorAttribute
     {
         //只有使用 config.Interceptors.AddTyped<BlogRedisCacheInterceptor>(); 时，属性注入才生效
-        [FromContainer]
+        [FromServiceContext]
         public IDistributedCache DistributedCache { get; set; }
 
         public override async Task Invoke(AspectContext context, AspectDelegate next)

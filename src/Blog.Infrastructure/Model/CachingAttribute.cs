@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Blog.Model
+namespace Blog.Infrastructure
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class CachingAttribute : Attribute
