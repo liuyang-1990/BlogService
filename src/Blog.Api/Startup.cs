@@ -3,7 +3,6 @@ using AspectCore.Extensions.DependencyInjection;
 using AutoMapper;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
-using Blog.Api.SwaggerExtensions;
 using Blog.Infrastructure.DI;
 using Blog.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;

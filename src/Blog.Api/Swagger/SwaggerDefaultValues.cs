@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 
-namespace Blog.Api.SwaggerExtensions
+namespace Blog.Api
 {
     /// <summary>
     /// Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.
