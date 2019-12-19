@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 
 namespace Blog.Infrastructure.DI
 {
@@ -8,7 +9,7 @@ namespace Blog.Infrastructure.DI
         private static CoreContainer _currentInstance;
         public static CoreContainer Current => _currentInstance ?? new CoreContainer();
 
-        private IServiceCollection _serviceCollection;
+        private readonly IServiceCollection _serviceCollection;
 
         private IServiceProvider _serviceProvider;
         internal CoreContainer()
@@ -17,10 +18,16 @@ namespace Blog.Infrastructure.DI
             _currentInstance = this;
         }
 
-
         public void BuildServiceProvider(IServiceCollection serviceCollection)
         {
-            //TODO
+            foreach (var serviceDescriptor in _serviceCollection)
+            {
+                if (serviceCollection.FirstOrDefault(x => x.ServiceType == serviceDescriptor.ServiceType) == null)
+                {
+                    serviceCollection.Add(serviceDescriptor);
+                }
+            }
+            _serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
         public T GetService<T>()

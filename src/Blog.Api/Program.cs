@@ -9,15 +9,11 @@ namespace Blog.Api
     {
         public static void Main(string[] args)
         {
-            // NLog: setup the logger first to catch all errors
-           // NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             CreateHostBuilder(args).Build().Run();
-
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-          //  .UseServiceProviderFactory(new AspectCoreServiceProviderFactory())
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();

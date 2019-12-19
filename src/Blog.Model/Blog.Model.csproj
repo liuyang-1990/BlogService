@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspectCore.Core" Version="2.0.0" />
     <PackageReference Include="sqlSugarCore" Version="5.0.0.11" />
   </ItemGroup>
 

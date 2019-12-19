@@ -1,4 +1,4 @@
-﻿using Blog.Infrastructure;
+﻿using Blog.Infrastructure.DI;
 using Blog.Infrastructure.Extensions;
 using Blog.Model;
 using Blog.Model.Request;
@@ -21,8 +21,8 @@ namespace Blog.Repository.Implement
 
         protected BaseRepository()
         {
-            Db = AspectCoreContainer.GetService<IDbContext>().GetDbContext();
-            DataProtector = AspectCoreContainer.GetService<IDataProtectionProvider>().CreateProtector("protect_params");
+            Db = CoreContainer.Current.GetService<IDbContext>().GetDbContext();
+            DataProtector = CoreContainer.Current.GetService<IDataProtectionProvider>().CreateProtector("protect_params");
         }
 
         #region Query

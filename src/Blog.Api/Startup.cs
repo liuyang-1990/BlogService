@@ -4,7 +4,7 @@ using AutoMapper;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
 using Blog.Api.SwaggerExtensions;
-using Blog.Infrastructure;
+using Blog.Infrastructure.DI;
 using Blog.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,7 +30,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Blog.Infrastructure.DI;
 
 namespace Blog.Api
 {
@@ -68,31 +67,25 @@ namespace Blog.Api
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-            })
-             //.AddJsonOptions(option =>
-             //{
-             //    //防止中文会被编码
-             //    option.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-             //})
-             .AddNewtonsoftJson(option =>
-             {
-                 option.SerializerSettings.ContractResolver = new DefaultContractResolver();
-             });
+            }).AddNewtonsoftJson(option =>
+            {
+                option.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
 
             #region  URL 地址转换成小写的形式
             services.AddRouting(options =>
-              {
-                  options.LowercaseUrls = true;
-              });
+            {
+                options.LowercaseUrls = true;
+            });
             #endregion
 
             #region MiniProfiler
             services.AddMiniProfiler(options =>
-             {
-                 options.RouteBasePath = "/profiler";
-                 options.PopupRenderPosition = RenderPosition.Left;
-                 options.PopupShowTimeWithChildren = true;
-             });
+            {
+                options.RouteBasePath = "/profiler";
+                options.PopupRenderPosition = RenderPosition.Left;
+                options.PopupShowTimeWithChildren = true;
+            });
 
 
             #endregion
@@ -118,29 +111,29 @@ namespace Blog.Api
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             services.AddSwaggerGen(options =>
-             {
-                 options.CustomSchemaIds(x => x.FullName);
-                 options.OperationFilter<SwaggerDefaultValues>();
-                 var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
-                 var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
-                 options.IncludeXmlComments(xmlPath, true);
-                 //添加header验证信息
+            {
+                options.CustomSchemaIds(x => x.FullName);
+                options.OperationFilter<SwaggerDefaultValues>();
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var xmlPath = Path.Combine(basePath, "Blog.Api.xml");
+                options.IncludeXmlComments(xmlPath, true);
+                //添加header验证信息
 
-                 options.OperationFilter<AddResponseHeadersFilter>();
-                 options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+                options.OperationFilter<AddResponseHeadersFilter>();
+                options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
 
-                 options.OperationFilter<SecurityRequirementsOperationFilter>();
-                 //var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
-                 //options.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
-                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                 {
-                     Description = "JWT授权(数据将在请求头中进行传输) 参数结构: \"Authorization: Bearer {token}\"",
-                     Name = "Authorization",//jwt默认的参数名称
-                     In = ParameterLocation.Header,//jwt默认存放Authorization信息的位置(请求头中)
-                     Type = SecuritySchemeType.ApiKey
-                 });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+                //var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } }, };
+                //options.AddSecurityRequirement(security);//添加一个必须的全局安全信息，和AddSecurityDefinition方法指定的方案名称要一致，这里是Bearer。
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT授权(数据将在请求头中进行传输) 参数结构: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",//jwt默认的参数名称
+                    In = ParameterLocation.Header,//jwt默认存放Authorization信息的位置(请求头中)
+                    Type = SecuritySchemeType.ApiKey
+                });
 
-             });
+            });
 
             #endregion
 
@@ -167,9 +160,9 @@ namespace Blog.Api
             #region 授权
             //  授权，就是根据令牌反向去解析出的用户身份，回应当前http请求的许可，表示可以使用当前接口，或者拒绝访问
             services.AddAuthorization(options =>
-              {
-                  options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-              });
+            {
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            });
             #endregion
 
             #region AutoMapper
@@ -185,20 +178,20 @@ namespace Blog.Api
 
             #region SqlSugarDbContext
             services.AddSqlSugarDbContext(options =>
-               {
-                   options.DbType = (DbType)Enum.Parse(typeof(DbType), Configuration["ConnectionStrings:DbType"]);
-                   options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
-                   options.IsAutoCloseConnection = true;
-                   options.InitKeyType = InitKeyType.SystemTable;
-                   options.AopEvents = new AopEvents()
-                   {
-                       OnLogExecuting = (sql, pars) =>
-                       {
-                           var sqlP = sql + "\r\n" + JsonConvert.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
-                           MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
-                       }
-                   };
-               });
+            {
+                options.DbType = (DbType)Enum.Parse(typeof(DbType), Configuration["ConnectionStrings:DbType"]);
+                options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
+                options.IsAutoCloseConnection = true;
+                options.InitKeyType = InitKeyType.SystemTable;
+                options.AopEvents = new AopEvents()
+                {
+                    OnLogExecuting = (sql, pars) =>
+                    {
+                        var sqlP = sql + "\r\n" + JsonConvert.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value));
+                        MiniProfiler.Current.CustomTiming("[SQL]:", sqlP);
+                    }
+                };
+            });
             #endregion
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -218,63 +211,36 @@ namespace Blog.Api
             #region AOP
 
             services.ConfigureDynamicProxy(config =>
-              {
-                  //只对以Business结尾的Service有效
-                  config.Interceptors.AddTyped<BlogRedisCacheInterceptor>(Predicates.ForService("*Business"));
-                  config.Interceptors.AddTyped<MiniProfilerInterceptor>(Predicates.ForService("*Business"));
-                  //全局拦截
-                  //config.Interceptors.AddTyped<MiniProfilerInterceptor>();
-              });
-            #endregion
-
-            #region HealthCheck
-
-            //var drivers = DriveInfo.GetDrives();
-            //var targetDriver = drivers.FirstOrDefault(x => x.DriveType == DriveType.Fixed);
-            //services.AddHealthChecks()
-            //       .AddPrivateMemoryHealthCheck(1000_000_000L)
-            //       .AddVirtualMemorySizeHealthCheck(1000_000_000L)
-            //       .AddWorkingSetHealthCheck(1000_000_000L)
-            //       .AddRedis(Configuration["RedisCaching:ConnectionString"])
-            //       .AddDiskStorageHealthCheck(x => x.AddDrive(targetDriver?.Name, 1000))
-            //       .AddMySql(Configuration["ConnectionStrings:ConnectionString"]);
-
+            {
+                //只对以Business结尾的Service有效
+                config.Interceptors.AddTyped<BlogRedisCacheInterceptor>(Predicates.ForService("*Business"));
+                config.Interceptors.AddTyped<MiniProfilerInterceptor>(Predicates.ForService("*Business"));
+                //全局拦截
+                //config.Interceptors.AddTyped<MiniProfilerInterceptor>();
+            });
             #endregion
 
             #region API版本控制
             services.AddApiVersioning(options =>
-               {
-                   // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
-                   options.ReportApiVersions = true;
-               });
+            {
+                // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
+                options.ReportApiVersions = true;
+            });
 
-            services.AddVersionedApiExplorer(
-                options =>
-                {
-                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
-                    options.GroupNameFormat = "'v'VVV";
+            services.AddVersionedApiExplorer(options =>
+            {
+                // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                options.GroupNameFormat = "'v'VVV";
 
-                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-                    // can also be used to control the format of the API version in route templates
-                    options.SubstituteApiVersionInUrl = true;
-                });
+                // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                // can also be used to control the format of the API version in route templates
+                options.SubstituteApiVersionInUrl = true;
+            });
             #endregion
 
             #region Ioc
-            //var builder = new ContainerBuilder();
-            //builder.Populate(services);
-            //builder.RegisterType<BlogRedisCacheAOP>();
-            //builder.RegisterType<MiniProfilerAOP>();
-            ////新模块组件注册    
-            //builder.RegisterModule<AutofacModuleRegister>();
-
-            ////创建容器
-            //var container = builder.Build();
-            ////第三方IOC接管 core内置DI容器 
-            //return new AutofacServiceProvider(container);
-            // return CoreContainer.Init(services);
-            // return AspectCoreContainer.BuildServiceProvider(services);
+            CoreContainer.Current.BuildServiceProvider(services);
             #endregion
 
 
@@ -318,23 +284,6 @@ namespace Blog.Api
             app.UseMetricServer();
             app.UseHttpMetrics();
             #endregion
-
-            #region HealthCheck
-            //app.UseHealthChecks("/healthz", new HealthCheckOptions()
-            //{
-            //    ResponseWriter = async (context, report) =>
-            //    {
-            //        var result = JsonConvert.SerializeObject(
-            //            new
-            //            {
-            //                status = report.Status.ToString(),
-            //                errors = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
-            //            });
-            //        context.Response.ContentType = MediaTypeNames.Application.Json;
-            //        await context.Response.WriteAsync(result);
-            //    }
-            //});
-            #endregion
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -356,16 +305,6 @@ namespace Blog.Api
                 endpoints.MapControllers();
             });
         }
-
-        public void ConfigureContainer(IServiceCollection serviceCollection)
-        {
-             CoreContainer.Current.BuildServiceProvider(serviceCollection);
-        }
-
-        //public void ConfigureContainer(IServiceContainer containerBuilder)
-        //{
-        //    AspectCoreContainer.BuildServiceProvider(containerBuilder);
-        //}
     }
 
 
