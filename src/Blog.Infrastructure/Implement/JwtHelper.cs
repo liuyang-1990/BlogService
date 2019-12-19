@@ -42,13 +42,13 @@ namespace Blog.Infrastructure.Implement
             {
                 new Claim(JwtRegisteredClaimNames.Jti,tokenModel.Uid.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,dateTime.ToUniversalTime().ToString(),ClaimValueTypes.Integer64),
-                new Claim(JwtRegisteredClaimNames.Iss, _configuration["JwtAuth:Issuer"]),
-                new Claim(JwtRegisteredClaimNames.Aud,_configuration["JwtAuth:Audience"]),
+                new Claim(JwtRegisteredClaimNames.Iss, _configuration["Authentication:JwtBearer:Issuer"]),
+                new Claim(JwtRegisteredClaimNames.Aud,_configuration["Authentication:JwtBearer:Audience"]),
             };
             // 可以将一个用户的多个角色全部赋予
             claims.AddRange(tokenModel.Role.ToString().Split(",").Select(s => new Claim(ClaimTypes.Role, s)));
             claims.Add(new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(tokenModel)));
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtAuth:SecurityKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:JwtBearer:SecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var jwt = new JwtSecurityToken(
                 notBefore: dateTime,

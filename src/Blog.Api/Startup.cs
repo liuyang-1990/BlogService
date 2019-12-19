@@ -16,7 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -29,7 +28,6 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Blog.Api
 {
@@ -137,25 +135,8 @@ namespace Blog.Api
 
             #endregion
 
-            #region 认证  
-            // 认证，就是根据登录的时候，生成的令牌，检查其是否合法，这个主要是证明没有被篡改
-            services.AddAuthentication("Bearer").AddJwtBearer(o =>
-            {
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidIssuer = Configuration["JwtAuth:Issuer"],
-                    ValidAudience = Configuration["JwtAuth:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JwtAuth:SecurityKey"])),
-                    RequireSignedTokens = true,
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateIssuerSigningKey = true,
-                    RequireExpirationTime = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-            #endregion
+            //认证  
+            AuthConfigurer.Configure(services, Configuration);
 
             #region 授权
             //  授权，就是根据令牌反向去解析出的用户身份，回应当前http请求的许可，表示可以使用当前接口，或者拒绝访问
