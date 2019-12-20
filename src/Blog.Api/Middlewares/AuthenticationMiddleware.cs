@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using JwtToken = Blog.Infrastructure.JwtToken;
 
 namespace Blog.Api
 {
@@ -67,15 +65,15 @@ namespace Blog.Api
                     return _next(httpContext);
                 }
                 //此时刷新token
-                var refreshToken = httpContext.Request.Headers["x-refresh-token"].ToString();
-                var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonConvert.DeserializeObject<JwtToken>(userData.Value));
-                if (newToken == null)
-                {
-                    return _next(httpContext);
-                }
-                httpContext.Request.Headers["Authorization"] = newToken;
+                //var refreshToken = httpContext.Request.Headers["x-refresh-token"].ToString();
+                //var newToken = _jwtHelper.RefreshJwt(refreshToken, JsonConvert.DeserializeObject<JwtToken>(userData.Value));
+                //if (newToken == null)
+                //{
+                //    return _next(httpContext);
+                //}
+               // httpContext.Request.Headers["Authorization"] = newToken;
                 httpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
-                httpContext.Response.Headers.Add("Authorization", newToken);
+               //// httpContext.Response.Headers.Add("Authorization", newToken);
             }
             catch
             {

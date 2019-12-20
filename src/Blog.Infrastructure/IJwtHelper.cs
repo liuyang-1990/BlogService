@@ -1,10 +1,10 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+
 namespace Blog.Infrastructure
 {
     public interface IJwtHelper
     {
-        LoginResponse IssueJwt(JwtToken tokenModel, bool isRefresh = false);
-
-        string RefreshJwt(string refreshToken, JwtToken tokenModel);
+        string CreateAccessToken(IEnumerable<Claim> claims);
     }
 }

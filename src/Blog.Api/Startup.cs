@@ -274,7 +274,7 @@ namespace Blog.Api
 
 
             //自定义认证
-            app.UseMiddleware<AuthenticationMiddleware>();
+            //app.UseMiddleware<AuthenticationMiddleware>();
             //认证
             app.UseAuthentication();
 

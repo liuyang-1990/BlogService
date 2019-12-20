@@ -2,13 +2,13 @@
 using Blog.Infrastructure;
 using Blog.Model;
 using Blog.Model.Request.Account;
-using Blog.Model.Response;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using JwtToken = Blog.Infrastructure.JwtToken;
-using LoginResponse = Blog.Infrastructure.LoginResponse;
+
 
 namespace Blog.Api.Controllers
 {
@@ -28,34 +28,35 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ResultModel<LoginResponse>> Login([FromBody]LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
         {
-            var response = new ResultModel<LoginResponse>();
             var userInfo = await _userBusiness.GetUserByUserName(loginRequest.UserName, loginRequest.Password);
             if (userInfo == null)
             {
-                response.IsSuccess = false;
-                response.Status = "1";
-                return response;
+                return BadRequest(new
+                {
+                    Msg = "用户名或者密码错误"
+                });
             }
             //用户被禁用
             if (userInfo.Status == 0)
             {
-                response.IsSuccess = false;
-                response.Status = "2";
-                return response;
+                return BadRequest(new
+                {
+                    Msg = "用户被禁用,请联系管理员"
+                });
             }
-            var loginResponse = _jwtHelper.IssueJwt(new JwtToken()
+            var claims = new List<Claim>
             {
-                Uid = userInfo.Id,
-                UserName = userInfo.UserName,
-                Avatar = userInfo.Avatar,
-                Role = Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString()
+                new Claim(ClaimTypes.Sid,userInfo.Id),
+                new Claim(ClaimTypes.NameIdentifier,userInfo.UserName),
+                new Claim(ClaimTypes.Role,Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString())
+            };
+            var token = _jwtHelper.CreateAccessToken(claims);
+            return Ok(new
+            {
+                AccessToken = token
             });
-            response.IsSuccess = true;
-            response.Status = "0";
-            response.ResultInfo = loginResponse;
-            return response;
         }
 
     }

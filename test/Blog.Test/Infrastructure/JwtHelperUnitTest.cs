@@ -1,9 +1,7 @@
-﻿using Blog.Infrastructure.Implement;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
-using Xunit;
 
 namespace Blog.Test.Infrastructure
 {
@@ -20,19 +18,19 @@ namespace Blog.Test.Infrastructure
             _configuration.Setup(x => x["JwtAuth:SecurityKey"]).Returns(Guid.NewGuid().ToString());
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void IssueJwt_Test(bool isRefresh)
-        {
-            var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
-            var res = helper.IssueJwt(new Blog.Infrastructure.JwtToken()
-            {
-                Uid = "1",
-                Role = "Admin"
-            }, isRefresh);
-            Assert.NotNull(res);
-        }
+        //[Theory]
+        //[InlineData(true)]
+        //[InlineData(false)]
+        //public void IssueJwt_Test(bool isRefresh)
+        //{
+        //    var helper = new JwtHelper(_configuration.Object, _redisHelper.Object);
+        //    var res = helper.IssueJwt(new Blog.Infrastructure.JwtToken()
+        //    {
+        //        Uid = "1",
+        //        Role = "Admin"
+        //    }, isRefresh);
+        //    Assert.NotNull(res);
+        //}
 
         //[Theory]
         //[MemberData(nameof(Data))]
