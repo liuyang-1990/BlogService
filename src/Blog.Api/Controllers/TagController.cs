@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.Tag;
 using Blog.Model.Response;
@@ -7,6 +6,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Nelibur.ObjectMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,11 +20,9 @@ namespace Blog.Api.Controllers
     public class TagController : ControllerBase
     {
         private readonly ITagBusiness _tagBusiness;
-        private readonly IMapper _mapper;
-        public TagController(ITagBusiness tagBusiness, IMapper mapper)
+        public TagController(ITagBusiness tagBusiness)
         {
             _tagBusiness = tagBusiness;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -62,7 +60,7 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<ResultModel<string>> AddTag([FromBody]CommonTagRequest request)
         {
-            return await _tagBusiness.Insert(_mapper.Map<TagInfo>(request));
+            return await _tagBusiness.Insert(TinyMapper.Map<TagInfo>(request));
         }
 
         /// <summary>
@@ -73,7 +71,7 @@ namespace Blog.Api.Controllers
         [HttpPut]
         public async Task<ResultModel<string>> UpdateTag([FromBody]UpdateTagRequest request)
         {
-            return await _tagBusiness.Update(_mapper.Map<TagInfo>(request));
+            return await _tagBusiness.Update(TinyMapper.Map<TagInfo>(request));
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
@@ -7,6 +6,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Nelibur.ObjectMapper;
 using System.Threading.Tasks;
 
 namespace Blog.Api.Controllers
@@ -19,11 +19,9 @@ namespace Blog.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBusiness _userBusiness;
-        private readonly IMapper _mapper;
-        public UserController(IUserBusiness userBusiness, IMapper mapper)
+        public UserController(IUserBusiness userBusiness)
         {
             _userBusiness = userBusiness;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<ResultModel<string>> AddUser([FromBody]AddUserRequest request)
         {
-            return await _userBusiness.Insert(_mapper.Map<UserInfo>(request));
+            return await _userBusiness.Insert(TinyMapper.Map<UserInfo>(request));
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Blog.Api.Controllers
         [HttpPut]
         public async Task<ResultModel<string>> UpdateUser([FromBody]UpdateUserRequest request)
         {
-            return await _userBusiness.Update(_mapper.Map<UserInfo>(request));
+            return await _userBusiness.Update(TinyMapper.Map<UserInfo>(request));
         }
 
         /// <summary>

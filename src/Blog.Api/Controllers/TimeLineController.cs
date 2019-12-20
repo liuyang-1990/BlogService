@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.TimeLine;
 using Blog.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Nelibur.ObjectMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,11 +19,9 @@ namespace Blog.Api.Controllers
     public class TimeLineController : ControllerBase
     {
         private readonly ITimeLineBusiness _timeLineBusiness;
-        private readonly IMapper _mapper;
-        public TimeLineController(ITimeLineBusiness timeLineBusiness, IMapper mapper)
+        public TimeLineController(ITimeLineBusiness timeLineBusiness)
         {
             _timeLineBusiness = timeLineBusiness;
-            _mapper = mapper;
         }
 
         [HttpGet("all")]
@@ -44,14 +42,14 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<ResultModel<string>> AddTimeLine([FromBody]CommonTimeLineRequest request)
         {
-            var timeLine = _mapper.Map<TimeLine>(request);
+            var timeLine = TinyMapper.Map<TimeLine>(request);
             return await _timeLineBusiness.Insert(timeLine);
         }
 
         [HttpPut]
         public async Task<ResultModel<string>> UpdateTimeLine([FromBody]UpdateTimeLineRequest request)
         {
-            var timeLine = _mapper.Map<TimeLine>(request);
+            var timeLine = TinyMapper.Map<TimeLine>(request);
             return await _timeLineBusiness.Update(timeLine);
         }
 

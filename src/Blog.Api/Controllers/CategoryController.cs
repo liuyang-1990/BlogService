@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Blog.Business;
+﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.Category;
 using Blog.Model.Response;
@@ -7,6 +6,7 @@ using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Nelibur.ObjectMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,11 +20,10 @@ namespace Blog.Api.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryBusiness _categoryBusiness;
-        private readonly IMapper _mapper;
-        public CategoryController(ICategoryBusiness categoryBusiness, IMapper mapper)
+
+        public CategoryController(ICategoryBusiness categoryBusiness)
         {
             _categoryBusiness = categoryBusiness;
-            _mapper = mapper;
         }
         /// <summary>
         /// 分页获取分类信息
@@ -65,7 +64,7 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<ResultModel<string>> AddCategory([FromBody]CommonCategoryRequest request)
         {
-            return await _categoryBusiness.Insert(_mapper.Map<CategoryInfo>(request));
+            return await _categoryBusiness.Insert(TinyMapper.Map<CategoryInfo>(request));
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace Blog.Api.Controllers
         [HttpPut]
         public async Task<ResultModel<string>> UpdateCategory([FromBody]UpdateCategoryRequest request)
         {
-            return await _categoryBusiness.Update(_mapper.Map<CategoryInfo>(request));
+            return await _categoryBusiness.Update(TinyMapper.Map<CategoryInfo>(request));
         }
 
         /// <summary>

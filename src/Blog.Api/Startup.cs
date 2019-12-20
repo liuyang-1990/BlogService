@@ -1,6 +1,5 @@
 ﻿using AspectCore.Configuration;
 using AspectCore.Extensions.DependencyInjection;
-using AutoMapper;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
 using Blog.Infrastructure.DI;
@@ -145,8 +144,8 @@ namespace Blog.Api
             });
             #endregion
 
-            #region AutoMapper
-            services.AddAutoMapper(typeof(Startup));
+            #region TinyMapper
+            Mapper.InitMapping();
             #endregion
 
             //使用微软的分布式缓存
