@@ -26,6 +26,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Blog.Api
 {
@@ -250,7 +251,7 @@ namespace Blog.Api
                 {
                     option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                 }
-                option.IndexStream = () => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("Blog.Api.index.html");
+                option.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream("Blog.Api.wwwroot.swagger.ui.index.html");
             });
             #endregion
 
