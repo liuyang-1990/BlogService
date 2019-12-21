@@ -177,7 +177,7 @@ namespace Blog.Api
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpClient();
             services.AddMemoryCache();
-
+            services.AddResponseCompression();
             #region DataProtection
             services.AddDataProtection().AddParamProtection(option =>
             {
@@ -272,7 +272,7 @@ namespace Blog.Api
             //跨域
             app.UseCors("LimitRequests");
 
-
+            app.UseResponseCompression();
             //自定义认证
             //app.UseMiddleware<AuthenticationMiddleware>();
             //认证
