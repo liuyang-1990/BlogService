@@ -1,4 +1,4 @@
-﻿using Blog.Infrastructure.Implement;
+﻿using Blog.Infrastructure.Cryptography;
 using Xunit;
 
 namespace Blog.Test.Infrastructure
@@ -11,7 +11,7 @@ namespace Blog.Test.Infrastructure
         public void Encrypt32_Test(string originStr, string result)
         {
             var helper = new Md5Helper();
-            var actual = helper.Encrypt32(originStr);
+            var actual = helper.Encrypt(originStr);
             Assert.Equal(result, actual);
         }
     }

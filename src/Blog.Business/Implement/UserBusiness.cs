@@ -1,4 +1,4 @@
-﻿using Blog.Infrastructure;
+﻿using Blog.Infrastructure.Cryptography;
 using Blog.Infrastructure.DI;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
@@ -55,7 +55,7 @@ namespace Blog.Business.Implement
             {
                 user.Password = "123456"; //默认密码
             }
-            user.Password = _md5Helper.Encrypt32(user.Password);
+            user.Password = _md5Helper.Encrypt(user.Password);
             return await base.Insert(user);
         }
         public override async Task<ResultModel<string>> Update(UserInfo user)
@@ -70,7 +70,7 @@ namespace Blog.Business.Implement
             }
             if (!string.IsNullOrEmpty(user.Password))
             {
-                user.Password = _md5Helper.Encrypt32(user.Password);
+                user.Password = _md5Helper.Encrypt(user.Password);
             }
             return await base.Update(user);
         }
@@ -78,7 +78,7 @@ namespace Blog.Business.Implement
 
         public async Task<UserInfo> GetUserByUserName(string userName, string password)
         {
-            password = _md5Helper.Encrypt32(password);
+            password = _md5Helper.Encrypt(password);
             return await _userRepository.QueryByWhere(x => x.UserName == userName && x.Password == password);
         }
 
@@ -92,7 +92,7 @@ namespace Blog.Business.Implement
                 response.Status = "2"; //旧密码不正确
                 return response;
             }
-            userInfo.Password = _md5Helper.Encrypt32(request.Password);
+            userInfo.Password = _md5Helper.Encrypt(request.Password);
             response.IsSuccess = await _userRepository.Update(userInfo, it => it.Password);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;

@@ -1,5 +1,5 @@
 ﻿using Blog.Business.Implement;
-using Blog.Infrastructure;
+using Blog.Infrastructure.Cryptography;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.User;
@@ -27,7 +27,7 @@ namespace Blog.Test.Business
             var md5Helper = new Mock<IMd5Helper>();
             var logger = new Mock<ILogger<UserBusiness>>();
             _userRepository = new Mock<IUserRepository>();
-            md5Helper.Setup(x => x.Encrypt32(It.IsAny<string>())).Returns("123");
+            md5Helper.Setup(x => x.Encrypt(It.IsAny<string>(), 32)).Returns("123");
             _userBusiness = new UserBusiness(_userRepository.Object, md5Helper.Object, logger.Object);
         }
 
