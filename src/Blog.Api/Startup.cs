@@ -3,7 +3,7 @@ using AspectCore.Extensions.DependencyInjection;
 using Blog.Api.Filters;
 using Blog.Api.Interceptors;
 using Blog.Infrastructure.DI;
-using Blog.Infrastructure.Extensions;
+using Blog.Infrastructure.ServiceCollectionExtension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

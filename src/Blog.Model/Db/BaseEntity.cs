@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
 using SqlSugar;
 using System;
+using Blog.Model.ViewModel;
 
 namespace Blog.Model
 {
 
-    public class BaseEntity
+    public class BaseEntity : IEntity<string>
     {
         /// <summary>
         /// 主键

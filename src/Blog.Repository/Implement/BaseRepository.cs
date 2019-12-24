@@ -1,5 +1,4 @@
 ﻿using Blog.Infrastructure.DI;
-using Blog.Infrastructure.Extensions;
 using Blog.Model;
 using Blog.Model.Request;
 using Blog.Model.Response;
@@ -21,7 +20,7 @@ namespace Blog.Repository.Implement
 
         protected BaseRepository()
         {
-            Db = CoreContainer.Current.GetService<IDbContext>().GetDbContext();
+            Db = CoreContainer.Current.GetService<ISqlSugarClient>();
             DataProtector = CoreContainer.Current.GetService<IDataProtectionProvider>().CreateProtector("protect_params");
         }
 
@@ -182,7 +181,7 @@ namespace Blog.Repository.Implement
         public async Task<T3> JoinQuery<T1, T2, T3>(
             Expression<Func<T1, T2, object[]>> joinExpression,
             Expression<Func<T1, T2, T3>> selectExpression,
-            Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity
+            Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity<string>
         {
             return await Db.Queryable(joinExpression)
                 .Where(whereLambda)

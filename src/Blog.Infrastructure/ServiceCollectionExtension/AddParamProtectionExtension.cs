@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Blog.Infrastructure.Extensions
+namespace Blog.Infrastructure.ServiceCollectionExtension
 {
     public static class AddParamProtectionExtension
     {

@@ -1,7 +1,7 @@
 ﻿namespace Blog.Model.ViewModel
 {
-    public interface IEntity
+    public interface IEntity<TKey>
     {
-        string Id { get; set; }
+        TKey Id { get; set; }
     }
 }

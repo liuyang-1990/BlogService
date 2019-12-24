@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blog.Infrastructure.Extensions.ParamProtection
+namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
 {
     public class ParamsProtectionActionFilter : IActionFilter
     {

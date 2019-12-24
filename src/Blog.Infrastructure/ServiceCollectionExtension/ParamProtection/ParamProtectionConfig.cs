@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Blog.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Blog.Infrastructure.Extensions.ParamProtection
+namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
 {
     public class ParamProtectionConfig
     {
