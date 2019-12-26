@@ -1,4 +1,5 @@
 ﻿using System;
+using Blog.Model.Entities;
 
 namespace Blog.Model.ViewModel
 {

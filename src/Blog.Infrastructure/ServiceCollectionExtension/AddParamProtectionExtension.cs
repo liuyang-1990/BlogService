@@ -1,8 +1,8 @@
-﻿using Blog.Infrastructure.Extensions.ParamProtection;
-using Microsoft.AspNetCore.DataProtection;
+﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Blog.Infrastructure.ServiceCollectionExtension.ParamProtection;
 
 namespace Blog.Infrastructure.ServiceCollectionExtension
 {

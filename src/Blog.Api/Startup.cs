@@ -163,6 +163,7 @@ namespace Blog.Api
                 options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
                 options.IsAutoCloseConnection = true;
                 options.InitKeyType = InitKeyType.SystemTable;
+                options.IsShardSameThread = true;
                 options.AopEvents = new AopEvents()
                 {
                     OnLogExecuting = (sql, pars) =>

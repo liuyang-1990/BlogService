@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using Blog.Infrastructure.Extensions;
 
 namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
 {

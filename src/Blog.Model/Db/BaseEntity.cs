@@ -1,17 +1,13 @@
 ﻿using Newtonsoft.Json;
 using SqlSugar;
 using System;
-using Blog.Model.ViewModel;
+using Blog.Model.Entities;
 
 namespace Blog.Model
 {
 
-    public class BaseEntity : IEntity<string>
+    public class BaseEntity : Entity
     {
-        /// <summary>
-        /// 主键
-        /// </summary>        
-        public string Id { get; set; }
 
         /// <summary>
         /// 是否删除 0 未删除 1 已删除
@@ -30,6 +26,5 @@ namespace Blog.Model
         /// </summary>
         [JsonIgnore]
         public DateTime? ModifyTime { get; set; }
-
     }
 }
