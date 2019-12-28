@@ -55,18 +55,19 @@ namespace Blog.Repository
             RefAsync<int> totalCount);
 
         /// <summary>
-        /// 根据where条件查询一条数据
+        /// Gets exactly one entity with given predicate.
+        /// Throws exception if no entity or more than one entity.
         /// </summary>
-        /// <param name="whereExpression">where条件</param>
-        /// <returns></returns>
-        Task<TEntity> QueryByWhere(Expression<Func<TEntity, bool>> whereExpression);
+        /// <param name="predicate">a filter</param>
+        /// <returns>entity</returns>
+        Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
         /// 根据ID查询一条数据
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
-        Task<TEntity> QueryById(TPrimaryKey id);
+        Task<TEntity> SingleAsync(TPrimaryKey id);
 
 
         /// <summary>

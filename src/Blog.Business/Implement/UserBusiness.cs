@@ -79,7 +79,7 @@ namespace Blog.Business.Implement
         public async Task<UserInfo> GetUserByUserName(string userName, string password)
         {
             password = _md5Helper.Encrypt(password);
-            return await _userRepository.QueryByWhere(x => x.UserName == userName && x.Password == password);
+            return await _userRepository.SingleAsync(x => x.UserName == userName && x.Password == password);
         }
 
         public async Task<ResultModel<string>> UpdatePassword(ChangePasswordRequest request)

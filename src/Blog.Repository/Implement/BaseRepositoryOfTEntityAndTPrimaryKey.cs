@@ -91,13 +91,14 @@ namespace Blog.Repository.Implement
         }
 
         /// <summary>
-        /// 根据where条件查询一条数据
+        /// Gets exactly one entity with given predicate.
+        /// Throws exception if no entity or more than one entity.
         /// </summary>
-        /// <param name="whereExpression">where条件</param>
-        /// <returns></returns>
-        public async Task<TEntity> QueryByWhere(Expression<Func<TEntity, bool>> whereExpression)
+        /// <param name="predicate">a filter</param>
+        /// <returns>entity</returns>
+        public async Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await Db.Queryable<TEntity>().FirstAsync(whereExpression);
+            return await Db.Queryable<TEntity>().SingleAsync(predicate);
         }
 
         /// <summary>
@@ -105,9 +106,9 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
-        public async Task<TEntity> QueryById(TPrimaryKey id)
+        public async Task<TEntity> SingleAsync(TPrimaryKey id)
         {
-            return await Db.Queryable<TEntity>().FirstAsync(x => SqlFunc.Equals(x.Id, id));
+            return await SingleAsync(CreateEqualityExpressionForId(id));
         }
 
         /// <summary>
@@ -265,5 +266,21 @@ namespace Blog.Repository.Implement
         }
 
         #endregion
+
+        protected Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
+        {
+            var lambdaParam = Expression.Parameter(typeof(TEntity));
+
+            var leftExpression = Expression.PropertyOrField(lambdaParam, "Id");
+
+            var idValue = Convert.ChangeType(id, typeof(TPrimaryKey));
+
+            Expression<Func<object>> closure = () => idValue;
+            var rightExpression = Expression.Convert(closure.Body, leftExpression.Type);
+
+            var lambdaBody = Expression.Equal(leftExpression, rightExpression);
+
+            return Expression.Lambda<Func<TEntity, bool>>(lambdaBody, lambdaParam);
+        }
     }
 }

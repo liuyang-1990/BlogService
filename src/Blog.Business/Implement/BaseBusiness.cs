@@ -32,7 +32,7 @@ namespace Blog.Business.Implement
         /// <returns></returns>
         public virtual async Task<T> GetDetail(string id)
         {
-            return await BaseRepository.QueryById(id);
+            return await BaseRepository.SingleAsync(id);
         }
         /// <summary>
         /// 查询所有
