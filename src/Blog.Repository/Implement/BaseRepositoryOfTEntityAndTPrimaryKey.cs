@@ -34,11 +34,11 @@ namespace Blog.Repository.Implement
         /// <summary>
         /// 查询是否存在
         /// </summary>
-        /// <param name="whereExpression">查询条件</param>
+        /// <param name="predicate">查询条件</param>
         /// <returns></returns>
-        public async Task<bool> QueryIsExist(Expression<Func<TEntity, bool>> whereExpression)
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await Db.Queryable<TEntity>().AnyAsync(whereExpression);
+            return await Db.Queryable<TEntity>().AnyAsync(predicate);
         }
 
         /// <summary>

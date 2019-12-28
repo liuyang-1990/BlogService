@@ -23,7 +23,7 @@ namespace Blog.Repository
         /// </summary>
         /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
-        Task<bool> QueryIsExist(Expression<Func<TEntity, bool>> predicate);
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
         /// 查询所有

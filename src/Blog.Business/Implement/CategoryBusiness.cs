@@ -53,7 +53,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Insert(CategoryInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _categoryRepository.QueryIsExist(it => it.CategoryName == entity.CategoryName);
+            var isExist = await _categoryRepository.AnyAsync(it => it.CategoryName == entity.CategoryName);
             if (!isExist)
             {
                 return await base.Insert(entity);
@@ -71,7 +71,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Update(CategoryInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _categoryRepository.QueryIsExist(x => x.CategoryName == entity.CategoryName && x.Id != entity.Id);
+            var isExist = await _categoryRepository.AnyAsync(x => x.CategoryName == entity.CategoryName && x.Id != entity.Id);
             if (!isExist)
             {
                 return await base.Update(entity);

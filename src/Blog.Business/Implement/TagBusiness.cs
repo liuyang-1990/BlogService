@@ -53,7 +53,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Insert(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRepository.QueryIsExist(it => it.TagName == entity.TagName);
+            var isExist = await _tagRepository.AnyAsync(it => it.TagName == entity.TagName);
             if (!isExist)
             {
                 return await base.Insert(entity);
@@ -70,7 +70,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Update(TagInfo entity)
         {
             var response = new ResultModel<string>();
-            var isExist = await _tagRepository.QueryIsExist(it => it.TagName == entity.TagName && it.Id != entity.Id);
+            var isExist = await _tagRepository.AnyAsync(it => it.TagName == entity.TagName && it.Id != entity.Id);
             if (!isExist)
             {
                 return await base.Update(entity);

@@ -44,7 +44,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Insert(UserInfo user)
         {
             var response = new ResultModel<string>();
-            var isExist = await _userRepository.QueryIsExist(x => x.UserName == user.UserName);
+            var isExist = await _userRepository.AnyAsync(x => x.UserName == user.UserName);
             if (isExist)
             {
                 response.IsSuccess = false;
@@ -61,7 +61,7 @@ namespace Blog.Business.Implement
         public override async Task<ResultModel<string>> Update(UserInfo user)
         {
             var response = new ResultModel<string>();
-            var isExist = await _userRepository.QueryIsExist(x => x.UserName == user.UserName && x.Id != user.Id);
+            var isExist = await _userRepository.AnyAsync(x => x.UserName == user.UserName && x.Id != user.Id);
             if (isExist)
             {
                 response.IsSuccess = false;
