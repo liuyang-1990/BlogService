@@ -32,7 +32,7 @@ namespace Blog.Test.Business
         public async Task Insert_Test(TagInfo tagInfo, bool isExist, ResultModel<string> expectedModel)
         {
             _tagRespoitory
-                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
+                .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
             _tagRespoitory.Setup(x => x.Insert(It.IsAny<TagInfo>())).ReturnsAsync(1);
             var actualModel = await _tagBusiness.Insert(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
@@ -93,7 +93,7 @@ namespace Blog.Test.Business
         public async Task Update_Test(TagInfo tagInfo, bool isExist, ResultModel<string> expectedModel)
         {
             _tagRespoitory
-                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
+                .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
             _tagRespoitory.Setup(x => x.Update(It.IsAny<TagInfo>())).ReturnsAsync(true);
             var actualModel = await _tagBusiness.Update(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);

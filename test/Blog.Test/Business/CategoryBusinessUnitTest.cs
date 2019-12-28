@@ -49,7 +49,7 @@ namespace Blog.Test.Business
         public async Task Insert_Test(CategoryInfo categoryRequest, bool isExist, ResultModel<string> expectedModel)
         {
             _categoryRepository
-                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
+                .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
             _categoryRepository.Setup(x => x.Insert(It.IsAny<CategoryInfo>())).ReturnsAsync(1);
             var actualModel = await _categoryBusiness.Insert(categoryRequest);
             var actualStr = JsonConvert.SerializeObject(actualModel);
@@ -94,7 +94,7 @@ namespace Blog.Test.Business
         public async Task Update_Test(CategoryInfo categoryInfo, bool isExist, ResultModel<string> expectedModel)
         {
             _categoryRepository
-                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
+                .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
             _categoryRepository.Setup(x => x.Update(It.IsAny<CategoryInfo>())).ReturnsAsync(true);
             var actualModel = await _categoryBusiness.Update(categoryInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);

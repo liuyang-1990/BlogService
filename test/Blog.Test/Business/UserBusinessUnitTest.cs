@@ -54,7 +54,7 @@ namespace Blog.Test.Business
         {
 
             _userRepository
-                .Setup(x => x.QueryIsExist(It.IsAny<Expression<Func<UserInfo, bool>>>())).ReturnsAsync(isExist);
+                .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<UserInfo, bool>>>())).ReturnsAsync(isExist);
             _userRepository.Setup(x => x.Insert(It.IsAny<UserInfo>())).ReturnsAsync(1);
             var actualModel = await _userBusiness.Insert(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
