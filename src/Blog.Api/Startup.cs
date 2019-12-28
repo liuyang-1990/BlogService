@@ -180,13 +180,13 @@ namespace Blog.Api
             services.AddMemoryCache();
             services.AddResponseCompression();
             #region DataProtection
-            services.AddDataProtection().AddParamProtection(option =>
-            {
-                option.Enable = true;
-                option.Purpose = "protect_params";
-                option.Params = new[] { "id", "ids", "Id", "TagIds", "CategoryIds" };
-                option.AddProtectValue<JsonResult>(r => r.Value);
-            });
+            //services.AddDataProtection().AddParamProtection(option =>
+            //{
+            //    option.Enable = true;
+            //    option.Purpose = "protect_params";
+            //    option.Params = new[] { "id", "ids", "Id", "TagIds", "CategoryIds" };
+            //    option.AddProtectValue<JsonResult>(r => r.Value);
+            //});
             #endregion
 
             #region AOP

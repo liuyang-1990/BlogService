@@ -139,11 +139,11 @@ namespace Blog.Business.Implement
             };
             var result = await _articleRepository.UseTranAsync(async () =>
             {
-                await _articleRepository.Update(article);
-                await _articleContentRepository.UpdateByWhere(content, it => it.ArticleId);
+                await _articleRepository.UpdateAsync(article);
+                await _articleContentRepository.UpdateAsync(content, it => it.ArticleId);
                 ////先删除再添加
-                await _articleTagRepository.DeleteByWhere(x => x.ArticleId == article.Id);
-                await _articleCategoryRepository.DeleteByWhere(x => x.ArticleId == article.Id);
+                await _articleTagRepository.DeleteAsync(x => x.ArticleId == article.Id);
+                await _articleCategoryRepository.DeleteAsync(x => x.ArticleId == article.Id);
                 var articleTags = request.TagIds.Select(tagId => new ArticleTag()
                 {
                     TagId = tagId,

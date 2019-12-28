@@ -94,7 +94,7 @@ namespace Blog.Test.Business
         {
             _tagRespoitory
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
-            _tagRespoitory.Setup(x => x.Update(It.IsAny<TagInfo>())).ReturnsAsync(true);
+            _tagRespoitory.Setup(x => x.UpdateAsync(It.IsAny<TagInfo>())).ReturnsAsync(true);
             var actualModel = await _tagBusiness.Update(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

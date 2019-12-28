@@ -1,6 +1,5 @@
 ﻿using Blog.Model.Entities;
 using Blog.Model.Request;
-using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using SqlSugar;
 using System;
@@ -80,11 +79,11 @@ namespace Blog.Repository
         /// <summary>
         /// 根据ID查询数据列表
         /// </summary>
-        /// <typeparam name="T1">返回的对象</typeparam>
+        /// <typeparam name="TResult">返回的对象</typeparam>
         /// <param name="ids">主键</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        Task<List<T1>> QueryByIds<T1>(List<TPrimaryKey> ids, Expression<Func<TEntity, T1>> selectExpression) where T1 : Property;
+        Task<List<TResult>> QueryByIds<TResult>(List<TPrimaryKey> ids, Expression<Func<TEntity, TResult>> selectExpression);
         /// <summary>
         ///  根据where条件查询某几列
         /// </summary>
@@ -106,7 +105,7 @@ namespace Blog.Repository
         Task<T3> JoinQuery<T1, T2, T3>(
             Expression<Func<T1, T2, object[]>> joinExpression,
             Expression<Func<T1, T2, T3>> selectExpression,
-            Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity<TPrimaryKey>;
+            Expression<Func<T1, T2, bool>> whereLambda);
 
 
         /// <summary>
@@ -123,56 +122,52 @@ namespace Blog.Repository
         /// <returns>受影响行数</returns>
         Task<int> Insert(List<TEntity> listEntity);
 
+        /// <summary>
+        ///  Updates an existing entity by primary key.
+        /// </summary>
+        /// <param name="entity">Entity</param>
+        /// <returns></returns>
+        Task<bool> UpdateAsync(TEntity entity);
 
         /// <summary>
-        ///  更新实体数据(以主键为条件)
+        /// Updates an existing entity by Non primary key columns.
         /// </summary>
-        /// <param name="entity">实体类</param>
+        /// <param name="entity">Entity</param>
+        /// <param name="whereColumns">Non primary key columns of the entity</param>
         /// <returns></returns>
-        Task<bool> Update(TEntity entity);
+        Task<bool> UpdateAsync(TEntity entity, Expression<Func<TEntity, object>> whereColumns);
 
         /// <summary>
-        /// 更新实体数据
+        /// Updates some columns of an existing entity.
         /// </summary>
-        /// <param name="entity">实体类</param>
-        /// <param name="updateColumns">更新的列</param>
+        /// <param name="updateColumns">columns of TEntity to be updated</param>
         /// <returns></returns>
-        Task<bool> Update(TEntity entity, Expression<Func<TEntity, object>> updateColumns);
+        Task<bool> UpdateAsync(Expression<Func<TEntity, object>> updateColumns);
 
         /// <summary>
-        /// 更新实体数据
+        /// Updates some columns of an existing entity by primary keys.
         /// </summary>
-        /// <param name="updateObj">要更新的实体</param>
-        /// <param name="whereColumns">更新的条件</param>
+        /// <param name="ids">Primary keys</param>
+        /// <param name="updateColumns">columns of the entity to be updated</param>
         /// <returns></returns>
-        Task<bool> UpdateByWhere(TEntity updateObj, Expression<Func<TEntity, object>> whereColumns);
+        Task<bool> UpdateAsync(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateColumns);
 
+        #region Delete
         /// <summary>
-        /// 根据主键批量更新某一列
+        /// Deletes an entity by function.
         /// </summary>
-        /// <param name="ids">主键</param>
-        /// <param name="updateExpression">某一列</param>
+        /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
-        Task<bool> UpdateByIds(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateExpression);
-        /// <summary>
-        /// 根据主键删除(假删除)
-        /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns></returns>
-        Task<bool> DeleteById(TPrimaryKey id);
+        Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
+        #endregion
 
+        #region Tran
         /// <summary>
-        /// 真删除
+        /// use tran
         /// </summary>
-        /// <param name="whereExpression"></param>
-        /// <returns></returns>
-        Task<bool> DeleteByWhere(Expression<Func<TEntity, bool>> whereExpression);
-
-        /// <summary>
-        /// 使用事务
-        /// </summary>
-        /// <param name="action"></param>
+        /// <param name="action">action that need to used in tran</param>
         /// <returns></returns>
         Task<DbResult<bool>> UseTranAsync(Action action);
+        #endregion
     }
 }

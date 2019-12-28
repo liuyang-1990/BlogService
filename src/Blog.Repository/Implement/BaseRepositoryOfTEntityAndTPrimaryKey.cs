@@ -1,7 +1,6 @@
 ﻿using Blog.Infrastructure.DI;
 using Blog.Model.Entities;
 using Blog.Model.Request;
-using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.DataProtection;
 using SqlSugar;
@@ -124,11 +123,11 @@ namespace Blog.Repository.Implement
         /// <summary>
         /// 根据ID查询数据列表
         /// </summary>
-        /// <typeparam name="T1">返回的对象</typeparam>
+        /// <typeparam name="TResult">返回的对象</typeparam>
         /// <param name="ids">主键</param>
         /// <param name="selectExpression">查询某几列</param>
         /// <returns></returns>
-        public async Task<List<T1>> QueryByIds<T1>(List<TPrimaryKey> ids, Expression<Func<TEntity, T1>> selectExpression) where T1 : Property
+        public async Task<List<TResult>> QueryByIds<TResult>(List<TPrimaryKey> ids, Expression<Func<TEntity, TResult>> selectExpression)
         {
             return await Db.Queryable<TEntity>().In(ids).Select(selectExpression).ToListAsync();
         }
@@ -151,7 +150,7 @@ namespace Blog.Repository.Implement
         public async Task<T3> JoinQuery<T1, T2, T3>(
             Expression<Func<T1, T2, object[]>> joinExpression,
             Expression<Func<T1, T2, T3>> selectExpression,
-            Expression<Func<T1, T2, bool>> whereLambda) where T3 : IEntity<TPrimaryKey>
+            Expression<Func<T1, T2, bool>> whereLambda)
         {
             return await Db.Queryable(joinExpression)
                 .Where(whereLambda)
@@ -187,78 +186,66 @@ namespace Blog.Repository.Implement
         #region Update
 
         /// <summary>
-        ///  更新实体数据(以主键为条件)
+        /// Updates an existing entity by primary key.
         /// </summary>
-        /// <param name="entity">实体类</param>
+        /// <param name="entity">Entity</param>
         /// <returns></returns>
-        public async Task<bool> Update(TEntity entity)
+        public async Task<bool> UpdateAsync(TEntity entity)
         {
             return await Db.Updateable(entity).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
-        /// 更新实体数据
+        /// Updates an existing entity by Non primary key columns.
         /// </summary>
-        /// <param name="entity">实体类</param>
-        /// <param name="updateColumns">更新的列</param>
+        /// <param name="entity">Entity</param>
+        /// <param name="whereColumns">Non primary key columns of the entity</param>
         /// <returns></returns>
-        public async Task<bool> Update(TEntity entity, Expression<Func<TEntity, object>> updateColumns)
+        public async Task<bool> UpdateAsync(TEntity entity, Expression<Func<TEntity, object>> whereColumns)
         {
-            return await Db.Updateable(entity).UpdateColumns(updateColumns).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(entity).WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
-        /// 更新实体数据
+        /// Updates some columns of an existing entity by primary key.
         /// </summary>
-        /// <param name="updateObj">要更新的实体</param>
-        /// <param name="whereColumns">更新的条件</param>
+        /// <param name="updateColumns">columns of the entity to be updated</param>
         /// <returns></returns>
-        public async Task<bool> UpdateByWhere(TEntity updateObj, Expression<Func<TEntity, object>> whereColumns)
+        public async Task<bool> UpdateAsync(Expression<Func<TEntity, object>> updateColumns)
         {
-            return await Db.Updateable(updateObj).WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<TEntity>().UpdateColumns(updateColumns).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
-        /// 根据主键批量更新某一列
+        /// Updates some columns of an existing entity by primary keys.
         /// </summary>
-        /// <param name="ids">主键</param>
-        /// <param name="updateExpression">某一列</param>
+        /// <param name="ids">Primary keys</param>
+        /// <param name="updateColumns">columns of the entity to be updated</param>
         /// <returns></returns>
-        public async Task<bool> UpdateByIds(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateExpression)
+        public async Task<bool> UpdateAsync(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateColumns)
         {
-            return await Db.Updateable<TEntity>().SetColumns(updateExpression).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<TEntity>().SetColumns(updateColumns).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
 
         #endregion
 
         #region Delete
         /// <summary>
-        /// 根据主键删除(假删除)
+        /// Deletes an entity by function.
         /// </summary>
-        /// <param name="id">主键</param>
+        /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
-        public async Task<bool> DeleteById(TPrimaryKey id)
+        public async Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            //TODO IsDeleteD
-            return await Db.Updateable<TEntity>().Where(it => SqlFunc.Equals(it.Id, id)).ExecuteCommandHasChangeAsync();
-        }
-
-        /// <summary>
-        /// 真删除
-        /// </summary>
-        /// <param name="whereExpression"></param>
-        /// <returns></returns>
-        public async Task<bool> DeleteByWhere(Expression<Func<TEntity, bool>> whereExpression)
-        {
-            return await Db.Deleteable<TEntity>().Where(whereExpression).ExecuteCommandHasChangeAsync();
+            return await Db.Deleteable<TEntity>().Where(predicate).ExecuteCommandHasChangeAsync();
         }
         #endregion
 
         #region Tran
         /// <summary>
-        /// 使用事务
+        /// use tran
         /// </summary>
-        /// <param name="action"></param>
+        /// <param name="action">action that need to used in tran</param>
         /// <returns></returns>
         public async Task<DbResult<bool>> UseTranAsync(Action action)
         {

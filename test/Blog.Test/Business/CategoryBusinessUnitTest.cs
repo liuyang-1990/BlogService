@@ -95,7 +95,7 @@ namespace Blog.Test.Business
         {
             _categoryRepository
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
-            _categoryRepository.Setup(x => x.Update(It.IsAny<CategoryInfo>())).ReturnsAsync(true);
+            _categoryRepository.Setup(x => x.UpdateAsync(It.IsAny<CategoryInfo>())).ReturnsAsync(true);
             var actualModel = await _categoryBusiness.Update(categoryInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

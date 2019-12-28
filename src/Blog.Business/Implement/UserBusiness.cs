@@ -93,7 +93,7 @@ namespace Blog.Business.Implement
                 return response;
             }
             userInfo.Password = _md5Helper.Encrypt(request.Password);
-            response.IsSuccess = await _userRepository.Update(userInfo, it => it.Password);
+            response.IsSuccess = await _userRepository.UpdateAsync(it => new UserInfo { Password = userInfo.Password });
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
 
@@ -102,7 +102,7 @@ namespace Blog.Business.Implement
         public async Task<ResultModel<string>> UpdateStatus(UpdateStatusRequest request)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await _userRepository.UpdateByIds(request.Ids, it => it.Status == request.Status);
+            response.IsSuccess = await _userRepository.UpdateAsync(request.Ids, it => it.Status == request.Status);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

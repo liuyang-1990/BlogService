@@ -64,7 +64,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Update(T entity)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.Update(entity);
+            response.IsSuccess = await BaseRepository.UpdateAsync(entity);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }
@@ -78,7 +78,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Delete(string id)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.DeleteById(id);
+            response.IsSuccess = await BaseRepository.UpdateAsync(it => new { IsDeleted = 1 });
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

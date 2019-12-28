@@ -15,7 +15,7 @@ namespace Blog.Api.Controllers
     [ApiVersion("1.0")]
     [BlogApiController]
     [EnableCors("LimitRequests")]//支持跨域
-    [Authorize(Policy = "Admin")]
+   // [Authorize(Policy = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserBusiness _userBusiness;
