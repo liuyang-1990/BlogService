@@ -34,7 +34,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _categoryRepository
-                .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<CategoryInfo, bool>>>()))
+                .Setup(x => x.Query(It.IsAny<GridParams>(), It.IsAny<Expression<Func<CategoryInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _categoryBusiness.GetPageList(new CategorySearchRequest());
             var actualStr = JsonConvert.SerializeObject(actualModel);
@@ -50,7 +50,7 @@ namespace Blog.Test.Business
         {
             _categoryRepository
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
-            _categoryRepository.Setup(x => x.Insert(It.IsAny<CategoryInfo>())).ReturnsAsync(1);
+            _categoryRepository.Setup(x => x.InsertAsync(It.IsAny<CategoryInfo>())).ReturnsAsync(1);
             var actualModel = await _categoryBusiness.Insert(categoryRequest);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

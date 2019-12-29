@@ -40,7 +40,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _userRepository
-                .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>()))
+                .Setup(x => x.Query(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _userBusiness.GetPageList(new UserSearchRequest() { Status = 1 });
             var actualStr = JsonConvert.SerializeObject(actualModel);
@@ -55,7 +55,7 @@ namespace Blog.Test.Business
 
             _userRepository
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<UserInfo, bool>>>())).ReturnsAsync(isExist);
-            _userRepository.Setup(x => x.Insert(It.IsAny<UserInfo>())).ReturnsAsync(1);
+            _userRepository.Setup(x => x.InsertAsync(It.IsAny<UserInfo>())).ReturnsAsync(1);
             var actualModel = await _userBusiness.Insert(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);

@@ -37,7 +37,7 @@ namespace Blog.Business.Implement
                 .AndIF(true, it => it.Status == request.Status)
                 .AndIF(!string.IsNullOrEmpty(request.UserName), it => it.UserName.Contains(request.UserName))
                 .ToExpression();
-            return await _userRepository.QueryByPage(request, exp);
+            return await _userRepository.Query(request, exp);
         }
 
 

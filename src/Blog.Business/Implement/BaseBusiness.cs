@@ -23,7 +23,7 @@ namespace Blog.Business.Implement
         /// <returns></returns>
         public virtual async Task<JsonResultModel<T>> GetPageList(GridParams param, Expression<Func<T, bool>> expression)
         {
-            return await BaseRepository.QueryByPage(param, expression);
+            return await BaseRepository.Query(param, expression);
         }
         /// <summary>
         /// 根据ID查询一条数据
@@ -51,7 +51,7 @@ namespace Blog.Business.Implement
         public virtual async Task<ResultModel<string>> Insert(T entity)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await BaseRepository.Insert(entity) > 0;
+            response.IsSuccess = await BaseRepository.InsertAsync(entity) > 0;
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

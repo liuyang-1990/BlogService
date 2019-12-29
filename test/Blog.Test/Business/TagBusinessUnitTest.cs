@@ -33,7 +33,7 @@ namespace Blog.Test.Business
         {
             _tagRespoitory
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
-            _tagRespoitory.Setup(x => x.Insert(It.IsAny<TagInfo>())).ReturnsAsync(1);
+            _tagRespoitory.Setup(x => x.InsertAsync(It.IsAny<TagInfo>())).ReturnsAsync(1);
             var actualModel = await _tagBusiness.Insert(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
@@ -72,7 +72,7 @@ namespace Blog.Test.Business
                 TotalRows = 10
             };
             _tagRespoitory
-                .Setup(x => x.QueryByPage(It.IsAny<GridParams>(), It.IsAny<Expression<Func<TagInfo, bool>>>()))
+                .Setup(x => x.Query(It.IsAny<GridParams>(), It.IsAny<Expression<Func<TagInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
             var actualModel = await _tagBusiness.GetPageList(new TagSearchRequest());
             var actualStr = JsonConvert.SerializeObject(actualModel);

@@ -17,111 +17,120 @@ namespace Blog.Repository
     public interface IBaseRepository<TEntity, TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, new()
     {
 
+        #region Query/Get
         /// <summary>
-        /// 查询是否存在
+        ///  Query for existence with given predicate.
         /// </summary>
         /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
-        /// 查询所有
+        /// Get All Entities
         /// </summary>
         /// <returns></returns>
         Task<List<TEntity>> QueryAll();
 
         /// <summary>
-        /// 分页查询
+        /// Gets entities with given predicate,page & sort params.
         /// </summary>
-        /// <param name="param">分页以及排序参数</param>
-        /// <param name="whereExpression">条件</param>
+        /// <param name="param">page & sort</param>
+        /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
-        Task<JsonResultModel<TEntity>> QueryByPage(GridParams param, Expression<Func<TEntity, bool>> whereExpression);
+        Task<JsonResultModel<TEntity>> Query(GridParams param, Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
-        ///  分页查询
+        /// Gets entities with given predicate,page & sort params.
         /// </summary>
-        /// <param name="param">分页以及排序参数</param>
-        /// <param name="whereExpression">条件</param>
-        /// <param name="groupByExpression">groupBy</param>
-        /// <param name="selectExpression">select</param>
-        /// <param name="totalCount">返回总条数</param>
+        /// <param name="param">page & sort</param>
+        /// <param name="predicate">A condition to filter entities</param>
+        /// <param name="groupBy">groupBy</param>
+        /// <param name="select">columns to be selected</param>
+        /// <param name="totalCount">total count</param>
         /// <returns></returns>
-        Task<List<TResult>> QueryByPage<TResult>(GridParams param,
-            Expression<Func<TEntity, bool>> whereExpression,
-            Expression<Func<TEntity, object>> groupByExpression,
-            Expression<Func<TEntity, TResult>> selectExpression,
+        Task<List<TResult>> Query<TResult>(GridParams param,
+            Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, object>> groupBy,
+            Expression<Func<TEntity, TResult>> select,
             RefAsync<int> totalCount);
 
         /// <summary>
         /// Gets exactly one entity with given predicate.
         /// Throws exception if no entity or more than one entity.
         /// </summary>
-        /// <param name="predicate">a filter</param>
+        /// <param name="predicate">A condition to filter entities</param>
         /// <returns>entity</returns>
         Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate);
 
         /// <summary>
-        /// 根据ID查询一条数据
+        /// Gets exactly one entity with primary key
+        /// Throws exception if no entity or more than one entity.
         /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns></returns>
+        /// <param name="id">primary key</param>
+        /// <returns>entity</returns>
         Task<TEntity> SingleAsync(TPrimaryKey id);
 
-
         /// <summary>
-        ///  根据ID查询数据列表
+        /// get entities with given primary keys
         /// </summary>
-        /// <param name="ids"></param>
+        /// <param name="ids">primary keys</param>
         /// <returns></returns>
-        Task<List<TEntity>> QueryByIds(List<TPrimaryKey> ids);
+        Task<List<TEntity>> Query(List<TPrimaryKey> ids);
 
         /// <summary>
-        /// 根据ID查询数据列表
+        /// get some columns of entities with given primary keys
         /// </summary>
-        /// <typeparam name="TResult">返回的对象</typeparam>
-        /// <param name="ids">主键</param>
-        /// <param name="selectExpression">查询某几列</param>
+        /// <typeparam name="TResult">the return entity</typeparam>
+        /// <param name="ids">primary keys</param>
+        /// <param name="select">columns to be selected</param>
         /// <returns></returns>
-        Task<List<TResult>> QueryByIds<TResult>(List<TPrimaryKey> ids, Expression<Func<TEntity, TResult>> selectExpression);
+        Task<List<TResult>> Query<TResult>(List<TPrimaryKey> ids, Expression<Func<TEntity, TResult>> select);
+
         /// <summary>
-        ///  根据where条件查询某几列
+        /// get some columns with given predicate
         /// </summary>
-        /// <param name="whereExpression">where条件</param>
-        /// <param name="selectExpression">查询某几列</param>
+        /// <param name="predicate">A condition to filter entities</param>
+        /// <param name="select">columns to be selected</param>
         /// <returns></returns>
-        Task<List<TResult>> QueryByWhere<TResult>(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TResult>> selectExpression);
+        Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> select);
+        #endregion
+
+        #region Join Query
+        /// <summary>
+        /// Multi-table join query
+        /// </summary>
+        /// <typeparam name="TEntity1">Entity1</typeparam>
+        /// <typeparam name="TEntity2">Entity2</typeparam>
+        /// <typeparam name="TResult">return result</typeparam>
+        /// <param name="join">a condition to join</param>
+        /// <param name="select">columns of the TResult</param>
+        /// <param name="predicate">A condition to filter entities</param>
+        /// <returns>Entity</returns>
+        Task<TResult> JoinQuery<TEntity1, TEntity2, TResult>(
+            Expression<Func<TEntity1, TEntity2, object[]>> join,
+            Expression<Func<TEntity1, TEntity2, TResult>> select,
+            Expression<Func<TEntity1, TEntity2, bool>> predicate);
+
+        #endregion
+
+        #region Insert
+        /// <summary>
+        /// insert an entity 
+        /// </summary>
+        /// <param name="entity">Entity</param>
+        /// <returns>primary key of the entity</returns>
+        Task<int> InsertAsync(TEntity entity);
 
         /// <summary>
-        /// 多表联合查询
+        /// insert entities(Fast performance)
         /// </summary>
-        /// <typeparam name="T1">一表</typeparam>
-        /// <typeparam name="T2">二表</typeparam>
-        /// <typeparam name="T3">返回实体</typeparam>
-        /// <param name="joinExpression"></param>
-        /// <param name="selectExpression"></param>
-        /// <param name="whereLambda"></param>
+        /// <param name="listEntity">Entities</param>
         /// <returns></returns>
-        Task<T3> JoinQuery<T1, T2, T3>(
-            Expression<Func<T1, T2, object[]>> joinExpression,
-            Expression<Func<T1, T2, T3>> selectExpression,
-            Expression<Func<T1, T2, bool>> whereLambda);
+        Task<int> InsertAsync(List<TEntity> listEntity);
 
+        #endregion
 
-        /// <summary>
-        /// 新增实体数据
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>返回自增量</returns>
-        Task<int> Insert(TEntity entity);
-
-        /// <summary>
-        /// 批量插入实体(性能很快不用操心）
-        /// </summary>
-        /// <param name="listEntity"></param>
-        /// <returns>受影响行数</returns>
-        Task<int> Insert(List<TEntity> listEntity);
-
+        #region Update
         /// <summary>
         ///  Updates an existing entity by primary key.
         /// </summary>
@@ -138,19 +147,20 @@ namespace Blog.Repository
         Task<bool> UpdateAsync(TEntity entity, Expression<Func<TEntity, object>> whereColumns);
 
         /// <summary>
-        /// Updates some columns of an existing entity.
+        /// Updates some columns of an existing entity by primary key.
         /// </summary>
         /// <param name="updateColumns">columns of TEntity to be updated</param>
         /// <returns></returns>
         Task<bool> UpdateAsync(Expression<Func<TEntity, object>> updateColumns);
 
         /// <summary>
-        /// Updates some columns of an existing entity by primary keys.
+        /// Updates a column of an existing entity by primary keys.
         /// </summary>
         /// <param name="ids">Primary keys</param>
-        /// <param name="updateColumns">columns of the entity to be updated</param>
+        /// <param name="updateColumns">a column of the entity to be updated</param>
         /// <returns></returns>
         Task<bool> UpdateAsync(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateColumns);
+        #endregion
 
         #region Delete
         /// <summary>
