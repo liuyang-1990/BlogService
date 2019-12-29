@@ -40,7 +40,7 @@ namespace Blog.Test.Business
             _userRepository
                 .Setup(x => x.Query(It.IsAny<GridParams>(), It.IsAny<Expression<Func<UserInfo, bool>>>()))
                 .ReturnsAsync(() => expectedModel);
-            var actualModel = await _userBusiness.GetPageList(new UserSearchRequest() { Status = 1 });
+            var actualModel = await _userBusiness.GetPageList(new UserSearchRequest() { IsActive = true });
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);

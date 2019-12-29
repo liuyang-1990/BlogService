@@ -12,7 +12,7 @@
         /// </summary>
         public string Abstract { get; set; }
 
-        public int IsOriginal { get; set; }
+        public bool IsOriginal { get; set; }
 
         /// <summary>
         /// 访问量
@@ -37,7 +37,7 @@
         /// <summary>
         /// 文章状态 1发布  0草稿
         /// </summary>
-        public int Status { get; set; }
+        public bool IsPublished { get; set; }
 
         public string ImageUrl { get; set; }
     }

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
+using Blog.Model.Entities;
 
 namespace Blog.Model.Request.User
 {
-    public class UpdateStatusRequest
+    public class UpdateStatusRequest : IPassivable
     {
         public List<int> Ids { get; set; }
-
-        public int Status { get; set; }
-
+        public bool IsActive { get; set; }
     }
 }

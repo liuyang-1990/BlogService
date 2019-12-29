@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Blog.Model.Entities;
 
 namespace Blog.Model.Request.Category
 {
-    public class UpdateCategoryRequest : CommonCategoryRequest
+    public class UpdateCategoryRequest : CommonCategoryRequest, IEntity<int>
     {
         [Required]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
     }
 }

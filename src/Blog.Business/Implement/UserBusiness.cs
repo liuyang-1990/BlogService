@@ -33,7 +33,7 @@ namespace Blog.Business.Implement
         public async Task<JsonResultModel<UserInfo>> GetPageList(UserSearchRequest request)
         {
             var exp = Expressionable.Create<UserInfo>()
-                .AndIF(true, it => it.Status == request.Status)
+                .AndIF(true, it => it.IsActive == request.IsActive)
                 .AndIF(!string.IsNullOrEmpty(request.UserName), it => it.UserName.Contains(request.UserName))
                 .ToExpression();
             return await _userRepository.Query(request, exp);
@@ -95,7 +95,7 @@ namespace Blog.Business.Implement
         public async Task<ResultModel<string>> UpdateStatus(UpdateStatusRequest request)
         {
             var response = new ResultModel<string>();
-            response.IsSuccess = await _userRepository.UpdateAsync(request.Ids, it => it.Status == request.Status);
+            response.IsSuccess = await _userRepository.UpdateAsync(request.Ids, it => it.IsActive == request.IsActive);
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
         }

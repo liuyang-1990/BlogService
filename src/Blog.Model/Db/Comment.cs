@@ -6,15 +6,15 @@ namespace Blog.Model.Db
     /// 评论/回复表
     /// </summary>
     [SugarTable("tbl_comment")]
-    public class Comment:BaseEntity
+    public class Comment : BaseEntity
     {
         [SugarColumn(ColumnName = "parent_id")]
-        public string ParentId { get; set; }
+        public int ParentId { get; set; }
 
         /// <summary>
         /// 留言内容
         /// </summary>
-        public string Content  { get; set; }
+        public string Content { get; set; }
 
         /// <summary>
         /// 留言人

@@ -48,7 +48,7 @@ namespace Blog.Business.Implement
         /// <returns></returns>
         public async Task<JsonResultModel<ArticleInfo>> GetPageList(ArticleSearchRequest request)
         {
-            var exp = Expressionable.Create<ArticleInfo>().AndIF(request.Status.HasValue, it => it.Status == request.Status);
+            var exp = Expressionable.Create<ArticleInfo>().AndIF(request.IsPublished.HasValue, it => it.IsPublished == request.IsPublished);
             if (string.IsNullOrEmpty(request.StartTime))
             {
                 request.StartTime = "1970-01-01";
@@ -73,7 +73,7 @@ namespace Blog.Business.Implement
                 Abstract = request.Abstract,
                 Title = request.Title,
                 IsOriginal = request.IsOriginal,
-                Status = request.Status,
+                IsPublished = request.IsPublished,
                 Likes = request.Likes,
                 Views = request.Views,
                 Comments = request.Comments,
@@ -125,7 +125,7 @@ namespace Blog.Business.Implement
                 Views = request.Views,
                 Comments = request.Comments,
                 IsOriginal = request.IsOriginal,
-                Status = request.Status,
+                IsPublished = request.IsPublished,
                 ImageUrl = request.ImageUrl,
                 ModifyTime = DateTime.Now
             };
@@ -183,10 +183,10 @@ namespace Blog.Business.Implement
                        Comments = ai.Comments,
                        Likes = ai.Likes,
                        Views = ai.Views,
-                       Status = ai.Status,
+                       IsPublished = ai.IsPublished,
                        CreateTime = ai.CreateTime
                    },
-                   (ai, ac) => ai.Id == id && ai.IsDeleted == 0
+                   (ai, ac) => ai.Id == id && !ai.IsDeleted
                    );
             //分类信息
             var cIds = await _articleCategoryRepository.Query(x => x.ArticleId == id, x => x.CategoryId);

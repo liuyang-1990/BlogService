@@ -1,5 +1,6 @@
 ﻿using Blog.Model.ViewModel;
 using System.Collections.Generic;
+using Blog.Model.Entities;
 
 namespace Blog.Model.Response
 {
@@ -14,10 +15,8 @@ namespace Blog.Model.Response
 
     }
 
-    public class Property
+    public class Property : Entity
     {
-        public int Id { get; set; }
-
         public string Value { get; set; }
     }
 }

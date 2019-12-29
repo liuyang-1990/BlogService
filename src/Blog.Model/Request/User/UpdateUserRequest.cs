@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Blog.Model.Entities;
 
 namespace Blog.Model.Request.User
 {
-    public class UpdateUserRequest : AddUserRequest
+    public class UpdateUserRequest : AddUserRequest, IEntity<int>
     {
         [Required]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
     }
 }

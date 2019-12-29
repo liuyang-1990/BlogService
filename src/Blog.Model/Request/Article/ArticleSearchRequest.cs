@@ -6,6 +6,6 @@
 
         public string EndTime { get; set; }
 
-        public int? Status { get; set; }
+        public bool? IsPublished { get; set; }
     }
 }

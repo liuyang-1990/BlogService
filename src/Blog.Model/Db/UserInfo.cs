@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
 using SqlSugar;
 using System;
+using Blog.Model.Entities;
 
 namespace Blog.Model.Db
 {
     [SugarTable("sys_user_info")]
-    public class UserInfo : BaseEntity
+    public class UserInfo : BaseEntity,IPassivable
     {
         /// <summary>
         /// 用户名
@@ -26,7 +27,7 @@ namespace Blog.Model.Db
         /// <summary>
         /// 状态 1 启用  0 禁用
         /// </summary>
-        public int Status { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// 头像
@@ -62,8 +63,6 @@ namespace Blog.Model.Db
         /// </summary>
         [SugarColumn(ColumnName = "last_login_time")]
         public DateTime? LastLoginTime { get; set; }
-       
-
     }
 
 }

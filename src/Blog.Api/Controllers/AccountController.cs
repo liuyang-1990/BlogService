@@ -43,7 +43,7 @@ namespace Blog.Api.Controllers
                 });
             }
             //用户被禁用
-            if (userInfo.Status == 0)
+            if (!userInfo.IsActive)
             {
                 return BadRequest(new
                 {
