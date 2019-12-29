@@ -1,9 +1,8 @@
 ﻿using Blog.Model.Db;
-using Blog.Model.Request;
+using Blog.Model.Request.User;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using System.Threading.Tasks;
-using Blog.Model.Request.User;
 
 namespace Blog.Business
 {

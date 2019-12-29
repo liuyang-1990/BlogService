@@ -65,7 +65,7 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="request">文章信息</param>
         /// <returns></returns>
-        public async Task<ResultModel<string>> Insert(AddArticleRequest request)
+        public async Task<ResultModel<string>> InsertAsync(AddArticleRequest request)
         {
             var response = new ResultModel<string>();
             var article = new ArticleInfo()
@@ -83,29 +83,27 @@ namespace Blog.Business.Implement
             {
                 Content = request.Content
             };
-
             var result = await _articleRepository.UseTranAsync(async () =>
             {
                 //插入文章基本信息
                 var id = await _articleRepository.InsertAsync(article);
-                content.ArticleId = id.ToString();
+                content.ArticleId = id;
                 //插入文章内容信息
                 await _articleContentRepository.InsertAsync(content);
                 var articleTags = request.TagIds.Select(tagId => new ArticleTag()
                 {
                     TagId = tagId,
-                    ArticleId = id.ToString()
+                    ArticleId = id
                 }).ToList();
                 await _articleTagRepository.InsertAsync(articleTags);
                 var articleCategories = request.CategoryIds.Select(categoryId => new ArticleCategory()
                 {
-                    ArticleId = id.ToString(),
+                    ArticleId = id,
                     CategoryId = categoryId
                 }).ToList();
                 await _articleCategoryRepository.InsertAsync(articleCategories);
             });
             response.IsSuccess = result.IsSuccess;
-            response.Status = response.IsSuccess ? "0" : "1";
             response.ResultInfo = result.ErrorMessage;
             return response;
         }
@@ -115,7 +113,7 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="request">文章信息</param>
         /// <returns></returns>
-        public async Task<ResultModel<string>> Update(UpdateArticleRequest request)
+        public async Task<ResultModel<string>> UpdateAsync(UpdateArticleRequest request)
         {
             var response = new ResultModel<string>();
             var article = new ArticleInfo()
@@ -159,7 +157,6 @@ namespace Blog.Business.Implement
             });
 
             response.IsSuccess = result.IsSuccess;
-            response.Status = response.IsSuccess ? "0" : "1";
             response.ResultInfo = result.ErrorMessage;
             return response;
         }
@@ -169,7 +166,7 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="id">文章id</param>
         /// <returns></returns>
-        public async Task<ArticleDetailResponse> GetArticleDetail(string id)
+        public async Task<ArticleDetailResponse> GetArticleDetail(int id)
         {
             var response = new ArticleDetailResponse();
             //文章详情
@@ -213,7 +210,7 @@ namespace Blog.Business.Implement
         /// <param name="categoryId">分类id</param>
         /// <param name="param">查询参数</param>
         /// <returns></returns>
-        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(int categoryId, GridParams param)
         {
             RefAsync<int> total = 0;
             var articleIds = await _articleCategoryRepository.Query(param,
@@ -234,7 +231,7 @@ namespace Blog.Business.Implement
         /// <param name="tagId">标签id</param>
         /// <param name="param">查询参数</param>
         /// <returns></returns>
-        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(int tagId, GridParams param)
         {
             RefAsync<int> total = 0;
             var articleIds = await _articleTagRepository.Query(param,

@@ -47,7 +47,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ArticleDetailResponse> GetDetailInfo(string id)
+        public async Task<ArticleDetailResponse> GetDetailInfo(int id)
         {
             return await _articleBusiness.GetArticleDetail(id);
         }
@@ -60,7 +60,7 @@ namespace Blog.Api.Controllers
         [HttpPost]
         public async Task<ResultModel<string>> AddArticle([FromBody]AddArticleRequest request)
         {
-            return await _articleBusiness.Insert(request);
+            return await _articleBusiness.InsertAsync(request);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Blog.Api.Controllers
         [HttpPut]
         public async Task<ResultModel<string>> UpdateArticle([FromBody]UpdateArticleRequest request)
         {
-            return await _articleBusiness.Update(request);
+            return await _articleBusiness.UpdateAsync(request);
         }
 
         /// <summary>
@@ -80,9 +80,14 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteArticle(string id)
+        public async Task<IActionResult> DeleteArticle(int id)
         {
-            return await _articleBusiness.Delete(id);
+            var success = await _articleBusiness.SoftDeleteAsync(id);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
 
@@ -94,7 +99,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, [FromQuery]GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(int categoryId, [FromQuery]GridParams param)
         {
             return await _articleBusiness.GetArticleByCategory(categoryId, param);
         }
@@ -107,7 +112,7 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, [FromQuery]GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(int tagId, [FromQuery]GridParams param)
         {
             return await _articleBusiness.GetArticleByTag(tagId, param);
         }

@@ -1,13 +1,14 @@
 ﻿using Blog.Infrastructure;
 using Blog.Infrastructure.DI;
+using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request.Tag;
-using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -32,6 +33,7 @@ namespace Blog.Business.Implement
         {
             return await base.QueryAll();
         }
+
         /// <summary>
         /// 分页获取
         /// </summary>
@@ -50,34 +52,29 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="entity">实体信息</param>
         /// <returns></returns>
-        public override async Task<ResultModel<string>> Insert(TagInfo entity)
+        public override async Task<bool> InsertAsync(TagInfo entity)
         {
-            var response = new ResultModel<string>();
-            var isExist = await _tagRepository.AnyAsync(it => it.TagName == entity.TagName);
-            if (!isExist)
+            var any = await _tagRepository.AnyAsync(it => it.TagName == entity.TagName);
+            if (any)
             {
-                return await base.Insert(entity);
+                throw new ServiceException("tag already exist.", "200") { HttpStatusCode = HttpStatusCode.BadRequest };
             }
-            response.IsSuccess = false;
-            response.Status = "2";//已经存在
-            return response;
+            return await base.InsertAsync(entity);
         }
+
         /// <summary>
         /// 更新标签
         /// </summary>
         /// <param name="entity">实体信息</param>
         /// <returns></returns>
-        public override async Task<ResultModel<string>> Update(TagInfo entity)
+        public override async Task<bool> UpdateAsync(TagInfo entity)
         {
-            var response = new ResultModel<string>();
-            var isExist = await _tagRepository.AnyAsync(it => it.TagName == entity.TagName && it.Id != entity.Id);
-            if (!isExist)
+            var any = await _tagRepository.AnyAsync(it => it.TagName == entity.TagName && it.Id != entity.Id);
+            if (any)
             {
-                return await base.Update(entity);
+                throw new ServiceException("tag already exist.", "200") { HttpStatusCode = HttpStatusCode.BadRequest };
             }
-            response.IsSuccess = false;
-            response.Status = "2";//已经存在
-            return response;
+            return await base.UpdateAsync(entity);
         }
     }
 }

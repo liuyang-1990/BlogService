@@ -15,7 +15,7 @@ namespace Blog.Api.Controllers
     [ApiVersion("1.0")]
     [BlogApiController]
     [EnableCors("LimitRequests")]//支持跨域
-   // [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserBusiness _userBusiness;
@@ -41,9 +41,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<UserInfo> GetDetailInfo(string id)
+        public async Task<UserInfo> GetDetailInfo(int id)
         {
-            return await _userBusiness.GetDetail(id);
+            return await _userBusiness.SingleAsync(id);
         }
 
         /// <summary>
@@ -52,9 +52,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddUser([FromBody]AddUserRequest request)
+        public async Task<IActionResult> AddUser([FromBody]AddUserRequest request)
         {
-            return await _userBusiness.Insert(TinyMapper.Map<UserInfo>(request));
+            var success = await _userBusiness.InsertAsync(TinyMapper.Map<UserInfo>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -63,9 +68,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateUser([FromBody]UpdateUserRequest request)
+        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserRequest request)
         {
-            return await _userBusiness.Update(TinyMapper.Map<UserInfo>(request));
+            var success = await _userBusiness.UpdateAsync(TinyMapper.Map<UserInfo>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -74,9 +84,14 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            return await _userBusiness.Delete(id);
+            var success = await _userBusiness.SoftDeleteAsync(id);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>

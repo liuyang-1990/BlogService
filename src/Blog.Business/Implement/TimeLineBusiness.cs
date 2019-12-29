@@ -11,12 +11,9 @@ namespace Blog.Business.Implement
     [Injector(typeof(ITimeLineBusiness), Lifetime = ServiceLifetime.Scoped)]
     public class TimeLineBusiness : BaseBusiness<TimeLine>, ITimeLineBusiness
     {
-        private readonly ITimeLineRepository _timeLineRepository;
-
         public TimeLineBusiness(ITimeLineRepository timeLineRepository)
         {
             BaseRepository = timeLineRepository;
-            _timeLineRepository = timeLineRepository;
         }
 
         /// <summary>

@@ -12,12 +12,12 @@ namespace Blog.Model.Db
         /// 对应文章ID
         /// </summary>
         [SugarColumn(ColumnName = "article_id")]
-        public string ArticleId { get; set; }
+        public int ArticleId { get; set; }
 
         /// <summary>
         /// 对应标签id
         /// </summary>
         [SugarColumn(ColumnName = "category_id")]
-        public string CategoryId { get; set; }
+        public int CategoryId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Blog.Infrastructure.DI;
+﻿using System.Linq;
+using Blog.Infrastructure.DI;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,6 +27,7 @@ namespace Blog.Infrastructure.Cryptography
             {
                 return null;
             }
+            originStr += AppConst.Salt;
             var md5Hasher = new MD5CryptoServiceProvider();
             var data = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(originStr));
             var sBuilder = new StringBuilder();

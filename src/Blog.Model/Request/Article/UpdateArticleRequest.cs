@@ -5,6 +5,6 @@ namespace Blog.Model.Request.Article
     public class UpdateArticleRequest : AddArticleRequest
     {
         [Required]
-        public string Id { get; set; }
+        public int Id { get; set; }
     }
 }

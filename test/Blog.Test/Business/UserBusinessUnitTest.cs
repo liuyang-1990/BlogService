@@ -6,7 +6,6 @@ using Blog.Model.Request.User;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using System;
@@ -25,10 +24,9 @@ namespace Blog.Test.Business
         public UserBusinessUnitTest()
         {
             var md5Helper = new Mock<IMd5Helper>();
-            var logger = new Mock<ILogger<UserBusiness>>();
             _userRepository = new Mock<IUserRepository>();
             md5Helper.Setup(x => x.Encrypt(It.IsAny<string>(), 32)).Returns("123");
-            _userBusiness = new UserBusiness(_userRepository.Object, md5Helper.Object, logger.Object);
+            _userBusiness = new UserBusiness(_userRepository.Object, md5Helper.Object);
         }
 
         [Fact]
@@ -56,7 +54,7 @@ namespace Blog.Test.Business
             _userRepository
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<UserInfo, bool>>>())).ReturnsAsync(isExist);
             _userRepository.Setup(x => x.InsertAsync(It.IsAny<UserInfo>())).ReturnsAsync(1);
-            var actualModel = await _userBusiness.Insert(userInfo);
+            var actualModel = await _userBusiness.InsertAsync(userInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);

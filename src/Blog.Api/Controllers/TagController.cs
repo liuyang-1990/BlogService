@@ -1,7 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.Tag;
-using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -48,9 +47,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<TagInfo> GetDetailInfo(string id)
+        public async Task<TagInfo> GetDetailInfo(int id)
         {
-            return await _tagBusiness.GetDetail(id);
+            return await _tagBusiness.SingleAsync(id);
         }
         /// <summary>
         /// 新增标签
@@ -58,9 +57,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddTag([FromBody]CommonTagRequest request)
+        public async Task<IActionResult> AddTag([FromBody]CommonTagRequest request)
         {
-            return await _tagBusiness.Insert(TinyMapper.Map<TagInfo>(request));
+            var success = await _tagBusiness.InsertAsync(TinyMapper.Map<TagInfo>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -69,9 +73,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateTag([FromBody]UpdateTagRequest request)
+        public async Task<IActionResult> UpdateTag([FromBody]UpdateTagRequest request)
         {
-            return await _tagBusiness.Update(TinyMapper.Map<TagInfo>(request));
+            var success = await _tagBusiness.UpdateAsync(TinyMapper.Map<TagInfo>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -80,9 +89,14 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteTag(string id)
+        public async Task<IActionResult> DeleteTag(int id)
         {
-            return await _tagBusiness.Delete(id);
+            var success = await _tagBusiness.SoftDeleteAsync(id);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
     }

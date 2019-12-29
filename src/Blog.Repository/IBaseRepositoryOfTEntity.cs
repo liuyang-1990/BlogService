@@ -2,7 +2,7 @@
 
 namespace Blog.Repository
 {
-    public interface IBaseRepository<TEntity> : IBaseRepository<TEntity, string> where TEntity : class, IEntity<string>, new()
+    public interface IBaseRepository<TEntity> : IBaseRepository<TEntity, int> where TEntity : class, IEntity<int>, new()
     {
 
     }

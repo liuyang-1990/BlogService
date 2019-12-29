@@ -1,7 +1,7 @@
 ﻿
 namespace Blog.Model.Entities
 {
-    public abstract class Entity : Entity<string>, IEntity
+    public abstract class Entity : Entity<int>, IEntity
     {
 
     }

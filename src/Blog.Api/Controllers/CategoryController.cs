@@ -1,7 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.Category;
-using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -52,9 +51,9 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<CategoryInfo> GetDetailInfo(string id)
+        public async Task<CategoryInfo> GetDetailInfo(int id)
         {
-            return await _categoryBusiness.GetDetail(id);
+            return await _categoryBusiness.SingleAsync(id);
         }
         /// <summary>
         /// 新增分类
@@ -62,9 +61,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddCategory([FromBody]CommonCategoryRequest request)
+        public async Task<IActionResult> AddCategory([FromBody]CommonCategoryRequest request)
         {
-            return await _categoryBusiness.Insert(TinyMapper.Map<CategoryInfo>(request));
+            var success = await _categoryBusiness.InsertAsync(TinyMapper.Map<CategoryInfo>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -73,9 +77,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateCategory([FromBody]UpdateCategoryRequest request)
+        public async Task<IActionResult> UpdateCategory([FromBody]UpdateCategoryRequest request)
         {
-            return await _categoryBusiness.Update(TinyMapper.Map<CategoryInfo>(request));
+            var success = await _categoryBusiness.UpdateAsync(TinyMapper.Map<CategoryInfo>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -84,9 +93,14 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteCategory(string id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            return await _categoryBusiness.Delete(id);
+            var success = await _categoryBusiness.SoftDeleteAsync(id);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
     }

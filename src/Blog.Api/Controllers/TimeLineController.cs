@@ -1,7 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Model.Db;
 using Blog.Model.Request.TimeLine;
-using Blog.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -34,29 +33,42 @@ namespace Blog.Api.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<TimeLine> GetDetailInfo(string id)
+        public async Task<TimeLine> GetDetailInfo(int id)
         {
-            return await _timeLineBusiness.GetDetail(id);
+            return await _timeLineBusiness.SingleAsync(id);
         }
 
         [HttpPost]
-        public async Task<ResultModel<string>> AddTimeLine([FromBody]CommonTimeLineRequest request)
+        public async Task<IActionResult> AddTimeLine([FromBody]CommonTimeLineRequest request)
         {
-            var timeLine = TinyMapper.Map<TimeLine>(request);
-            return await _timeLineBusiness.Insert(timeLine);
+            var success = await _timeLineBusiness.InsertAsync(TinyMapper.Map<TimeLine>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateTimeLine([FromBody]UpdateTimeLineRequest request)
+        public async Task<IActionResult> UpdateTimeLine([FromBody]UpdateTimeLineRequest request)
         {
-            var timeLine = TinyMapper.Map<TimeLine>(request);
-            return await _timeLineBusiness.Update(timeLine);
+            var success = await _timeLineBusiness.UpdateAsync(TinyMapper.Map<TimeLine>(request));
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ResultModel<string>> DeleteTimeLine(string id)
+        public async Task<object> DeleteTimeLine(int id)
         {
-            return await _timeLineBusiness.Delete(id);
+            var success = await _timeLineBusiness.SoftDeleteAsync(id);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
     }

@@ -2,7 +2,7 @@
 
 namespace Blog.Repository.Implement
 {
-    public class BaseRepository<TEntity> : BaseRepository<TEntity, string> where TEntity : class, IEntity<string>, new()
+    public class BaseRepository<TEntity> : BaseRepository<TEntity, int> where TEntity : class, IEntity<int>, new()
     {
 
     }

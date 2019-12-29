@@ -52,7 +52,7 @@ namespace Blog.Api.Controllers
             }
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Sid,_desEncrypt.Encrypt(userInfo.Id)),
+                new Claim(ClaimTypes.Sid,_desEncrypt.Encrypt(userInfo.Id.ToString())),
                 new Claim(ClaimTypes.NameIdentifier,userInfo.UserName),
                 new Claim(ClaimTypes.Role,Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString())
             };

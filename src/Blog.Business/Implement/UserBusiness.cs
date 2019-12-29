@@ -1,13 +1,14 @@
 ﻿using Blog.Infrastructure.Cryptography;
 using Blog.Infrastructure.DI;
+using Blog.Model;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
 using Blog.Model.ViewModel;
 using Blog.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SqlSugar;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Blog.Business.Implement
@@ -17,13 +18,11 @@ namespace Blog.Business.Implement
     {
         private readonly IMd5Helper _md5Helper;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger<UserBusiness> _logger;
-        public UserBusiness(IUserRepository repository, IMd5Helper md5Helper, ILogger<UserBusiness> logger)
+        public UserBusiness(IUserRepository repository, IMd5Helper md5Helper)
         {
             BaseRepository = repository;
             _md5Helper = md5Helper;
             _userRepository = repository;
-            _logger = logger;
         }
 
         /// <summary>
@@ -41,38 +40,32 @@ namespace Blog.Business.Implement
         }
 
 
-        public override async Task<ResultModel<string>> Insert(UserInfo user)
+        public override async Task<bool> InsertAsync(UserInfo user)
         {
-            var response = new ResultModel<string>();
-            var isExist = await _userRepository.AnyAsync(x => x.UserName == user.UserName);
-            if (isExist)
+            var any = await _userRepository.AnyAsync(x => x.UserName == user.UserName);
+            if (any)
             {
-                response.IsSuccess = false;
-                response.Status = "2";//已经存在
-                return response;
+                throw new ServiceException("user already exist.", "200") { HttpStatusCode = HttpStatusCode.BadRequest };
             }
             if (string.IsNullOrEmpty(user.Password))
             {
-                user.Password = "123456"; //默认密码
+                user.Password = "Blog.Core"; //默认密码
             }
             user.Password = _md5Helper.Encrypt(user.Password);
-            return await base.Insert(user);
+            return await base.InsertAsync(user);
         }
-        public override async Task<ResultModel<string>> Update(UserInfo user)
+        public override async Task<bool> UpdateAsync(UserInfo user)
         {
-            var response = new ResultModel<string>();
-            var isExist = await _userRepository.AnyAsync(x => x.UserName == user.UserName && x.Id != user.Id);
-            if (isExist)
+            var any = await _userRepository.AnyAsync(x => x.UserName == user.UserName && x.Id != user.Id);
+            if (any)
             {
-                response.IsSuccess = false;
-                response.Status = "2";//已经存在
-                return response;
+                throw new ServiceException("user already exist.", "200") { HttpStatusCode = HttpStatusCode.BadRequest };
             }
             if (!string.IsNullOrEmpty(user.Password))
             {
                 user.Password = _md5Helper.Encrypt(user.Password);
             }
-            return await base.Update(user);
+            return await base.UpdateAsync(user);
         }
 
 

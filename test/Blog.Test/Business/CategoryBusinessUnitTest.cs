@@ -51,7 +51,7 @@ namespace Blog.Test.Business
             _categoryRepository
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
             _categoryRepository.Setup(x => x.InsertAsync(It.IsAny<CategoryInfo>())).ReturnsAsync(1);
-            var actualModel = await _categoryBusiness.Insert(categoryRequest);
+            var actualModel = await _categoryBusiness.InsertAsync(categoryRequest);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);
@@ -96,7 +96,7 @@ namespace Blog.Test.Business
             _categoryRepository
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<CategoryInfo, bool>>>())).ReturnsAsync(isExist);
             _categoryRepository.Setup(x => x.UpdateAsync(It.IsAny<CategoryInfo>())).ReturnsAsync(true);
-            var actualModel = await _categoryBusiness.Update(categoryInfo);
+            var actualModel = await _categoryBusiness.UpdateAsync(categoryInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);

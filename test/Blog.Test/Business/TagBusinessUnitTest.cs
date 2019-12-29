@@ -34,7 +34,7 @@ namespace Blog.Test.Business
             _tagRespoitory
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
             _tagRespoitory.Setup(x => x.InsertAsync(It.IsAny<TagInfo>())).ReturnsAsync(1);
-            var actualModel = await _tagBusiness.Insert(tagInfo);
+            var actualModel = await _tagBusiness.InsertAsync(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);
@@ -95,7 +95,7 @@ namespace Blog.Test.Business
             _tagRespoitory
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<TagInfo, bool>>>())).ReturnsAsync(isExist);
             _tagRespoitory.Setup(x => x.UpdateAsync(It.IsAny<TagInfo>())).ReturnsAsync(true);
-            var actualModel = await _tagBusiness.Update(tagInfo);
+            var actualModel = await _tagBusiness.UpdateAsync(tagInfo);
             var actualStr = JsonConvert.SerializeObject(actualModel);
             var expectedStr = JsonConvert.SerializeObject(expectedModel);
             Assert.Equal(expectedStr, actualStr);

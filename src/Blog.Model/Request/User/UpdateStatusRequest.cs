@@ -4,7 +4,7 @@ namespace Blog.Model.Request.User
 {
     public class UpdateStatusRequest
     {
-        public List<string> Ids { get; set; }
+        public List<int> Ids { get; set; }
 
         public int Status { get; set; }
 

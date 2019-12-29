@@ -16,7 +16,7 @@ namespace Blog.Model.Response
 
     public class Property
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         public string Value { get; set; }
     }

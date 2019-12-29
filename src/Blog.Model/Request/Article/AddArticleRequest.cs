@@ -8,11 +8,11 @@ namespace Blog.Model.Request.Article
         /// <summary>
         /// 标签
         /// </summary>
-        public List<string> TagIds { get; set; }
+        public List<int> TagIds { get; set; }
 
         /// <summary>
         /// 分类
         /// </summary>
-        public List<string> CategoryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
     }
 }
