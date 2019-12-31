@@ -5,7 +5,7 @@ namespace Blog.Api.Controllers
 {
     [ApiController]
     [ApiVersion("2.0")]
-    [ApiVersion("0.9", Deprecated = true)]
+    [ApiVersion("1.1", Deprecated = true)]
     [BlogApiController]
     public class ValuesController : ControllerBase
     {

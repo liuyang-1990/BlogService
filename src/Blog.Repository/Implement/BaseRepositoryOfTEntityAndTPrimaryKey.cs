@@ -190,7 +190,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public async Task<bool> UpdateAsync(TEntity entity)
         {
-            return await Db.Updateable(entity).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(entity).IgnoreColumns(true).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Blog.Repository.Implement
         /// <returns></returns>
         public async Task<bool> UpdateAsync(TEntity entity, Expression<Func<TEntity, object>> whereColumns)
         {
-            return await Db.Updateable(entity).WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable(entity).IgnoreColumns(true).WhereColumns(whereColumns).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>

@@ -40,7 +40,7 @@ namespace Blog.Infrastructure.ServiceCollectionExtension
                     var logger = o.GetService<ILogger<SqlSugarClient>>();
                     logger.LogError("[SQL]:" + exp.Sql + "[Parameters]:" + exp.Parametres);
                     logger.LogError(Environment.NewLine);
-                    logger.LogError(exp.InnerException.ToString());
+                    logger.LogError(exp.Message);
                 };
                 return sqlSugarClient;
             });

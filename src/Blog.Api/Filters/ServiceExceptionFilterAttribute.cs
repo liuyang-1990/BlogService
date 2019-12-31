@@ -11,23 +11,23 @@ namespace Blog.Api.Filters
         {
             if (context.Exception is ServiceException exception)
             {
-                var code = exception.HttpStatusCode != default(HttpStatusCode)
-                     ? exception.HttpStatusCode
-                     : HttpStatusCode.InternalServerError;
+                var statusCode = exception.HttpStatusCode != default ? exception.HttpStatusCode : HttpStatusCode.InternalServerError;
+                context.HttpContext.Response.StatusCode = (int)statusCode;
                 context.Result = new JsonResult(new
                 {
-                    ResponseCode = code.ToString(),
+                    ResponseCode = exception.ResponseCode,
                     Msg = context.Exception.Message,
-                    StatusCode = exception.ResponseCode
+                    StatusCode = statusCode
                 });
             }
             else
             {
+                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Result = new JsonResult(new
                 {
                     ResponseCode = HttpStatusCode.InternalServerError.ToString(),
                     Msg = context.Exception.Message,
-                    StatusCode = context.HttpContext.Response.StatusCode,
+                    StatusCode = HttpStatusCode.InternalServerError,
                 });
             }
         }

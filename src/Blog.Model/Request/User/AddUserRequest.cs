@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Blog.Model.Entities;
 
 namespace Blog.Model.Request.User
 {
-    public class AddUserRequest
+    public class AddUserRequest : IPassivable
     {
         /// <summary>
         /// 用户名
@@ -23,7 +24,7 @@ namespace Blog.Model.Request.User
         /// <summary>
         /// 状态 1 启用  0 禁用
         /// </summary>
-        public int Status { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// 头像
