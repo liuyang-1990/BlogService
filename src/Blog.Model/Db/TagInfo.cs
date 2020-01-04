@@ -11,9 +11,10 @@ namespace Blog.Model.Db
         /// <summary>
         /// 标签名称
         /// </summary>
-        [SugarColumn(ColumnName = "tag_name")]
+        [SugarColumn(ColumnName = "tag_name", Length = 20, IsNullable = false)]
         public string TagName { get; set; }
 
+        [SugarColumn(Length = 50, IsNullable = true)]
         public string Description { get; set; }
     }
 }

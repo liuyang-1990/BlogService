@@ -11,11 +11,13 @@ namespace Blog.Model.Db
         /// <summary>
         /// 标题
         /// </summary>
+        [SugarColumn(Length = 200, IsNullable = true)]
         public string Title { get; set; }
 
         /// <summary>
         /// 摘要
         /// </summary>
+        [SugarColumn(Length = 500, IsNullable = true)]
         public string Abstract { get; set; }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace Blog.Model.Db
         /// <summary>
         /// 摘要右侧图片
         /// </summary>
-        [SugarColumn(ColumnName = "image_url")]
+        [SugarColumn(ColumnName = "image_url", Length = 200, IsNullable = true)]
         public string ImageUrl { get; set; }
         /// <summary>
         /// 是否置顶

@@ -8,10 +8,10 @@ namespace Blog.Model.Db
         /// <summary>
         /// 对应文章ID
         /// </summary>
-        [SugarColumn(ColumnName = "article_id")]
+        [SugarColumn(ColumnName = "article_id", IsNullable = false)]
         public int ArticleId { get; set; }
 
-        [SugarColumn(ColumnName = "comment_id")]
+        [SugarColumn(ColumnName = "comment_id", IsNullable = false)]
         public int CommentId { get; set; }
 
 
