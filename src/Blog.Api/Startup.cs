@@ -1,13 +1,9 @@
-﻿using AspectCore.Configuration;
-using AspectCore.Extensions.DependencyInjection;
-using Blog.Api.Filters;
-using Blog.Api.Interceptors;
+﻿using Blog.Api.Filters;
 using Blog.Infrastructure.DI;
 using Blog.Infrastructure.ServiceCollectionExtension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -188,19 +184,7 @@ namespace Blog.Api
             //    option.AddProtectValue<JsonResult>(r => r.Value);
             //});
             #endregion
-
-            #region AOP
-
-            services.ConfigureDynamicProxy(config =>
-            {
-                //只对以Business结尾的Service有效
-                config.Interceptors.AddTyped<BlogRedisCacheInterceptor>(Predicates.ForService("*Business"));
-                config.Interceptors.AddTyped<MiniProfilerInterceptor>(Predicates.ForService("*Business"));
-                //全局拦截
-                //config.Interceptors.AddTyped<MiniProfilerInterceptor>();
-            });
-            #endregion
-
+            
             #region API版本控制
             services.AddApiVersioning(options =>
             {

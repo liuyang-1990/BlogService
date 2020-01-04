@@ -7,16 +7,12 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Blog.Infrastructure.DI;
 
 namespace Blog.Api.Interceptors
 {
     public class BlogRedisCacheInterceptor : AbstractInterceptorAttribute
     {
-        private readonly IDistributedCache _distributedCache;
-        public BlogRedisCacheInterceptor(IDistributedCache distributedCache)
-        {
-            _distributedCache = distributedCache;
-        }
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
             var methodInfo = context.ImplementationMethod;
@@ -35,8 +31,11 @@ namespace Blog.Api.Interceptors
             var cachingAttribute = methodInfo.GetCustomAttribute<CachingAttribute>();
             //获取缓存key
             var key = string.IsNullOrEmpty(cachingAttribute.CacheKey) ? GetCustomKey(context) : cachingAttribute.CacheKey;
+
+            var distributedCache = CoreContainer.Current.GetService<IDistributedCache>();
+
             //获取缓存值
-            var value = await _distributedCache.GetStringAsync(key);
+            var value = await distributedCache.GetStringAsync(key);
             //没有值先执行方法,后存入缓存中
             if (string.IsNullOrEmpty(value))
             {
@@ -48,7 +47,7 @@ namespace Blog.Api.Interceptors
                     return;
                 }
                 var val = JsonConvert.SerializeObject(returnValue);
-                await _distributedCache.SetAsync(key, val, new DistributedCacheEntryOptions()
+                await distributedCache.SetAsync(key, val, new DistributedCacheEntryOptions()
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cachingAttribute.AbsoluteExpiration)
                 });
