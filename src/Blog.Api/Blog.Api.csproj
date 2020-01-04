@@ -5,6 +5,8 @@
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591;</NoWarn>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
