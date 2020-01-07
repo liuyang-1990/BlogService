@@ -1,6 +1,7 @@
 ﻿using Blog.Api.Filters;
 using Blog.Infrastructure.DI;
 using Blog.Infrastructure.ServiceCollectionExtension;
+using Blog.Model.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -158,7 +159,7 @@ namespace Blog.Api
                 options.DbType = (DbType)Enum.Parse(typeof(DbType), Configuration["ConnectionStrings:DbType"]);
                 options.ConnectionString = Configuration["ConnectionStrings:ConnectionString"];
                 options.IsAutoCloseConnection = true;
-                options.InitKeyType = InitKeyType.SystemTable;
+                options.InitKeyType = InitKeyType.Attribute;
                 options.IsShardSameThread = true;
                 options.AopEvents = new AopEvents()
                 {
@@ -175,6 +176,11 @@ namespace Blog.Api
             services.AddHttpClient();
             services.AddMemoryCache();
             services.AddResponseCompression();
+
+            #region Seed
+            services.AddScoped(typeof(SeedHelper));
+            #endregion
+
             #region DataProtection
             //services.AddDataProtection().AddParamProtection(option =>
             //{
@@ -184,7 +190,7 @@ namespace Blog.Api
             //    option.AddProtectValue<JsonResult>(r => r.Value);
             //});
             #endregion
-            
+
             #region API版本控制
             services.AddApiVersioning(options =>
             {
@@ -208,7 +214,8 @@ namespace Blog.Api
             CoreContainer.Current.BuildServiceProvider(services);
             #endregion
 
-
+            var seed = CoreContainer.Current.GetService<SeedHelper>();
+            seed.SeedAsync().ConfigureAwait(false);
         }
 
         /// <summary>

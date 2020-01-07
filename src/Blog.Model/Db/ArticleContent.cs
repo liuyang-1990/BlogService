@@ -18,7 +18,7 @@ namespace Blog.Model.Db
         /// 内容
         /// </summary>
         //自动转码和解码->方便插入表情，不需要对表做任何配置
-        [SugarColumn(IsTranscoding = true, ColumnDataType = "text,varchar(max)", IsNullable = false)]
+        [SugarColumn(IsTranscoding = true, ColumnDataType = "text", IsNullable = false)]
         public string Content { get; set; }
 
     }

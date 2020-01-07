@@ -17,7 +17,7 @@ namespace Blog.Model
         /// 是否删除 0 未删除 1 已删除
         /// </summary>
         [JsonIgnore]
-        [SugarColumn(ColumnName = "is_deleted")]
+        [SugarColumn(ColumnName = "is_deleted", DefaultValue = "0")]
         public bool IsDeleted { get; set; }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Blog.Model
         /// 修改时间
         /// </summary>
         [JsonIgnore]
-        [SugarColumn(IsOnlyIgnoreInsert = true)]
+        [SugarColumn(IsOnlyIgnoreInsert = true, IsNullable = true)]
         public DateTime? ModifyTime { get; set; }
     }
 }

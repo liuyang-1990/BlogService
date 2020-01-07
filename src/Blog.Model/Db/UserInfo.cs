@@ -71,7 +71,7 @@ namespace Blog.Model.Db
         /// <summary>
         /// 上次登录时间
         /// </summary>
-        [SugarColumn(ColumnName = "last_login_time")]
+        [SugarColumn(ColumnName = "last_login_time", IsNullable = true)]
         public DateTime? LastLoginTime { get; set; }
     }
 

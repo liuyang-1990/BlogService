@@ -14,7 +14,7 @@ namespace Blog.Model.Db
         /// <summary>
         /// 留言内容
         /// </summary>
-        [SugarColumn(ColumnDataType = "text,varchar(max)", IsNullable = false)]
+        [SugarColumn(ColumnDataType = "text", IsNullable = false)]
         public string Content { get; set; }
 
         /// <summary>
