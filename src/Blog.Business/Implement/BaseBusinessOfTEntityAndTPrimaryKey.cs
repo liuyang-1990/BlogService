@@ -10,55 +10,59 @@ using System.Threading.Tasks;
 namespace Blog.Business.Implement
 {
 
-    public class BaseBusiness<TEntity, TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, new()
+    public class BaseBusiness<TEntity, TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, IHasModificationTime, ISoftDelete, new()
     {
         protected IBaseRepository<TEntity, TPrimaryKey> BaseRepository;
 
         /// <summary>
-        /// 分页查询
+        /// Gets entities with given predicate,page & sort params.
         /// </summary>
-        /// <param name="param">分页以及排序参数</param>
-        /// <param name="predicate">条件</param>
+        /// <param name="param">page & sort</param>
+        /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
-        public virtual async Task<JsonResultModel<TEntity>> GetPageList(GridParams param, Expression<Func<TEntity, bool>> predicate)
+        public async Task<JsonResultModel<TEntity>> GetPageList(GridParams param, Expression<Func<TEntity, bool>> predicate)
         {
             return await BaseRepository.Query(param, predicate);
         }
+
         /// <summary>
-        /// 根据ID查询一条数据
+        /// Gets exactly one entity with primary key
+        /// Throws exception if no entity or more than one entity.
         /// </summary>
-        /// <param name="id">主键</param>
-        /// <returns></returns>
-        public virtual async Task<TEntity> SingleAsync(TPrimaryKey id)
+        /// <param name="id">primary key</param>
+        /// <returns>entity</returns>
+        public async Task<TEntity> SingleAsync(TPrimaryKey id)
         {
             return await BaseRepository.SingleAsync(id);
         }
+
         /// <summary>
-        /// 查询所有
+        /// Get All Entities
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<List<TEntity>> QueryAll()
+        public async Task<List<TEntity>> QueryAll()
         {
             return await BaseRepository.QueryAll();
         }
 
         /// <summary>
-        /// 新增
+        /// insert an entity 
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Entity</param>
+        /// <returns>primary key of the entity</returns>
         public virtual async Task<bool> InsertAsync(TEntity entity)
         {
             return await BaseRepository.InsertAsync(entity) > 0;
         }
 
         /// <summary>
-        /// 更新
+        /// Updates an existing entity by primary key.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         public virtual async Task<bool> UpdateAsync(TEntity entity)
         {
+            entity.ModifyTime = DateTime.Now;
             return await BaseRepository.UpdateAsync(entity);
         }
 
@@ -67,9 +71,9 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns></returns>
-        public virtual async Task<bool> SoftDeleteAsync(TPrimaryKey id)
+        public async Task<bool> SoftDeleteAsync(TPrimaryKey id)
         {
-            return await BaseRepository.UpdateAsync(it => new { IsDeleted = 1 });
+            return await BaseRepository.UpdateAsync(id, it => new TEntity { IsDeleted = true });
         }
     }
 }

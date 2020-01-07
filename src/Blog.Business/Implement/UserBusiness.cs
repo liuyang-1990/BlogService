@@ -86,7 +86,7 @@ namespace Blog.Business.Implement
                 return response;
             }
             userInfo.Password = _md5Helper.Encrypt(request.Password);
-            response.IsSuccess = await _userRepository.UpdateAsync(it => new UserInfo { Password = userInfo.Password });
+            response.IsSuccess = await _userRepository.UpdateAsync(userInfo.Id, it => new UserInfo { Password = userInfo.Password });
             response.Status = response.IsSuccess ? "0" : "1";
             return response;
 

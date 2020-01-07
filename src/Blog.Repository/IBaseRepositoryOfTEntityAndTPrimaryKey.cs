@@ -149,9 +149,10 @@ namespace Blog.Repository
         /// <summary>
         /// Updates some columns of an existing entity by primary key.
         /// </summary>
+        /// <param name="id">primary key</param>
         /// <param name="updateColumns">columns of TEntity to be updated</param>
         /// <returns></returns>
-        Task<bool> UpdateAsync(Expression<Func<TEntity, object>> updateColumns);
+        Task<bool> UpdateAsync(TPrimaryKey id, Expression<Func<TEntity, object>> updateColumns);
 
         /// <summary>
         /// Updates a column of an existing entity by primary keys.

@@ -6,7 +6,7 @@ using Blog.Model.Entities;
 namespace Blog.Model
 {
 
-    public class BaseEntity : Entity, ISoftDelete
+    public class BaseEntity : Entity, ISoftDelete, IHasModificationTime
     {
         public BaseEntity()
         {

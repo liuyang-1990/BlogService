@@ -207,11 +207,12 @@ namespace Blog.Repository.Implement
         /// <summary>
         /// Updates some columns of an existing entity by primary key.
         /// </summary>
-        /// <param name="updateColumns">columns of the entity to be updated</param>
+        /// <param name="id">primary key</param>
+        /// <param name="updateColumns">columns of TEntity to be updated</param>
         /// <returns></returns>
-        public async Task<bool> UpdateAsync(Expression<Func<TEntity, object>> updateColumns)
+        public async Task<bool> UpdateAsync(TPrimaryKey id, Expression<Func<TEntity, object>> updateColumns)
         {
-            return await Db.Updateable<TEntity>().UpdateColumns(updateColumns).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<TEntity>().UpdateColumns(updateColumns).Where(CreateEqualityExpressionForId(id)).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Blog.Infrastructure.Cryptography;
+using Blog.Model.Db;
 using Microsoft.Extensions.Logging;
 
 namespace Blog.Model.Seed

@@ -2,7 +2,7 @@
 
 namespace Blog.Business
 {
-    public interface IBaseBusiness<TEntity> : IBaseBusiness<TEntity, int> where TEntity : class, IEntity<int>, new()
+    public interface IBaseBusiness<TEntity> : IBaseBusiness<TEntity, int> where TEntity : class, IEntity<int>, IHasModificationTime, ISoftDelete, new()
     {
 
     }

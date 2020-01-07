@@ -2,36 +2,45 @@
 using Blog.Model.Request;
 using Blog.Model.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Blog.Business
 {
-    public interface IBaseBusiness<TEntity, in TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, new()
+    public interface IBaseBusiness<TEntity, in TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, IHasModificationTime, ISoftDelete, new()
     {
         /// <summary>
-        /// 分页查询
+        /// Gets entities with given predicate,page & sort params.
         /// </summary>
-        /// <param name="param">分页以及排序参数</param>
-        /// <param name="expression">条件</param>
+        /// <param name="param">page & sort</param>
+        /// <param name="predicate">A condition to filter entities</param>
         /// <returns></returns>
-        Task<JsonResultModel<TEntity>> GetPageList(GridParams param, Expression<Func<TEntity, bool>> expression);
+        Task<JsonResultModel<TEntity>> GetPageList(GridParams param, Expression<Func<TEntity, bool>> predicate);
+
         /// <summary>
-        /// 根据ID查询一条数据
+        /// Get All Entities
         /// </summary>
-        /// <param name="id">主键</param>
         /// <returns></returns>
+        Task<List<TEntity>> QueryAll();
+
+        /// <summary>
+        /// Gets exactly one entity with primary key
+        /// Throws exception if no entity or more than one entity.
+        /// </summary>
+        /// <param name="id">primary key</param>
+        /// <returns>entity</returns>
         Task<TEntity> SingleAsync(TPrimaryKey id);
 
         /// <summary>
-        /// 新增实体数据
+        /// insert an entity 
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Entity</param>
+        /// <returns>primary key of the entity</returns>
         Task<bool> InsertAsync(TEntity entity);
 
         /// <summary>
-        /// 更新实体数据
+        /// Updates an existing entity by primary key.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
