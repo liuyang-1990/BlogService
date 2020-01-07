@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Blog.Api.Hubs;
 
 namespace Blog.Api
 {
@@ -176,7 +177,7 @@ namespace Blog.Api
             services.AddHttpClient();
             services.AddMemoryCache();
             services.AddResponseCompression();
-
+            services.AddSignalR();
             #region Seed
             services.AddScoped(typeof(SeedHelper));
             #endregion
@@ -275,6 +276,7 @@ namespace Blog.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }
