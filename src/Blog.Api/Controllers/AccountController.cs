@@ -39,7 +39,7 @@ namespace Blog.Api.Controllers
             {
                 return BadRequest(new
                 {
-                    Msg = "用户名或者密码错误"
+                    Msg = "Username or password is incorrect!"
                 });
             }
             //用户被禁用
@@ -47,7 +47,7 @@ namespace Blog.Api.Controllers
             {
                 return BadRequest(new
                 {
-                    Msg = "用户被禁用,请联系管理员"
+                    Msg = "User is disabled, please contact administrator!"
                 });
             }
             var claims = new List<Claim>

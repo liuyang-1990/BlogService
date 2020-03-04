@@ -28,13 +28,20 @@ namespace Blog.Api.Controllers
             _articleBusiness = articleBusiness;
         }
 
+        [HttpGet("page")]
+        [AllowAnonymous]
+        public async Task<JsonResultModel<ArticleInfo>> GetPageList([FromQuery]GridParams request)
+        {
+            return await _articleBusiness.GetPageLsit(request);
+        }
+
+
         /// <summary>
         /// 分页获取文章
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("page")]
-        [AllowAnonymous]
+        [HttpGet("admin/page")]
         public async Task<JsonResultModel<ArticleInfo>> GetPageList([FromQuery]ArticleSearchRequest request)
         {
             return await _articleBusiness.GetPageList(request);
@@ -58,9 +65,14 @@ namespace Blog.Api.Controllers
         /// <param name="request">文章信息</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResultModel<string>> AddArticle([FromBody]AddArticleRequest request)
+        public async Task<IActionResult> AddArticle([FromBody]AddArticleRequest request)
         {
-            return await _articleBusiness.InsertAsync(request);
+            var res = await _articleBusiness.InsertAsync(request);
+            if (res.IsSuccess)
+            {
+                return Ok();
+            }
+            return BadRequest(res.ResultInfo);
         }
 
         /// <summary>
@@ -69,9 +81,14 @@ namespace Blog.Api.Controllers
         /// <param name="request">文章信息</param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ResultModel<string>> UpdateArticle([FromBody]UpdateArticleRequest request)
+        public async Task<IActionResult> UpdateArticle([FromBody]UpdateArticleRequest request)
         {
-            return await _articleBusiness.UpdateAsync(request);
+            var res = await _articleBusiness.UpdateAsync(request);
+            if (res.IsSuccess)
+            {
+                return Ok();
+            }
+            return BadRequest(res.ResultInfo);
         }
 
         /// <summary>

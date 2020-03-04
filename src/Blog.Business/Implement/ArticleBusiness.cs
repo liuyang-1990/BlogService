@@ -42,8 +42,23 @@ namespace Blog.Business.Implement
             _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
         }
+
         /// <summary>
         /// 分页获取
+        /// for user
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<JsonResultModel<ArticleInfo>> GetPageLsit(GridParams param)
+        {
+            //只查询已发布的
+            var exp = Expressionable.Create<ArticleInfo>().And(it => it.IsPublished);
+            return await base.GetPageList(param, exp.ToExpression());
+        }
+
+        /// <summary>
+        /// 分页获取
+        /// for admin
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>

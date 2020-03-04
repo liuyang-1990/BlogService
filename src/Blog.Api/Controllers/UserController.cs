@@ -2,7 +2,6 @@
 using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
-using Blog.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -100,9 +99,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("password")]
-        public async Task<ResultModel<string>> UpdatePassword([FromBody]ChangePasswordRequest request)
+        public async Task<IActionResult> UpdatePassword([FromBody]ChangePasswordRequest request)
         {
-            return await _userBusiness.UpdatePassword(request);
+            var success = await _userBusiness.UpdatePassword(request);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         /// <summary>
@@ -111,9 +115,14 @@ namespace Blog.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("status")]
-        public async Task<ResultModel<string>> UpdateStatus([FromBody]UpdateStatusRequest request)
+        public async Task<IActionResult> UpdateStatus([FromBody]UpdateStatusRequest request)
         {
-            return await _userBusiness.UpdateStatus(request);
+            var success = await _userBusiness.UpdateStatus(request);
+            if (success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
     }

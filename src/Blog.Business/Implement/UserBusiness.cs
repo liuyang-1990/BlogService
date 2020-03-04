@@ -4,7 +4,6 @@ using Blog.Model;
 using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
-using Blog.Model.Response;
 using Blog.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
@@ -75,29 +74,20 @@ namespace Blog.Business.Implement
             return await _userRepository.SingleAsync(x => x.UserName == userName && x.Password == password);
         }
 
-        public async Task<ResultModel<string>> UpdatePassword(ChangePasswordRequest request)
+        public async Task<bool> UpdatePassword(ChangePasswordRequest request)
         {
-            var response = new ResultModel<string>();
             var userInfo = await GetUserByUserName(request.UserName, request.OldPassword);
             if (userInfo == null)
             {
-                response.IsSuccess = false;
-                response.Status = "2"; //旧密码不正确
-                return response;
+                throw new ServiceException("old password is not correct.", "200") { HttpStatusCode = HttpStatusCode.BadRequest };
             }
             userInfo.Password = _md5Helper.Encrypt(request.Password);
-            response.IsSuccess = await _userRepository.UpdateAsync(userInfo.Id, it => new UserInfo { Password = userInfo.Password });
-            response.Status = response.IsSuccess ? "0" : "1";
-            return response;
-
+            return await _userRepository.UpdateAsync(userInfo.Id, it => new UserInfo { Password = userInfo.Password });
         }
 
-        public async Task<ResultModel<string>> UpdateStatus(UpdateStatusRequest request)
+        public async Task<bool> UpdateStatus(UpdateStatusRequest request)
         {
-            var response = new ResultModel<string>();
-            response.IsSuccess = await _userRepository.UpdateAsync(request.Ids, it => it.IsActive == request.IsActive);
-            response.Status = response.IsSuccess ? "0" : "1";
-            return response;
+            return await _userRepository.UpdateAsync(request.Ids, it => it.IsActive == request.IsActive);
         }
     }
 }

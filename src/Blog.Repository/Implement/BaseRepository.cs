@@ -15,7 +15,7 @@ namespace Blog.Repository.Implement
     /// <typeparam name="TEntity">Entity type</typeparam>
     public class BaseRepository<TEntity> where TEntity : BaseEntity, new()
     {
-        protected ISqlSugarClient Db;
+        protected readonly ISqlSugarClient Db;
         public BaseRepository(ISqlSugarClient sqlSugarClient)
         {
             Db = sqlSugarClient;

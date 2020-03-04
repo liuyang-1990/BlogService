@@ -11,6 +11,14 @@ namespace Blog.Business
     {
         /// <summary>
         /// 分页获取
+        /// for user
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<JsonResultModel<ArticleInfo>> GetPageLsit(GridParams param);
+
+        /// <summary>
+        /// 分页获取
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
