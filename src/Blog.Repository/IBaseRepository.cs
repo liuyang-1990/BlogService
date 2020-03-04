@@ -1,6 +1,6 @@
-﻿using Blog.Model.Entities;
+﻿using Blog.Model;
+using Blog.Model.Common;
 using Blog.Model.Request;
-using Blog.Model.ViewModel;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -13,8 +13,7 @@ namespace Blog.Repository
     /// This interface is implemented by all repositories to ensure implementation of fixed methods.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TPrimaryKey"></typeparam>
-    public interface IBaseRepository<TEntity, TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, new()
+    public interface IBaseRepository<TEntity> where TEntity : BaseEntity, new()
     {
 
         #region Query/Get
@@ -68,14 +67,14 @@ namespace Blog.Repository
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns>entity</returns>
-        Task<TEntity> SingleAsync(TPrimaryKey id);
+        Task<TEntity> SingleAsync(int id);
 
         /// <summary>
         /// get entities with given primary keys
         /// </summary>
         /// <param name="ids">primary keys</param>
         /// <returns></returns>
-        Task<List<TEntity>> Query(List<TPrimaryKey> ids);
+        Task<List<TEntity>> Query(List<int> ids);
 
         /// <summary>
         /// get some columns of entities with given primary keys
@@ -84,7 +83,7 @@ namespace Blog.Repository
         /// <param name="ids">primary keys</param>
         /// <param name="select">columns to be selected</param>
         /// <returns></returns>
-        Task<List<TResult>> Query<TResult>(List<TPrimaryKey> ids, Expression<Func<TEntity, TResult>> select);
+        Task<List<TResult>> Query<TResult>(List<int> ids, Expression<Func<TEntity, TResult>> select);
 
         /// <summary>
         /// get some columns with given predicate
@@ -152,7 +151,7 @@ namespace Blog.Repository
         /// <param name="id">primary key</param>
         /// <param name="updateColumns">columns of TEntity to be updated</param>
         /// <returns></returns>
-        Task<bool> UpdateAsync(TPrimaryKey id, Expression<Func<TEntity, object>> updateColumns);
+        Task<bool> UpdateAsync(int id, Expression<Func<TEntity, object>> updateColumns);
 
         /// <summary>
         /// Updates a column of an existing entity by primary keys.
@@ -160,7 +159,7 @@ namespace Blog.Repository
         /// <param name="ids">Primary keys</param>
         /// <param name="updateColumns">a column of the entity to be updated</param>
         /// <returns></returns>
-        Task<bool> UpdateAsync(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateColumns);
+        Task<bool> UpdateAsync(List<int> ids, Expression<Func<TEntity, bool>> updateColumns);
         #endregion
 
         #region Delete

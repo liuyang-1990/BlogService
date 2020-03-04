@@ -1,9 +1,9 @@
 ﻿using Blog.Infrastructure;
 using Blog.Infrastructure.DI;
 using Blog.Model;
+using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request.Category;
-using Blog.Model.ViewModel;
 using Blog.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;

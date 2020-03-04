@@ -1,10 +1,10 @@
 ﻿using Blog.Business.Implement;
 using Blog.Infrastructure.Cryptography;
+using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
-using Blog.Model.ViewModel;
 using Blog.Repository;
 using Moq;
 using Newtonsoft.Json;

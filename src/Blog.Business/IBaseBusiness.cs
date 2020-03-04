@@ -1,6 +1,6 @@
-﻿using Blog.Model.Entities;
+﻿using Blog.Model;
+using Blog.Model.Common;
 using Blog.Model.Request;
-using Blog.Model.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Business
 {
-    public interface IBaseBusiness<TEntity, in TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, IHasModificationTime, ISoftDelete, new()
+    public interface IBaseBusiness<TEntity> where TEntity : BaseEntity, new()
     {
         /// <summary>
         /// Gets entities with given predicate,page & sort params.
@@ -30,7 +30,7 @@ namespace Blog.Business
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns>entity</returns>
-        Task<TEntity> SingleAsync(TPrimaryKey id);
+        Task<TEntity> SingleAsync(int id);
 
         /// <summary>
         /// insert an entity 
@@ -51,7 +51,7 @@ namespace Blog.Business
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns></returns>
-        Task<bool> SoftDeleteAsync(TPrimaryKey id);
+        Task<bool> SoftDeleteAsync(int id);
 
 
     }

@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Blog.Model.Entities;
+using Newtonsoft.Json;
 using SqlSugar;
-using System;
-using Blog.Model.Entities;
 
 namespace Blog.Model.Db
 {
@@ -48,31 +47,6 @@ namespace Blog.Model.Db
         /// </summary>
         [SugarColumn(Length = 100, IsNullable = true)]
         public string Email { get; set; }
-
-        /// <summary>
-        /// 国家
-        /// </summary>
-        [SugarColumn(Length = 10, IsNullable = true)]
-        public string Country { get; set; }
-
-        [SugarColumn(Length = 20, IsNullable = true)]
-        public string Province { get; set; }
-
-        [SugarColumn(Length = 20, IsNullable = true)]
-        public string City { get; set; }
-        /// <summary>
-        /// 简介
-        /// </summary>
-        [SugarColumn(Length = 500, IsNullable = true)]
-        public string Profile { get; set; }
-
-        [SugarColumn(Length = 500, IsNullable = true)]
-        public string Address { get; set; }
-        /// <summary>
-        /// 上次登录时间
-        /// </summary>
-        [SugarColumn(ColumnName = "last_login_time", IsNullable = true)]
-        public DateTime? LastLoginTime { get; set; }
     }
 
 }

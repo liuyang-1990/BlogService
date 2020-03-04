@@ -1,10 +1,10 @@
 ﻿using Blog.Infrastructure.Cryptography;
 using Blog.Infrastructure.DI;
 using Blog.Model;
+using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
-using Blog.Model.ViewModel;
 using Blog.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;

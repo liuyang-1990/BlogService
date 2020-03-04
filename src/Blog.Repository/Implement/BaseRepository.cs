@@ -1,7 +1,6 @@
-﻿using Blog.Infrastructure.DI;
-using Blog.Model.Entities;
+﻿using Blog.Model;
+using Blog.Model.Common;
 using Blog.Model.Request;
-using Blog.Model.ViewModel;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -14,13 +13,12 @@ namespace Blog.Repository.Implement
     /// Base class for custom repositories of the application.
     /// </summary>
     /// <typeparam name="TEntity">Entity type</typeparam>
-    /// <typeparam name="TPrimaryKey">Primary key type of the entity</typeparam>
-    public class BaseRepository<TEntity, TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, new()
+    public class BaseRepository<TEntity> where TEntity : BaseEntity, new()
     {
         protected ISqlSugarClient Db;
-        protected BaseRepository()
+        public BaseRepository(ISqlSugarClient sqlSugarClient)
         {
-            Db = CoreContainer.Current.GetService<ISqlSugarClient>();
+            Db = sqlSugarClient;
         }
 
         #region Query
@@ -97,9 +95,9 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns></returns>
-        public async Task<TEntity> SingleAsync(TPrimaryKey id)
+        public async Task<TEntity> SingleAsync(int id)
         {
-            return await SingleAsync(CreateEqualityExpressionForId(id));
+            return await SingleAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -107,7 +105,7 @@ namespace Blog.Repository.Implement
         /// </summary>
         /// <param name="ids">primary keys</param>
         /// <returns></returns>
-        public async Task<List<TEntity>> Query(List<TPrimaryKey> ids)
+        public async Task<List<TEntity>> Query(List<int> ids)
         {
             return await Db.Queryable<TEntity>().In(ids).ToListAsync();
         }
@@ -119,7 +117,7 @@ namespace Blog.Repository.Implement
         /// <param name="ids">primary keys</param>
         /// <param name="select">columns to be selected</param>
         /// <returns></returns>
-        public async Task<List<TResult>> Query<TResult>(List<TPrimaryKey> ids, Expression<Func<TEntity, TResult>> select)
+        public async Task<List<TResult>> Query<TResult>(List<int> ids, Expression<Func<TEntity, TResult>> select)
         {
             return await Db.Queryable<TEntity>().In(ids).Select(select).ToListAsync();
         }
@@ -210,9 +208,9 @@ namespace Blog.Repository.Implement
         /// <param name="id">primary key</param>
         /// <param name="updateColumns">columns of TEntity to be updated</param>
         /// <returns></returns>
-        public async Task<bool> UpdateAsync(TPrimaryKey id, Expression<Func<TEntity, object>> updateColumns)
+        public async Task<bool> UpdateAsync(int id, Expression<Func<TEntity, object>> updateColumns)
         {
-            return await Db.Updateable<TEntity>().UpdateColumns(updateColumns).Where(CreateEqualityExpressionForId(id)).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<TEntity>().UpdateColumns(updateColumns).Where(x => x.Id == id).ExecuteCommandHasChangeAsync();
         }
 
         /// <summary>
@@ -221,7 +219,7 @@ namespace Blog.Repository.Implement
         /// <param name="ids">Primary keys</param>
         /// <param name="updateColumns">a column of the entity to be updated</param>
         /// <returns></returns>
-        public async Task<bool> UpdateAsync(List<TPrimaryKey> ids, Expression<Func<TEntity, bool>> updateColumns)
+        public async Task<bool> UpdateAsync(List<int> ids, Expression<Func<TEntity, bool>> updateColumns)
         {
             return await Db.Updateable<TEntity>().SetColumns(updateColumns).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
         }
@@ -253,20 +251,20 @@ namespace Blog.Repository.Implement
 
         #endregion
 
-        protected Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
-        {
-            var lambdaParam = Expression.Parameter(typeof(TEntity));
+        //protected Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
+        //{
+        //    var lambdaParam = Expression.Parameter(typeof(TEntity));
 
-            var leftExpression = Expression.PropertyOrField(lambdaParam, "Id");
+        //    var leftExpression = Expression.PropertyOrField(lambdaParam, "Id");
 
-            var idValue = Convert.ChangeType(id, typeof(TPrimaryKey));
+        //    var idValue = Convert.ChangeType(id, typeof(TPrimaryKey));
 
-            Expression<Func<object>> closure = () => idValue;
-            var rightExpression = Expression.Convert(closure.Body, leftExpression.Type);
+        //    Expression<Func<object>> closure = () => idValue;
+        //    var rightExpression = Expression.Convert(closure.Body, leftExpression.Type);
 
-            var lambdaBody = Expression.Equal(leftExpression, rightExpression);
+        //    var lambdaBody = Expression.Equal(leftExpression, rightExpression);
 
-            return Expression.Lambda<Func<TEntity, bool>>(lambdaBody, lambdaParam);
-        }
+        //    return Expression.Lambda<Func<TEntity, bool>>(lambdaBody, lambdaParam);
+        //}
     }
 }

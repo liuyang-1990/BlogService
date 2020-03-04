@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Blog.Model.ViewModel
+namespace Blog.Model.Common
 {
     public class JsonResultModel<T>
     {

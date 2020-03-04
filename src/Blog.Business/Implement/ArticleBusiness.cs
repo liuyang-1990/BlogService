@@ -1,4 +1,5 @@
 ﻿using Blog.Infrastructure.DI;
+using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.Article;
@@ -72,7 +73,6 @@ namespace Blog.Business.Implement
             {
                 Abstract = request.Abstract,
                 Title = request.Title,
-                IsOriginal = request.IsOriginal,
                 IsPublished = request.IsPublished,
                 Likes = request.Likes,
                 Views = request.Views,
@@ -124,7 +124,6 @@ namespace Blog.Business.Implement
                 Likes = request.Likes,
                 Views = request.Views,
                 Comments = request.Comments,
-                IsOriginal = request.IsOriginal,
                 IsPublished = request.IsPublished,
                 ImageUrl = request.ImageUrl,
                 ModifyTime = DateTime.Now
@@ -176,7 +175,6 @@ namespace Blog.Business.Implement
                    {
                        Id = ai.Id,
                        Title = ai.Title,
-                       IsOriginal = ai.IsOriginal,
                        Abstract = ai.Abstract,
                        ImageUrl = ai.ImageUrl,
                        Content = ac.Content,

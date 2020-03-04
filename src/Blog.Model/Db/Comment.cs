@@ -8,8 +8,8 @@ namespace Blog.Model.Db
     [SugarTable("tbl_comment")]
     public class Comment : BaseEntity
     {
-        [SugarColumn(ColumnName = "parent_id", IsNullable = false)]
-        public int ParentId { get; set; }
+        [SugarColumn(ColumnName = "parent_id", IsNullable = true)]
+        public int? ParentId { get; set; }
 
         /// <summary>
         /// 留言内容

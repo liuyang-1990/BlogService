@@ -1,9 +1,9 @@
 ﻿using Blog.Business.Implement;
+using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.Category;
 using Blog.Model.Response;
-using Blog.Model.ViewModel;
 using Blog.Repository;
 using Moq;
 using Newtonsoft.Json;

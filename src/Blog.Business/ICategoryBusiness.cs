@@ -1,6 +1,6 @@
-﻿using Blog.Model.Db;
+﻿using Blog.Model.Common;
+using Blog.Model.Db;
 using Blog.Model.Request.Category;
-using Blog.Model.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

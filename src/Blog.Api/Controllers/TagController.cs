@@ -1,7 +1,7 @@
 ﻿using Blog.Business;
+using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request.Tag;
-using Blog.Model.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;

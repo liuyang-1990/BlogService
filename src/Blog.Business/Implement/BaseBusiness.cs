@@ -1,6 +1,6 @@
-﻿using Blog.Model.Entities;
+﻿using Blog.Model;
+using Blog.Model.Common;
 using Blog.Model.Request;
-using Blog.Model.ViewModel;
 using Blog.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace Blog.Business.Implement
 {
 
-    public class BaseBusiness<TEntity, TPrimaryKey> where TEntity : class, IEntity<TPrimaryKey>, IHasModificationTime, ISoftDelete, new()
+    public class BaseBusiness<TEntity> where TEntity : BaseEntity, new()
     {
-        protected IBaseRepository<TEntity, TPrimaryKey> BaseRepository;
+        protected IBaseRepository<TEntity> BaseRepository;
 
         /// <summary>
         /// Gets entities with given predicate,page & sort params.
@@ -31,7 +31,7 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns>entity</returns>
-        public async Task<TEntity> SingleAsync(TPrimaryKey id)
+        public async Task<TEntity> SingleAsync(int id)
         {
             return await BaseRepository.SingleAsync(id);
         }
@@ -71,7 +71,7 @@ namespace Blog.Business.Implement
         /// </summary>
         /// <param name="id">primary key</param>
         /// <returns></returns>
-        public async Task<bool> SoftDeleteAsync(TPrimaryKey id)
+        public async Task<bool> SoftDeleteAsync(int id)
         {
             return await BaseRepository.UpdateAsync(id, it => new TEntity { IsDeleted = true });
         }

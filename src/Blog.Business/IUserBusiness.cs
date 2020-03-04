@@ -1,7 +1,7 @@
-﻿using Blog.Model.Db;
+﻿using Blog.Model.Common;
+using Blog.Model.Db;
 using Blog.Model.Request.User;
 using Blog.Model.Response;
-using Blog.Model.ViewModel;
 using System.Threading.Tasks;
 
 namespace Blog.Business
