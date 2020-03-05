@@ -1,4 +1,4 @@
-﻿using Blog.Model;
+﻿using Blog.Infrastructure.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;

@@ -1,6 +1,6 @@
 ﻿using Blog.Infrastructure.Cryptography;
 using Blog.Infrastructure.DI;
-using Blog.Model;
+using Blog.Infrastructure.Model;
 using Blog.Model.Common;
 using Blog.Model.Db;
 using Blog.Model.Request.User;

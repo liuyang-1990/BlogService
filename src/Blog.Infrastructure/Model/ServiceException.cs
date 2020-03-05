@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Blog.Model
+namespace Blog.Infrastructure.Model
 {
     public class ServiceException : Exception
     {
