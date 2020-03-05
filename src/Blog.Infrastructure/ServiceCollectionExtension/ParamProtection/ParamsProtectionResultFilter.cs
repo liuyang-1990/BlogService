@@ -1,98 +1,51 @@
-﻿using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Mvc;
+﻿using Blog.Infrastructure.Cryptography;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
-using Blog.Infrastructure.Extensions;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
 {
-    public class ParamsProtectionResultFilter : IResultFilter
+    public class ParamsProtectionResultFilter : IAsyncResultFilter
     {
-        private readonly IDataProtector _dataProtector;
-        private readonly ParamProtectionConfig _protectionConfig;
+        private static readonly string MatchJsonIdExpression = "\"[a-zA-Z0-9]*id[s]?\"";
+        private static readonly string MatchJsonIdValueExpression = "[a-zA-Z0-9_\\-]+";
+        private static readonly Regex MatchJsonIdKeyValue = new Regex($"{MatchJsonIdExpression}:{MatchJsonIdValueExpression}", RegexOptions.IgnoreCase);
 
-        public ParamsProtectionResultFilter(IDataProtectionProvider provider, IOptions<ParamProtectionConfig> optionsAccessor)
+        private readonly IDesEncrypt _desEncrypt;
+        public ParamsProtectionResultFilter(IDesEncrypt desEncrypt)
         {
-            _protectionConfig = optionsAccessor.Value;
-            _dataProtector = provider.CreateProtector(_protectionConfig.Purpose);
+            _desEncrypt = desEncrypt;
         }
-
-        public void OnResultExecuting(ResultExecutingContext context)
+        public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            if (!_protectionConfig.Enable || !_protectionConfig.Params.Any())
+            var originalBodyStream = context.HttpContext.Response.Body;
+            using (var ms = new MemoryStream())
             {
-                return;
-            }
-
-            foreach (var (key, value) in _protectionConfig.ProtectResponseValues)
-            {
-                if (key.IsInstanceOfType(context.Result))
+                context.HttpContext.Response.Body = ms;
+                await next();
+                var response = context.HttpContext.Response;
+                response.Body.Seek(0, SeekOrigin.Begin);
+                var text = await new StreamReader(response.Body).ReadToEndAsync();
+                // 筛选以Id结尾的字段，并将ID加密
+                var matchedIdCollection = MatchJsonIdKeyValue.Matches(text);
+                foreach (Match match in matchedIdCollection)
                 {
-                    var prop = ReflectionExtensions.TypePropertyCache.GetOrAdd(key, t => t.GetProperties()).FirstOrDefault(p => p.Name == value);
-                    var val = prop?.GetValueGetter()?.Invoke(context.Result);
-                    if (val != null)
-                    {
-                        var obj = JToken.FromObject(val);
-                        try
-                        {
-                            ProtectParams(obj);
-                        }
-                        catch (Exception)
-                        {
-                            context.Result = new BadRequestResult();
-                        }
-                        prop.GetValueSetter().Invoke(context.Result, obj);
-                    }
+                    var unprotectId = Regex.Match(match.Value, $"{MatchJsonIdValueExpression}$").Value;
+                    var protectId = Regex.Replace(match.Value,
+                        $"{MatchJsonIdValueExpression}$",
+                        $"\"{_desEncrypt.Encrypt(unprotectId)}\"");
+
+                    text = text.Replace(match.Value, protectId);
                 }
-            }
-        }
-
-        public void OnResultExecuted(ResultExecutedContext context)
-        {
-
-        }
-
-
-        private void ProtectParams(JToken token)
-        {
-            if (token is JArray array)
-            {
-                foreach (var j in array)
-                {
-                    if (array.Parent is JProperty property && j is JValue val)
-                    {
-                        var strJ = val.Value.ToString();
-                        if (_protectionConfig.Params.Any(x => x.Equals(property.Name, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            val.Value = _dataProtector.Protect(strJ);
-                        }
-                    }
-                    else
-                    {
-                        ProtectParams(j);
-                    }
-                }
-            }
-            else if (token is JObject obj)
-            {
-                foreach (var property in obj.Children<JProperty>())
-                {
-                    var val = property.Value.ToString();
-                    if (_protectionConfig.Params.Any(x => x.Equals(property.Name, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        property.Value = _dataProtector.Protect(val);
-                    }
-                    else
-                    {
-                        if (property.Value.HasValues)
-                        {
-                            ProtectParams(property.Value);
-                        }
-                    }
-                }
+                var buffer = Encoding.UTF8.GetBytes(text);
+                ms.Seek(0, SeekOrigin.Begin);
+                await ms.WriteAsync(buffer, 0, buffer.Length);
+                await ms.FlushAsync();
+                response.Body.Seek(0, SeekOrigin.Begin);
+                context.HttpContext.Response.ContentLength = buffer.Length;
+                await ms.CopyToAsync(originalBodyStream);
             }
         }
     }

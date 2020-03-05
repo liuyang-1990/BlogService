@@ -2,6 +2,7 @@
 using Blog.Api.Hubs;
 using Blog.Infrastructure.DI;
 using Blog.Infrastructure.ServiceCollectionExtension;
+using Blog.Infrastructure.ServiceCollectionExtension.ParamProtection;
 using Blog.Model.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,6 +63,8 @@ namespace Blog.Api
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
+
+                options.Filters.Add<ParamsProtectionResultFilter>();
             }).AddNewtonsoftJson(option =>
             {
                 option.SerializerSettings.ContractResolver = new DefaultContractResolver();
