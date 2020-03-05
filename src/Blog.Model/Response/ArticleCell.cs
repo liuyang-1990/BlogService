@@ -1,4 +1,4 @@
-﻿namespace Blog.Model.ViewModel
+﻿namespace Blog.Model.Response
 {
     public class ArticleCell
     {
@@ -11,8 +11,6 @@
         /// 摘要
         /// </summary>
         public string Abstract { get; set; }
-
-        public bool IsOriginal { get; set; }
 
         /// <summary>
         /// 访问量

@@ -35,6 +35,16 @@ namespace Blog.Business
         /// <param name="request">文章信息</param>
         /// <returns></returns>
         Task<ResultModel<string>> UpdateAsync(UpdateArticleRequest request);
+
+        /// <summary>
+        /// 获取文章详情
+        /// for user
+        /// only published
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<ArticleDetailResponse> GetArticleDetailForUser(int id);
+
         /// <summary>
         /// 获取文章详情
         /// </summary>

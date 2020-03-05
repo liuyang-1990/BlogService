@@ -1,4 +1,4 @@
-﻿using Blog.Model.ViewModel;
+﻿using Blog.Model.Response;
 using System.Collections.Generic;
 
 namespace Blog.Model.Request.Article

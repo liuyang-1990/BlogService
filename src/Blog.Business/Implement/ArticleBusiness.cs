@@ -4,7 +4,6 @@ using Blog.Model.Db;
 using Blog.Model.Request;
 using Blog.Model.Request.Article;
 using Blog.Model.Response;
-using Blog.Model.ViewModel;
 using Blog.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
@@ -172,6 +171,57 @@ namespace Blog.Business.Implement
 
             response.IsSuccess = result.IsSuccess;
             response.ResultInfo = result.ErrorMessage;
+            return response;
+        }
+
+
+        /// <summary>
+        /// 获取文章详情
+        /// for user
+        /// only published
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ArticleDetailResponse> GetArticleDetailForUser(int id)
+        {
+            var response = new ArticleDetailResponse();
+            //文章详情
+            response.ArticleInfo = await _articleRepository.JoinQuery<ArticleInfo, ArticleContent, ArticleViewModel>(
+                (ai, ac) => new object[] { JoinType.Inner, ai.Id == ac.ArticleId },
+                (ai, ac) => new ArticleViewModel()
+                {
+                    Id = ai.Id,
+                    Title = ai.Title,
+                    Abstract = ai.Abstract,
+                    ImageUrl = ai.ImageUrl,
+                    Content = ac.Content,
+                    Comments = ai.Comments,
+                    Likes = ai.Likes,
+                    Views = ai.Views,
+                    IsPublished = ai.IsPublished,
+                    CreateTime = ai.CreateTime
+                },
+                (ai, ac) => ai.Id == id && !ai.IsDeleted && ai.IsPublished
+            );
+
+            if (response.ArticleInfo == null)
+            {
+                return null;
+            }
+            //分类信息
+            var cIds = await _articleCategoryRepository.Query(x => x.ArticleId == id, x => x.CategoryId);
+            response.Categories = await _categoryRepository.Query(cIds, x => new Property()
+            {
+                Id = x.Id,
+                Value = x.CategoryName
+            });
+            //标签信息
+            var tIds = await _articleTagRepository.Query(x => x.ArticleId == id, x => x.TagId);
+            response.Tags = await _tagRepository.Query(tIds, x => new Property()
+            {
+                Id = x.Id,
+                Value = x.TagName
+            });
             return response;
         }
 

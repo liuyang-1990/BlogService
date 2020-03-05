@@ -41,19 +41,5 @@ namespace Blog.Model.Request.User
         /// </summary>
         public string Email { get; set; }
 
-        /// <summary>
-        /// 国家
-        /// </summary>
-        public string Country { get; set; }
-
-        public string Province { get; set; }
-
-        public string City { get; set; }
-        /// <summary>
-        /// 简介
-        /// </summary>
-        public string Profile { get; set; }
-
-        public string Address { get; set; }
     }
 }

@@ -52,11 +52,23 @@ namespace Blog.Api.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        [AllowAnonymous]
+        [HttpGet("admin/{id}")]
         public async Task<ArticleDetailResponse> GetDetailInfo(int id)
         {
             return await _articleBusiness.GetArticleDetail(id);
+        }
+
+
+        /// <summary>
+        /// 获取详细信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<ArticleDetailResponse> GetArticleDetailForUser(int id)
+        {
+            return await _articleBusiness.GetArticleDetailForUser(id);
         }
 
         /// <summary>

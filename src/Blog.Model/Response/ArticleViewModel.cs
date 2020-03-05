@@ -1,9 +1,9 @@
 ﻿using System;
 using Blog.Model.Entities;
 
-namespace Blog.Model.ViewModel
+namespace Blog.Model.Response
 {
-    public class ArticleViewModel : ArticleCell, IEntity<int>
+    public class ArticleViewModel : ArticleCell, IEntity
     {
         public int Id { get; set; }
 
