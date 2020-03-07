@@ -1,5 +1,6 @@
 ﻿using Blog.Api.Filters;
 using Blog.Api.Hubs;
+using Blog.Api.MiddleWares;
 using Blog.Infrastructure.DI;
 using Blog.Infrastructure.ServiceCollectionExtension;
 using Blog.Infrastructure.ServiceCollectionExtension.ParamProtection;
@@ -64,6 +65,7 @@ namespace Blog.Api
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
 
+                //options.Filters.Add<ParamsProtectionActionFilter>();
                 options.Filters.Add<ParamsProtectionResultFilter>();
             }).AddNewtonsoftJson(option =>
             {
@@ -268,7 +270,7 @@ namespace Blog.Api
             //跨域
             app.UseCors("LimitRequests");
 
-            app.UseResponseCompression();
+
             //自定义认证
             //app.UseMiddleware<AuthenticationMiddleware>();
             //认证
@@ -276,6 +278,8 @@ namespace Blog.Api
 
             app.UseAuthorization();
 
+            app.UseDataProtectMiddleware();
+            app.UseResponseCompression();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

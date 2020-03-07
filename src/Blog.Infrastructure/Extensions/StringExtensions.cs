@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Blog.Infrastructure.Cryptography;
+using Blog.Infrastructure.DI;
+using Blog.Infrastructure.Utility;
+using System;
 
 namespace Blog.Infrastructure.Extensions
 {
@@ -42,6 +45,25 @@ namespace Blog.Infrastructure.Extensions
             }
 
             return str.Substring(0, len);
+        }
+
+
+        public static string ToDecrypted(this string encryptedId)
+        {
+            if (string.IsNullOrEmpty(encryptedId))
+            {
+                return encryptedId;
+            }
+            var cryp = CoreContainer.Current.GetService<IDesEncrypt>();
+            var utility = CoreContainer.Current.GetService<IUrlUtility>();
+            return cryp.Decrypt(utility.UnTransCodeBase64(encryptedId));
+        }
+
+        public static string ToEncrypted(this string decryptedId)
+        {
+            var cryp = CoreContainer.Current.GetService<IDesEncrypt>();
+            var utility = CoreContainer.Current.GetService<IUrlUtility>();
+            return utility.TransCodeBase64(cryp.Encrypt(decryptedId));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Blog.Infrastructure.Cryptography;
+﻿using Blog.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.IO;
 using System.Text;
@@ -13,11 +13,6 @@ namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
         private static readonly string MatchJsonIdValueExpression = "[a-zA-Z0-9_\\-]+";
         private static readonly Regex MatchJsonIdKeyValue = new Regex($"{MatchJsonIdExpression}:{MatchJsonIdValueExpression}", RegexOptions.IgnoreCase);
 
-        private readonly IDesEncrypt _desEncrypt;
-        public ParamsProtectionResultFilter(IDesEncrypt desEncrypt)
-        {
-            _desEncrypt = desEncrypt;
-        }
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             var originalBodyStream = context.HttpContext.Response.Body;
@@ -35,7 +30,7 @@ namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
                     var unprotectId = Regex.Match(match.Value, $"{MatchJsonIdValueExpression}$").Value;
                     var protectId = Regex.Replace(match.Value,
                         $"{MatchJsonIdValueExpression}$",
-                        $"\"{_desEncrypt.Encrypt(unprotectId)}\"");
+                        $"\"{unprotectId.ToEncrypted()}\"");
 
                     text = text.Replace(match.Value, protectId);
                 }
