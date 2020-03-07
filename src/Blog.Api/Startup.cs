@@ -3,7 +3,6 @@ using Blog.Api.Hubs;
 using Blog.Api.MiddleWares;
 using Blog.Infrastructure.DI;
 using Blog.Infrastructure.ServiceCollectionExtension;
-using Blog.Infrastructure.ServiceCollectionExtension.ParamProtection;
 using Blog.Model.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,8 +63,6 @@ namespace Blog.Api
                 {
                     options.Filters.Add<ServiceExceptionFilterAttribute>();
                 }
-
-                //options.Filters.Add<ParamsProtectionActionFilter>();
                 options.Filters.Add<ParamsProtectionResultFilter>();
             }).AddNewtonsoftJson(option =>
             {
@@ -185,16 +182,6 @@ namespace Blog.Api
             services.AddSignalR();
             #region Seed
             services.AddScoped(typeof(SeedHelper));
-            #endregion
-
-            #region DataProtection
-            //services.AddDataProtection().AddParamProtection(option =>
-            //{
-            //    option.Enable = true;
-            //    option.Purpose = "protect_params";
-            //    option.Params = new[] { "id", "ids", "Id", "TagIds", "CategoryIds" };
-            //    option.AddProtectValue<JsonResult>(r => r.Value);
-            //});
             #endregion
 
             #region API版本控制

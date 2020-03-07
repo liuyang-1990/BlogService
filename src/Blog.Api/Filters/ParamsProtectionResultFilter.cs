@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Blog.Infrastructure.ServiceCollectionExtension.ParamProtection
+namespace Blog.Api.Filters
 {
     public class ParamsProtectionResultFilter : IAsyncResultFilter
     {
