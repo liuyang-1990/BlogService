@@ -219,9 +219,9 @@ namespace Blog.Repository.Implement
         /// <param name="ids">Primary keys</param>
         /// <param name="updateColumns">a column of the entity to be updated</param>
         /// <returns></returns>
-        public async Task<bool> UpdateAsync(List<int> ids, Expression<Func<TEntity, bool>> updateColumns)
+        public async Task<bool> UpdateAsync(List<string> ids, Expression<Func<TEntity, bool>> updateColumns)
         {
-            return await Db.Updateable<TEntity>().SetColumns(updateColumns).Where(it => ids.Contains(it.Id)).ExecuteCommandHasChangeAsync();
+            return await Db.Updateable<TEntity>().SetColumns(updateColumns).Where(it => ids.Contains(SqlFunc.ToString(it.Id))).ExecuteCommandHasChangeAsync();
         }
 
         #endregion

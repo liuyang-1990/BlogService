@@ -40,9 +40,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<UserInfo> GetDetailInfo(int id)
+        public async Task<UserInfo> GetDetailInfo(string id)
         {
-            return await _userBusiness.SingleAsync(id);
+            int.TryParse(id, out var uid);
+            return await _userBusiness.SingleAsync(uid);
         }
 
         /// <summary>
@@ -83,9 +84,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var success = await _userBusiness.SoftDeleteAsync(id);
+            int.TryParse(id, out var uid);
+            var success = await _userBusiness.SoftDeleteAsync(uid);
             if (success)
             {
                 return Ok();

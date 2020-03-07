@@ -5,7 +5,7 @@ namespace Blog.Model.Request.User
 {
     public class UpdateStatusRequest : IPassivable
     {
-        public List<int> Ids { get; set; }
+        public List<string> Ids { get; set; }
         public bool IsActive { get; set; }
     }
 }

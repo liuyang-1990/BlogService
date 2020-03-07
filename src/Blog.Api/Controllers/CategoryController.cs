@@ -51,9 +51,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<CategoryInfo> GetDetailInfo(int id)
+        public async Task<CategoryInfo> GetDetailInfo(string id)
         {
-            return await _categoryBusiness.SingleAsync(id);
+            int.TryParse(id, out var cid);
+            return await _categoryBusiness.SingleAsync(cid);
         }
         /// <summary>
         /// 新增分类
@@ -93,9 +94,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(string id)
         {
-            var success = await _categoryBusiness.SoftDeleteAsync(id);
+            int.TryParse(id, out var cid);
+            var success = await _categoryBusiness.SoftDeleteAsync(cid);
             if (success)
             {
                 return Ok();

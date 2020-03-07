@@ -53,9 +53,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("admin/{id}")]
-        public async Task<ArticleDetailResponse> GetDetailInfo(int id)
+        public async Task<ArticleDetailResponse> GetDetailInfo(string id)
         {
-            return await _articleBusiness.GetArticleDetail(id);
+            int.TryParse(id, out var aid);
+            return await _articleBusiness.GetArticleDetail(aid);
         }
 
 
@@ -66,9 +67,10 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ArticleDetailResponse> GetArticleDetailForUser(int id)
+        public async Task<ArticleDetailResponse> GetArticleDetailForUser(string id)
         {
-            return await _articleBusiness.GetArticleDetailForUser(id);
+            int.TryParse(id, out var aid);
+            return await _articleBusiness.GetArticleDetailForUser(aid);
         }
 
         /// <summary>
@@ -109,9 +111,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArticle(int id)
+        public async Task<IActionResult> DeleteArticle(string id)
         {
-            var success = await _articleBusiness.SoftDeleteAsync(id);
+            int.TryParse(id, out var aid);
+            var success = await _articleBusiness.SoftDeleteAsync(aid);
             if (success)
             {
                 return Ok();
@@ -128,9 +131,10 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(int categoryId, [FromQuery]GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByCategory(string categoryId, [FromQuery]GridParams param)
         {
-            return await _articleBusiness.GetArticleByCategory(categoryId, param);
+            int.TryParse(categoryId, out var cid);
+            return await _articleBusiness.GetArticleByCategory(cid, param);
         }
 
         /// <summary>
@@ -141,9 +145,10 @@ namespace Blog.Api.Controllers
         /// <returns></returns>
         [HttpGet("tag/{tagId}")]
         [AllowAnonymous]
-        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(int tagId, [FromQuery]GridParams param)
+        public async Task<JsonResultModel<ArticleInfo>> GetArticleByTag(string tagId, [FromQuery]GridParams param)
         {
-            return await _articleBusiness.GetArticleByTag(tagId, param);
+            int.TryParse(tagId, out var tid);
+            return await _articleBusiness.GetArticleByTag(tid, param);
         }
     }
 }

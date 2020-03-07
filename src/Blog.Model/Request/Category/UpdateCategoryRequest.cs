@@ -3,10 +3,10 @@ using Blog.Model.Entities;
 
 namespace Blog.Model.Request.Category
 {
-    public class UpdateCategoryRequest : CommonCategoryRequest, IEntity<int>
+    public class UpdateCategoryRequest : CommonCategoryRequest, IEntity<string>
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
     }
 }

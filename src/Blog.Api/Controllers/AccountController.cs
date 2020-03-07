@@ -1,6 +1,6 @@
 ﻿using Blog.Business;
 using Blog.Infrastructure;
-using Blog.Infrastructure.Cryptography;
+using Blog.Infrastructure.Extensions;
 using Blog.Model;
 using Blog.Model.Request.Account;
 using Microsoft.AspNetCore.Cors;
@@ -21,14 +21,11 @@ namespace Blog.Api.Controllers
     {
         private readonly IJwtHelper _jwtHelper;
         private readonly IUserBusiness _userBusiness;
-        private readonly IDesEncrypt _desEncrypt;
         public AccountController(IJwtHelper jwtHelper,
-            IUserBusiness userBusiness,
-            IDesEncrypt desEncrypt)
+            IUserBusiness userBusiness)
         {
             _jwtHelper = jwtHelper;
             _userBusiness = userBusiness;
-            _desEncrypt = desEncrypt;
         }
 
         [HttpPost("login")]
@@ -52,7 +49,7 @@ namespace Blog.Api.Controllers
             }
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Sid,_desEncrypt.Encrypt(userInfo.Id.ToString())),
+                new Claim(ClaimTypes.Sid,userInfo.Id.ToString().ToEncrypted()),
                 new Claim(ClaimTypes.NameIdentifier,userInfo.UserName),
                 new Claim(ClaimTypes.Role,Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString())
             };

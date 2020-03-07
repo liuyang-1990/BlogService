@@ -33,9 +33,10 @@ namespace Blog.Api.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<TimeLine> GetDetailInfo(int id)
+        public async Task<TimeLine> GetDetailInfo(string id)
         {
-            return await _timeLineBusiness.SingleAsync(id);
+            int.TryParse(id, out var tid);
+            return await _timeLineBusiness.SingleAsync(tid);
         }
 
         [HttpPost]
@@ -61,9 +62,10 @@ namespace Blog.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<object> DeleteTimeLine(int id)
+        public async Task<IActionResult> DeleteTimeLine(string id)
         {
-            var success = await _timeLineBusiness.SoftDeleteAsync(id);
+            int.TryParse(id, out var tid);
+            var success = await _timeLineBusiness.SoftDeleteAsync(tid);
             if (success)
             {
                 return Ok();

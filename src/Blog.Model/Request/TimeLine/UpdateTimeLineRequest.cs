@@ -3,9 +3,9 @@ using Blog.Model.Entities;
 
 namespace Blog.Model.Request.TimeLine
 {
-    public class UpdateTimeLineRequest : CommonTimeLineRequest, IEntity<int>
+    public class UpdateTimeLineRequest : CommonTimeLineRequest, IEntity<string>
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }

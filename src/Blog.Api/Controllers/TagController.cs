@@ -47,9 +47,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<TagInfo> GetDetailInfo(int id)
+        public async Task<TagInfo> GetDetailInfo(string id)
         {
-            return await _tagBusiness.SingleAsync(id);
+            int.TryParse(id, out var tid);
+            return await _tagBusiness.SingleAsync(tid);
         }
         /// <summary>
         /// 新增标签
@@ -89,9 +90,10 @@ namespace Blog.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTag(int id)
+        public async Task<IActionResult> DeleteTag(string id)
         {
-            var success = await _tagBusiness.SoftDeleteAsync(id);
+            int.TryParse(id, out var tid);
+            var success = await _tagBusiness.SoftDeleteAsync(tid);
             if (success)
             {
                 return Ok();

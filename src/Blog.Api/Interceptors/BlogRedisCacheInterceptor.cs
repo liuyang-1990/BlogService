@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Blog.Infrastructure.DI;
 
@@ -46,8 +47,8 @@ namespace Blog.Api.Interceptors
                 {
                     return;
                 }
-                var val = JsonConvert.SerializeObject(returnValue);
-                await distributedCache.SetAsync(key, val, new DistributedCacheEntryOptions()
+                string val = JsonConvert.SerializeObject(returnValue);
+                await distributedCache.SetAsync(key, Encoding.UTF8.GetBytes(val), new DistributedCacheEntryOptions()
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cachingAttribute.AbsoluteExpiration)
                 });

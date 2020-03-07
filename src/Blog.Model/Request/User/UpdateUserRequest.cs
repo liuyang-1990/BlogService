@@ -3,10 +3,10 @@ using Blog.Model.Entities;
 
 namespace Blog.Model.Request.User
 {
-    public class UpdateUserRequest : AddUserRequest, IEntity<int>
+    public class UpdateUserRequest : AddUserRequest, IEntity<string>
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
     }
 }

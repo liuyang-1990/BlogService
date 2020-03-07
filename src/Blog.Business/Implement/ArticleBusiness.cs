@@ -106,14 +106,14 @@ namespace Blog.Business.Implement
                 await _articleContentRepository.InsertAsync(content);
                 var articleTags = request.TagIds.Select(tagId => new ArticleTag()
                 {
-                    TagId = tagId,
+                    TagId = tagId.ObjToInt(),
                     ArticleId = id
                 }).ToList();
                 await _articleTagRepository.InsertAsync(articleTags);
                 var articleCategories = request.CategoryIds.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = id,
-                    CategoryId = categoryId
+                    CategoryId = categoryId.ObjToInt()
                 }).ToList();
                 await _articleCategoryRepository.InsertAsync(articleCategories);
             });
@@ -134,7 +134,7 @@ namespace Blog.Business.Implement
             {
                 Abstract = request.Abstract,
                 Title = request.Title,
-                Id = request.Id,
+                Id = request.Id.ObjToInt(),
                 Likes = request.Likes,
                 Views = request.Views,
                 Comments = request.Comments,
@@ -157,14 +157,14 @@ namespace Blog.Business.Implement
                 await _articleCategoryRepository.DeleteAsync(x => x.ArticleId == article.Id);
                 var articleTags = request.TagIds.Select(tagId => new ArticleTag()
                 {
-                    TagId = tagId,
+                    TagId = tagId.ObjToInt(),
                     ArticleId = article.Id,
                 }).ToList();
                 await _articleTagRepository.InsertAsync(articleTags);
                 var articleCategories = request.CategoryIds.Select(categoryId => new ArticleCategory()
                 {
                     ArticleId = article.Id,
-                    CategoryId = categoryId
+                    CategoryId = categoryId.ObjToInt()
                 }).ToList();
                 await _articleCategoryRepository.InsertAsync(articleCategories);
             });

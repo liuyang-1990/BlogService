@@ -159,7 +159,7 @@ namespace Blog.Repository
         /// <param name="ids">Primary keys</param>
         /// <param name="updateColumns">a column of the entity to be updated</param>
         /// <returns></returns>
-        Task<bool> UpdateAsync(List<int> ids, Expression<Func<TEntity, bool>> updateColumns);
+        Task<bool> UpdateAsync(List<string> ids, Expression<Func<TEntity, bool>> updateColumns);
         #endregion
 
         #region Delete

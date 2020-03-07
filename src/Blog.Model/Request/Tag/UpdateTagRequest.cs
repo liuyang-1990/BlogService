@@ -3,9 +3,9 @@ using Blog.Model.Entities;
 
 namespace Blog.Model.Request.Tag
 {
-    public class UpdateTagRequest : CommonTagRequest, IEntity<int>
+    public class UpdateTagRequest : CommonTagRequest, IEntity<string>
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }
