@@ -1,4 +1,5 @@
 ﻿using Blog.Model.Db;
+using Blog.Model.Request.Account;
 using Blog.Model.Request.Category;
 using Blog.Model.Request.TimeLine;
 using Blog.Model.Request.User;
@@ -15,6 +16,7 @@ namespace Blog.Api
             TinyMapper.Bind<UpdateCategoryRequest, CategoryInfo>();
             TinyMapper.Bind<AddUserRequest, UserInfo>();
             TinyMapper.Bind<UpdateUserRequest, UserInfo>();
+            TinyMapper.Bind<RegisterRequest,UserInfo>();
         }
     }
 }

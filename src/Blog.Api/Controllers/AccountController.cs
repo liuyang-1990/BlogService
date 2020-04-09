@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Blog.Model.Db;
+using Nelibur.ObjectMapper;
 
 
 namespace Blog.Api.Controllers
@@ -60,5 +62,26 @@ namespace Blog.Api.Controllers
             });
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody]RegisterRequest register)
+        {
+            var success = await _userBusiness.InsertAsync(TinyMapper.Map<UserInfo>(register));
+            if (!success)
+            {
+                return BadRequest();
+            }
+            var userInfo = await _userBusiness.GetUserByUserName(register.UserName, register.Password);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Sid,userInfo.Id.ToString().ToEncrypted()),
+                new Claim(ClaimTypes.NameIdentifier,userInfo.UserName),
+                new Claim(ClaimTypes.Role,Enum.Parse(typeof(RoleDesc), userInfo.Role.ToString()).ToString())
+            };
+            var token = _jwtHelper.CreateAccessToken(claims);
+            return Ok(new
+            {
+                AccessToken = token
+            });
+        }
     }
 }
