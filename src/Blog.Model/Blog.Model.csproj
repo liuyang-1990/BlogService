@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.2" />
-    <PackageReference Include="sqlSugarCore" Version="5.0.0.11" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.0.13" />
   </ItemGroup>
 
   <ItemGroup>
