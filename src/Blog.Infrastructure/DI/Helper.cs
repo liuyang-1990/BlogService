@@ -1,6 +1,7 @@
 ﻿using Blog.Infrastructure.DI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,10 @@ namespace Blog.Infrastructure
         private static IEnumerable<ServiceDescriptor> ScanServiceDescriptionMetas()
         {
             var serviceDescriptors = new List<ServiceDescriptor>();
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()
+            var assemblies = DependencyContext.Default.RuntimeLibraries.Where(o => o.Name.StartsWith("Blog.")).Select(o => Assembly.Load(new AssemblyName(o.Name))).ToList();
+            var current = AppDomain.CurrentDomain.GetAssemblies();
+            assemblies.AddRange(current);
+            var types = assemblies.SelectMany(x => x.GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && t.IsDefined(typeof(InjectorAttribute))));
             var serviceGroup = types.SelectMany(service => service.GetCustomAttributes<InjectorAttribute>()
                 .Select(x => new { Attr = x, Impl = service }));
