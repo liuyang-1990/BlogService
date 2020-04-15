@@ -1,16 +1,17 @@
 ﻿using Blog.Business;
 using Blog.Infrastructure;
 using Blog.Infrastructure.Extensions;
+using Blog.Infrastructure.Implement;
 using Blog.Model;
+using Blog.Model.Db;
 using Blog.Model.Request.Account;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Nelibur.ObjectMapper;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Blog.Model.Db;
-using Nelibur.ObjectMapper;
 
 
 namespace Blog.Api.Controllers
@@ -58,7 +59,9 @@ namespace Blog.Api.Controllers
             var token = _jwtHelper.CreateAccessToken(claims);
             return Ok(new
             {
-                AccessToken = token
+                AccessToken = token,
+                Expires = TimeSpan.FromDays(1).Days,
+                UserName = userInfo.UserName
             });
         }
 
@@ -80,8 +83,27 @@ namespace Blog.Api.Controllers
             var token = _jwtHelper.CreateAccessToken(claims);
             return Ok(new
             {
-                AccessToken = token
+                AccessToken = token,
+                Expires = TimeSpan.FromDays(1).Days,
+                UserName = register.UserName
             });
+        }
+
+        [HttpGet("captcha")]
+        public async Task<IActionResult> GetCaptcha(string to)
+        {
+            try
+            {
+                var captcha = RandomHelper.GetRandomNum(6);
+                var body = $"<p style='font-size:14px;color:#333;line-height:30px;'>您本次的验证码为:</p><p><b style='font-size:18px;color:#f90;line-height:30px;'>{captcha}</b> <span style='font-size:14px;margin-left:10px;color:#979797;line-height:30px;'>(请在5分钟内完成验证。)</span><p>";
+                await MailHelper.SendEMailAsync(to, "验证码", body);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }
