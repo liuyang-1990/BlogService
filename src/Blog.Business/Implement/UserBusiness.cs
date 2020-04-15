@@ -50,6 +50,8 @@ namespace Blog.Business.Implement
             {
                 user.Password = "Blog.Core"; //默认密码
             }
+            user.Role = 0;
+            user.IsActive = true;
             user.Password = _md5Helper.Encrypt(user.Password);
             return await base.InsertAsync(user);
         }
