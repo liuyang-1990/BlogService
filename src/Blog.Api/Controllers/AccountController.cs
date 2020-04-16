@@ -7,11 +7,14 @@ using Blog.Model.Db;
 using Blog.Model.Request.Account;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Nelibur.ObjectMapper;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 
 namespace Blog.Api.Controllers
@@ -23,11 +26,14 @@ namespace Blog.Api.Controllers
     {
         private readonly IJwtHelper _jwtHelper;
         private readonly IUserBusiness _userBusiness;
+        private readonly IDistributedCache _distributedCache;
         public AccountController(IJwtHelper jwtHelper,
-            IUserBusiness userBusiness)
+            IUserBusiness userBusiness,
+            IDistributedCache distributedCache)
         {
             _jwtHelper = jwtHelper;
             _userBusiness = userBusiness;
+            _distributedCache = distributedCache;
         }
 
         [HttpPost("login")]
@@ -67,6 +73,15 @@ namespace Blog.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterRequest register)
         {
+            var captcha = await _distributedCache.GetStringAsync(register.Email);
+            if (string.IsNullOrEmpty(captcha))
+            {
+                return BadRequest(new { Msg = "验证码已过期。" });
+            }
+            if (captcha != register.Captcha)
+            {
+                return BadRequest(new { Msg = "验证码不正确" });
+            }
             var success = await _userBusiness.InsertAsync(TinyMapper.Map<UserInfo>(register));
             if (!success)
             {
@@ -91,18 +106,18 @@ namespace Blog.Api.Controllers
         [HttpGet("captcha")]
         public async Task<IActionResult> GetCaptcha(string to)
         {
-            try
+            to = HttpUtility.UrlDecode(to);
+            var captcha = RandomHelper.GetRandomNum(6);
+            var body = $"<p style='font-size:14px;color:#333;line-height:30px;'>您本次的验证码为:</p><p><b style='font-size:18px;color:#f90;line-height:30px;'>{captcha}</b> <span style='font-size:14px;margin-left:10px;color:#979797;line-height:30px;'>(请在5分钟内完成验证。)</span><p>";
+            await MailHelper.SendEMailAsync(to, "验证码", body);
+            await _distributedCache.SetAsync(to, Encoding.UTF8.GetBytes(captcha), new DistributedCacheEntryOptions()
             {
-                var captcha = RandomHelper.GetRandomNum(6);
-                var body = $"<p style='font-size:14px;color:#333;line-height:30px;'>您本次的验证码为:</p><p><b style='font-size:18px;color:#f90;line-height:30px;'>{captcha}</b> <span style='font-size:14px;margin-left:10px;color:#979797;line-height:30px;'>(请在5分钟内完成验证。)</span><p>";
-                await MailHelper.SendEMailAsync(to, "验证码", body);
-                return Ok();
-            }
-            catch (Exception e)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+            return Ok(new
             {
-                Console.WriteLine(e);
-                throw;
-            }
+                Captcha = captcha
+            });
         }
     }
 }

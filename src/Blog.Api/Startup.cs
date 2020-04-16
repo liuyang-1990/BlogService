@@ -69,10 +69,7 @@ namespace Blog.Api
 
             services.AddControllers(options =>
             {
-                if (!Env.IsDevelopment())
-                {
-                    options.Filters.Add<ServiceExceptionFilterAttribute>();
-                }
+                options.Filters.Add<ServiceExceptionFilterAttribute>();
                 options.Filters.Add<ParamsProtectionResultFilter>();
             }).AddNewtonsoftJson(option =>
             {
