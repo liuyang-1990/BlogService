@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 namespace Blog.Api.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [BlogApiController]
+    [Route("image")]
     [EnableCors("LimitRequests")]//支持跨域
     [Authorize(Policy = "Admin")]
     public class ImageController : ControllerBase

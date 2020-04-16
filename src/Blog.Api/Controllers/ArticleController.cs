@@ -15,8 +15,7 @@ namespace Blog.Api.Controllers
     /// 文章
     /// </summary>
     [ApiController]
-    [ApiVersion("1.0")]
-    [BlogApiController]
+    [Route("article")]
     [EnableCors("LimitRequests")]//支持跨域
     [Authorize(Policy = "Admin")]
     public class ArticleController : ControllerBase

@@ -12,8 +12,7 @@ namespace Blog.Api.Controllers
 {
 
     [ApiController]
-    [ApiVersion("1.0")]
-    [BlogApiController]
+    [Route("friend-link")]
     [EnableCors("LimitRequests")]//支持跨域
     [Authorize(Policy = "Admin")]
     public class FriendLinkController : ControllerBase

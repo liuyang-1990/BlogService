@@ -17,8 +17,7 @@ using System.Threading.Tasks;
 namespace Blog.Api.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [BlogApiController]
+    [Route("account")]
     [EnableCors("LimitRequests")]//支持跨域
     public class AccountController : ControllerBase
     {
