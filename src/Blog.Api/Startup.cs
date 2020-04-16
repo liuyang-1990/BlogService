@@ -1,4 +1,5 @@
-﻿using Blog.Api.Filters;
+﻿using AspNetCoreRateLimit;
+using Blog.Api.Filters;
 using Blog.Api.Hubs;
 using Blog.Api.MiddleWares;
 using Blog.Infrastructure.DI;
@@ -7,12 +8,9 @@ using Blog.Model.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -20,7 +18,6 @@ using Prometheus;
 using SqlSugar;
 using StackExchange.Profiling;
 using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
@@ -57,6 +54,19 @@ namespace Blog.Api
         /// <returns></returns>
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // needed to load configuration from appsettings.json
+            services.AddOptions();
+            // needed to store rate limit counters and ip rules
+            services.AddMemoryCache();
+            //load general configuration from appsettings.json
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            //load ip rules from appsettings.json
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            // inject counter and rules stores
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
             services.AddControllers(options =>
             {
                 if (!Env.IsDevelopment())
@@ -105,10 +115,18 @@ namespace Blog.Api
 
             #region Swagger
 
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             services.AddSwaggerGen(options =>
             {
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Title = "Blog Service",
+                    Contact = new OpenApiContact() { Name = "Liu Yang", Email = "xy_liuy0305@163.com" },
+                    TermsOfService = new Uri("https://api.nayoung515.top/swagger"),
+                    License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
+                });
+
                 options.CustomSchemaIds(x => x.FullName);
                 options.OperationFilter<SwaggerDefaultValues>();
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -174,10 +192,14 @@ namespace Blog.Api
                 };
             });
             #endregion
-
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpClient();
-            services.AddMemoryCache();
+
+            // the IHttpContextAccessor service is not registered by default.
+            // the clientId/clientIp resolvers use it.
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // configuration (resolvers, counter key builders)
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
             services.AddResponseCompression();
             services.AddSignalR();
             #region Seed
@@ -185,22 +207,22 @@ namespace Blog.Api
             #endregion
 
             #region API版本控制
-            services.AddApiVersioning(options =>
-            {
-                // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
-                options.ReportApiVersions = true;
-            });
+            //services.AddApiVersioning(options =>
+            //{
+            //    // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
+            //    options.ReportApiVersions = true;
+            //});
 
-            services.AddVersionedApiExplorer(options =>
-            {
-                // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-                // note: the specified format code will format the version as "'v'major[.minor][-status]"
-                options.GroupNameFormat = "'v'VVV";
+            //services.AddVersionedApiExplorer(options =>
+            //{
+            //    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+            //    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+            //    options.GroupNameFormat = "'v'VVV";
 
-                // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-                // can also be used to control the format of the API version in route templates
-                options.SubstituteApiVersionInUrl = true;
-            });
+            //    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+            //    // can also be used to control the format of the API version in route templates
+            //    options.SubstituteApiVersionInUrl = true;
+            //});
             #endregion
 
             #region Ioc
@@ -216,9 +238,10 @@ namespace Blog.Api
         /// </summary>
         /// <param name="app"></param>
         /// <param name="provider"></param>
-        public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app)
         {
-
+            //Ip限流
+            app.UseIpRateLimiting();
             if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -232,10 +255,11 @@ namespace Blog.Api
                 option.DefaultModelsExpandDepth(-1);
                 option.DefaultModelExpandDepth(2);
                 option.DocExpansion(DocExpansion.List);
-                foreach (var description in provider.ApiVersionDescriptions)
-                {
-                    option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-                }
+                option.SwaggerEndpoint("/swagger/v1/swagger.json", "Blog.Api");
+                //foreach (var description in provider.ApiVersionDescriptions)
+                //{
+                //    option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                //}
                 option.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream("Blog.Api.wwwroot.swagger.ui.index.html");
             });
             #endregion
