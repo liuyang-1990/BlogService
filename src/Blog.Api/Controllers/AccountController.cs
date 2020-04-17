@@ -11,10 +11,14 @@ using Microsoft.Extensions.Caching.Distributed;
 using Nelibur.ObjectMapper;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace Blog.Api.Controllers
@@ -27,13 +31,16 @@ namespace Blog.Api.Controllers
         private readonly IJwtHelper _jwtHelper;
         private readonly IUserBusiness _userBusiness;
         private readonly IDistributedCache _distributedCache;
+        private readonly IHttpClientFactory _httpClientFactory;
         public AccountController(IJwtHelper jwtHelper,
             IUserBusiness userBusiness,
-            IDistributedCache distributedCache)
+            IDistributedCache distributedCache,
+            IHttpClientFactory httpClientFactory)
         {
             _jwtHelper = jwtHelper;
             _userBusiness = userBusiness;
             _distributedCache = distributedCache;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpPost("login")]
@@ -119,5 +126,41 @@ namespace Blog.Api.Controllers
                 Captcha = captcha
             });
         }
+
+        /// <summary>
+        /// 第三方登录
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        [HttpGet("oauth")]
+        public async Task OAuth(string code)
+        {
+            string client_id = "2c77be8f313152952c68";
+            string client_secret = "95308ee6e73aede145e3888adeaa4cfba2c880d5";
+            var postdata = new
+            {
+                client_id = client_id,
+                client_secret = client_secret,
+                code = code
+            };
+            var json = JsonConvert.SerializeObject(postdata);
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            StringContent sc = new StringContent(json);
+            sc.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var req = new HttpRequestMessage(HttpMethod.Post, "https://github.com/login/oauth/access_token");
+            req.Content = sc;
+            var result = await client.SendAsync(req);
+            var data = await result.Content.ReadAsStringAsync();
+            var jObject = JObject.Parse(data);
+            //{"access_token":"4ff5c119d0cb63932a11e844a4bff861cc569079","token_type":"bearer","scope":""}
+            var access_token = jObject["access_token"];
+            var req1 = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/user?access_token={access_token}");
+            var res = await client.SendAsync(req1);
+            var info = await res.Content.ReadAsStringAsync();
+        }
+
+
     }
 }
