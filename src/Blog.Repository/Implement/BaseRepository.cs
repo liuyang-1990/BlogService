@@ -248,7 +248,10 @@ namespace Blog.Repository.Implement
         {
             return await Db.Ado.UseTranAsync(action);
         }
-
+        public async Task<DbResult<T1>> UseTranAsync<T1>(Func<T1> action)
+        {
+            return await Db.Ado.UseTranAsync(action);
+        }
         #endregion
 
         //protected Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)

@@ -178,6 +178,8 @@ namespace Blog.Repository
         /// <param name="action">action that need to used in tran</param>
         /// <returns></returns>
         Task<DbResult<bool>> UseTranAsync(Action action);
+
+        Task<DbResult<T1>> UseTranAsync<T1>(Func<T1> action);
         #endregion
     }
 }
