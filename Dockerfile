@@ -1,11 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
-RUN apk add --no-cache tzdata
-ENV TZ Asia/Shanghai
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 WORKDIR /app
-ARG GIT_COMMIT=unspecifid
-LABEL gitcommithash=$GIT_COMMIT
 COPY publish/ .
 EXPOSE 80
-#RUN export ASPNETCORE_HOSTINGSTARTUPASSEMBLIES=SkyAPM.Agent.AspNetCore
-#RUN export SKYWALKING__SERVICENAME=BlogService
 ENTRYPOINT ["dotnet", "Blog.Api.dll"]
